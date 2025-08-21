@@ -1,6 +1,6 @@
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
-import ChaiBuilder from "chai-next/server";
+import ChaiBuilder, { getSupabaseAdmin } from "chai-next/server";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
@@ -12,6 +12,8 @@ export const generateMetadata = async (props: {
   params: Promise<{ slug: string[] }>;
 }) => {
   const nextParams = await props.params;
+  const hostname = 'multi-tenant-murex.vercel.app';
+  await ChaiBuilder.initByHostname(hostname);
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
   return await ChaiBuilder.getPageSeoData(slug);
 };
@@ -22,8 +24,8 @@ export default async function Page({
   params: Promise<{ hostname: string; slug: string[] }>;
 }) {
   const nextParams = await params;
-  console.log('Hostname', nextParams.hostname);
-  await ChaiBuilder.initByHostname(nextParams.hostname);
+  const hostname = nextParams.hostname;
+  await ChaiBuilder.initByHostname(hostname);
 
   const { isEnabled } = await draftMode();
   await ChaiBuilder.loadSiteSettings(isEnabled);
