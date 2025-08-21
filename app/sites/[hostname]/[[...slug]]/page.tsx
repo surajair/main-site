@@ -1,5 +1,5 @@
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
-import { PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
+import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
 import ChaiBuilder from "chai-next/server";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
@@ -19,11 +19,15 @@ export const generateMetadata = async (props: {
 export default async function Page({
   params,
 }: {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ hostname: string; slug: string[] }>;
 }) {
   const nextParams = await params;
-  const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
+  await ChaiBuilder.initByHostname(nextParams.hostname);
+
   const { isEnabled } = await draftMode();
+  await ChaiBuilder.loadSiteSettings(isEnabled);
+
+  const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
 
   const page = await ChaiBuilder.getPage(slug);
   if ("error" in page) {
@@ -39,6 +43,7 @@ export default async function Page({
   };
   return (
     <>
+      <FontsAndStyles />
       <PreviewBanner slug={slug} show={isEnabled} />
       <RenderChaiBlocks page={page} pageProps={pageProps} />
     </>
