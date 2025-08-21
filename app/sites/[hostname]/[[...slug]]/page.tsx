@@ -22,6 +22,7 @@ export default async function Page({
   params: Promise<{ hostname: string; slug: string[] }>;
 }) {
   const nextParams = await params;
+  console.log('Hostname', nextParams.hostname);
   await ChaiBuilder.initByHostname(nextParams.hostname);
 
   const { isEnabled } = await draftMode();
