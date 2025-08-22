@@ -1,45 +1,36 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export const Logo = ({
   width = 30,
   height = 30,
-  shouldRedirect = true, // New prop with default value
+  shouldRedirect = true,
 }: {
   width?: number;
   height?: number;
-  shouldRedirect?: boolean; // Type definition for the new prop
+  shouldRedirect?: boolean;
 }) => (
   <div className="rounded-lg">
-    {shouldRedirect ? ( // Conditional rendering based on shouldRedirect
+    {shouldRedirect ? (
       <Link
         className="flex-none flex rounded text-xl items-center font-semibold focus:outline-none focus:opacity-80"
-        aria-label="Chai Builder"
-        href="https://www.chaibuilder.com"
+        aria-label="Website Builder"
+        href="/"
       >
-        <Image
-          src={"https://ucarecdn.com/fbfc3b05-cb73-4e99-92a2-3a367b7c36cd/"}
-          alt=""
-          loading="lazy"
-          width={width}
-          height={height}
-          decoding="async"
-          data-nimg="1"
-          className="text-primary-400 dark:text-primary-300 rounded"
-        />
+        <div 
+          className="bg-primary text-primary-foreground rounded flex items-center justify-center font-bold"
+          style={{ width, height }}
+        >
+          WB
+        </div>
       </Link>
     ) : (
       <div className="flex-none flex rounded text-xl items-center font-semibold">
-        <Image
-          src={"https://ucarecdn.com/fbfc3b05-cb73-4e99-92a2-3a367b7c36cd/"}
-          alt=""
-          loading="lazy"
-          width={width}
-          height={height}
-          decoding="async"
-          data-nimg="1"
-          className="text-primary-400 dark:text-primary-300 rounded"
-        />
+        <div 
+          className="bg-primary text-primary-foreground rounded flex items-center justify-center font-bold"
+          style={{ width, height }}
+        >
+          WB
+        </div>
       </div>
     )}
   </div>

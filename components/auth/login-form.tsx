@@ -45,7 +45,6 @@ export default function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="border-gray-300"
           />
         </div>
         <div className="space-y-2">
@@ -53,7 +52,7 @@ export default function LoginForm() {
             <Label htmlFor="password">Password</Label>
             <Link
               href="/forgot-password"
-              className="text-xs text-fuchsia-600 hover:underline"
+              className="text-xs text-primary hover:underline"
             >
               Forgot password?
             </Link>
@@ -65,14 +64,13 @@ export default function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="border-gray-300"
               placeholder="Password"
             />
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className="absolute right-0 top-1/2 -translate-y-1/2 w-8 hover:bg-transparent hover:text-gray-500"
+              className="absolute right-0 top-1/2 -translate-y-1/2 w-8 hover:bg-transparent hover:text-muted-foreground"
               onClick={(e) => {
                 e.preventDefault();
                 setShowPassword(!showPassword);
@@ -84,7 +82,7 @@ export default function LoginForm() {
         </div>
         <Button
           type="submit"
-          className="w-full bg-fuchsia-800 hover:bg-fuchsia-700"
+          className="w-full"
           disabled={isLoading}
         >
           {isLoading ? "Signing in..." : "Sign in"}

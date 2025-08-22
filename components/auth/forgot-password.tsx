@@ -43,14 +43,14 @@ export default function ForgetPassword() {
           <CheckCircle className="h-12 w-12 text-green-500" />
         </div>
         <h3 className="text-xl font-semibold">Password Reset Link Sent</h3>
-        <p className="text-gray-400 text-sm">
+        <p className="text-muted-foreground text-sm">
           Please check your email and follow the instructions to reset your
           password.
         </p>
         <br />
         <Link
           href="/login"
-          className="w-full bg-fuchsia-800 hover:bg-fuchsia-700 text-white font-medium px-20 py-3 rounded"
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-20 py-3 rounded"
         >
           Go to login
         </Link>
@@ -70,13 +70,12 @@ export default function ForgetPassword() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="border-gray-300"
             disabled={isLoading}
           />
         </div>
         <Button
           type="submit"
-          className="w-full bg-fuchsia-800 hover:bg-fuchsia-700"
+          className="w-full"
           disabled={isLoading}
         >
           {isLoading ? "Sending..." : "Send reset link"}

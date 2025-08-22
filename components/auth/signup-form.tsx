@@ -72,7 +72,6 @@ export default function SignupForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="border-gray-300"
             disabled={isLoading}
           />
         </div>
@@ -85,7 +84,6 @@ export default function SignupForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="border-gray-300"
               placeholder="Password"
               disabled={isLoading}
             />
@@ -93,7 +91,7 @@ export default function SignupForm() {
               type="button"
               variant="ghost"
               size="icon"
-              className="absolute right-0 top-1/2 -translate-y-1/2 w-8 hover:bg-transparent hover:text-gray-500"
+              className="absolute right-0 top-1/2 -translate-y-1/2 w-8 hover:bg-transparent hover:text-muted-foreground"
               onClick={(e) => {
                 e.preventDefault();
                 setShowPassword(!showPassword);
@@ -115,7 +113,6 @@ export default function SignupForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="border-gray-300"
               placeholder="Confirm Password"
               disabled={isLoading}
             />
@@ -123,7 +120,7 @@ export default function SignupForm() {
               type="button"
               variant="ghost"
               size="icon"
-              className="absolute right-0 top-1/2 -translate-y-1/2 w-8 hover:bg-transparent hover:text-gray-500"
+              className="absolute right-0 top-1/2 -translate-y-1/2 w-8 hover:bg-transparent hover:text-muted-foreground"
               onClick={(e) => {
                 e.preventDefault();
                 setShowConfirmPassword(!showConfirmPassword);
@@ -135,7 +132,7 @@ export default function SignupForm() {
         </div>
         <Button
           type="submit"
-          className="w-full bg-fuchsia-800 hover:bg-fuchsia-700"
+          className="w-full"
           disabled={isLoading}
         >
           {isLoading ? "Creating account..." : "Create account"}

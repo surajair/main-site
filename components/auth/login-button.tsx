@@ -61,7 +61,7 @@ export default function LoginButton() {
         onClick={handleGoogleSignIn}
         disabled={loading}
         variant="outline"
-        className="w-full h-12 text-base font-medium border-2 border-gray-500 hover:bg-gray-200 mb-6 rounded-xl"
+        className="w-full h-12 text-base font-medium border-2 hover:bg-accent mb-6 rounded-xl"
       >
         {loading ? (
           <Loader fullscreen={false} />

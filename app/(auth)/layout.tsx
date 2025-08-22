@@ -7,8 +7,8 @@ import { redirect } from "next/navigation";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Chaibuilder - Websites",
-  description: "Manage your Chaibuilder websites",
+  title: "Website Builder - Dashboard",
+  description: "Build and manage your websites with ease",
 };
 
 /**
@@ -21,7 +21,7 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col-reverse lg:flex-row">
       {/* Left side - Link, Content */}
-      <div className="hidden lg:flex w-full lg:w-1/2 bg-fuchsia-800 p-8 lg:p-16 flex-col justify-center items-center lg:items-start relative overflow-hidden">
+      <div className="hidden lg:flex w-full lg:w-1/2 bg-primary p-8 lg:p-16 flex-col justify-center items-center lg:items-start relative overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
           <svg width="100%" height="100%">
@@ -48,21 +48,21 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="border-2 rounded">
             <Logo shouldRedirect={false} />
           </div>
-          <h1 className="text-white text-3xl font-bold uppercase leading-tight tracking-wide">
-            Chai Builder
+          <h1 className="text-primary-foreground text-3xl font-bold uppercase leading-tight tracking-wide">
+            Website Builder
           </h1>
         </div>
 
         {/* Main content */}
         <div className="relative z-10">
-          <h2 className="text-white text-3xl xl:text-5xl font-bold mb-6 text-center lg:text-left">
+          <h2 className="text-primary-foreground text-3xl xl:text-5xl font-bold mb-6 text-center lg:text-left">
             Build websites visually
             <br />
-            with Chai Builder
+            with ease
           </h2>
-          <p className="text-white/70 text-lg xl:text-xl mb-8 max-w-xl hidden lg:flex">
-            The ultimate React + Tailwind website builder with AI-powered
-            features, drag-and-drop editing, and instant publishing.
+          <p className="text-primary-foreground/70 text-lg xl:text-xl mb-8 max-w-xl hidden lg:flex">
+            The ultimate website builder with AI-powered features, 
+            drag-and-drop editing, and instant publishing capabilities.
           </p>
 
           {/* Feature grid */}
@@ -70,11 +70,11 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="bg-white/10 backdrop-blur-sm rounded-lg p-4 flex items-start space-x-3 hover:shadow-xl duration-300">
-                <div className="mt-0.5 text-white">{feature.icon}</div>
+                className="bg-background/10 backdrop-blur-sm rounded-lg p-4 flex items-start space-x-3 hover:shadow-xl duration-300">
+                <div className="mt-0.5 text-primary-foreground">{feature.icon}</div>
                 <div>
-                  <h3 className="text-white font-medium">{feature.title}</h3>
-                  <p className="text-white/70 text-sm">{feature.description}</p>
+                  <h3 className="text-primary-foreground font-medium">{feature.title}</h3>
+                  <p className="text-primary-foreground/70 text-sm">{feature.description}</p>
                 </div>
               </div>
             ))}
@@ -83,7 +83,7 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
 
       {/* Right side - Login */}
-      <div className="w-full lg:w-1/2 h-full bg-white flex items-center justify-center p-8 lg:p-16">
+      <div className="w-full lg:w-1/2 h-full bg-background flex items-center justify-center p-8 lg:p-16">
         <div className="w-full max-w-md">
           <div className="flex justify-center mb-8">
             <Logo width={50} height={50} shouldRedirect={false} />
@@ -91,18 +91,18 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
 
           {children}
 
-          <p className="text-xs text-center text-gray-500">
+          <p className="text-xs text-center text-muted-foreground">
             By signing in, you agree to our
             <Link
               href="/terms-and-conditions"
-              className="text-purple-600 hover:text-purple-800 font-medium">
+              className="text-primary hover:underline font-medium">
               {" "}
               Terms of Service
             </Link>{" "}
             and
             <Link
               href="/privacy-policy"
-              className="text-purple-600 hover:text-purple-800 font-medium">
+              className="text-primary hover:underline font-medium">
               {" "}
               Privacy Policy
             </Link>
@@ -111,8 +111,8 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="mt-8 text-center">
             <Link
               href="/docs"
-              className="text-sm text-gray-600 hover:text-purple-600">
-              Learn more about Chai Builder
+              className="text-sm text-muted-foreground hover:text-primary">
+              Learn more about our platform
             </Link>
           </div>
         </div>
@@ -166,8 +166,8 @@ const features = [
         />
       </svg>
     ),
-    title: "Drag & Drop Builder",
-    description: "Build visually with ease",
+    title: "Visual Builder",
+    description: "Build with drag & drop",
   },
   {
     icon: (
@@ -185,8 +185,8 @@ const features = [
         />
       </svg>
     ),
-    title: "One-Click Publish",
-    description: "Deploy instantly",
+    title: "Instant Deploy",
+    description: "Publish with one click",
   },
   {
     icon: (
@@ -204,8 +204,8 @@ const features = [
         />
       </svg>
     ),
-    title: "AI Content & Style",
-    description: "Generate with AI",
+    title: "Smart Features",
+    description: "AI-powered tools",
   },
   {
     icon: (
@@ -223,7 +223,7 @@ const features = [
         />
       </svg>
     ),
-    title: "Revisions & Restore",
-    description: "Version control",
+    title: "Version Control",
+    description: "Track all changes",
   },
 ];
