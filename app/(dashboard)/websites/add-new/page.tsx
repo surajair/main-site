@@ -147,7 +147,7 @@ export default function NewWebsitePage() {
                   {allLanguages.map((lang) => (
                     <SelectItem key={lang.code} value={lang.code}>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono border border-border rounded px-2 bg-gray-100">{lang.code}</span>
+                        <span className="font-mono border rounded px-2 bg-muted">{lang.code}</span>
                         <span>{lang.name}</span>
                       </div>
                     </SelectItem>
@@ -191,16 +191,16 @@ export default function NewWebsitePage() {
               <h4 className="font-medium mb-2">Language Configuration</h4>
               <div className="space-y-1 text-sm">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono border border-border rounded px-2 bg-gray-50">{defaultLanguage}</span>
+                  <span className="font-mono border rounded px-2 bg-background">{defaultLanguage}</span>
                   <span>{getLanguageName(defaultLanguage)}</span>
-                  <Badge variant="outline" className="text-xs border-border text-[12px] py-px">
+                  <Badge variant="outline" className="text-xs text-[12px] py-px">
                     <Star className="h-3 w-3 mr-1 text-yellow-500 fill-yellow-500" />
                     Default
                   </Badge>
                 </div>
                 {additionalLanguages.map((langCode) => (
                   <div key={langCode} className="flex items-center gap-2">
-                    <span className="font-mono border border-border rounded px-2 bg-gray-50">{langCode}</span>
+                    <span className="font-mono border rounded px-2 bg-background">{langCode}</span>
                     <span>{getLanguageName(langCode)}</span>
                   </div>
                 ))}

@@ -52,16 +52,16 @@ const CommandComponent = ({ site }: { site: Site }) => {
   };
 
   const copyButtonClass = copied
-    ? "bg-green-200/50 border-green-500 text-green-700"
-    : "bg-blue-200/90 border-blue-500 text-blue-900 hover:bg-blue-300/70";
+    ? "bg-green-500/10 border-green-500 text-green-700"
+    : "bg-primary/10 border-primary text-primary hover:bg-primary/20";
 
   return (
     <div
       onClick={handleCopy}
-      className="bg-blue-100/40 h-7 w-full overflow-hidden py-1 pl-2 rounded-md flex items-center justify-between"
+      className="bg-muted h-7 w-full overflow-hidden py-1 pl-2 rounded-md flex items-center justify-between"
     >
       <span
-        className="font-mono text-sm w-full whitespace-nowrap truncate overflow-hidden text-blue-600"
+        className="font-mono text-sm w-full whitespace-nowrap truncate overflow-hidden text-foreground"
         style={{ userSelect: "none" }}
       >
         npx @chaibuilder/create {kebabCase(site.name)} -key={"<API_KEY>"}
@@ -103,7 +103,7 @@ export default function SiteCard({
         onClick={(e) => {
           setShowDetailsModal(true);
         }}
-        className="relative mx-auto flex flex-col justify-between w-full sm:max-w-md group dark:bg-gray-800 dark:border-gray-700 overflow-hidden hover:border-gray-300 cursor-pointer"
+        className="relative mx-auto flex flex-col justify-between w-full sm:max-w-md group overflow-hidden hover:border-muted-foreground/30 cursor-pointer"
       >
         {isNew(site) && (
           <div className="bg-green-600 px-3 py-1.5 text-white absolute top-0 left-0 text-xs rounded-br-lg z-10">
@@ -120,24 +120,24 @@ export default function SiteCard({
           />
         </div>
         <CardHeader className="flex flex-col items-center pt-8 pb-2">
-          <h1 className="text-5xl text-gray-300 font-black group-hover:text-fuchsia-500 duration-300">
-            <span className="text-gray-200 font-light">#</span>
+          <h1 className="text-5xl text-muted-foreground font-black group-hover:text-primary duration-300">
+            <span className="text-muted-foreground/60 font-light">#</span>
             {index + 1}
           </h1>
-          <CardTitle className="pt-3 text-xl font-black text-gray-900 dark:text-white text-center pb-0">
+          <CardTitle className="pt-3 text-xl font-black text-foreground text-center pb-0">
             {site.name}
-            <div className="text-xs text-gray-400 dark:text-gray-400 text-center pt-1 leading-none font-normal">
+            <div className="text-xs text-muted-foreground text-center pt-1 leading-none font-normal">
               {formatDate(site.createdAt)}
             </div>
           </CardTitle>
         </CardHeader>
         <CardFooter className="flex flex-col gap-2 justify-start px-2 pb-2 scale-95">
-          <small className="text-gray-400 font-light">
+          <small className="text-muted-foreground font-light">
             Run this command in your terminal to setup locally
           </small>
           <CommandComponent site={site} />
 
-          <small className="text-gray-400 font-light">
+          <small className="text-muted-foreground font-light">
             OR follow the instructions from our documentation
           </small>
           <div className="flex items-center justify-center gap-2">
@@ -150,7 +150,7 @@ export default function SiteCard({
                 variant="outline"
                 size="sm"
                 onClick={(e) => e.stopPropagation()}
-                className="max-w-[150px] min-w-[150px] bg-purple-300/10 border-purple-200/50 hover:bg-purple-300/20 h-max w-max py-1.5 duration-300 text-xs"
+                className="max-w-[150px] min-w-[150px] bg-accent border-border hover:bg-accent/80 h-max w-max py-1.5 duration-300 text-xs"
               >
                 <Laptop className="h-3 w-3" />
                 Setup locally
@@ -165,21 +165,21 @@ export default function SiteCard({
                 variant="outline"
                 size="sm"
                 onClick={(e) => e.stopPropagation()}
-                className="max-w-[150px] bg-blue-300/10 border-blue-200/50 hover:bg-blue-300/20 h-max w-max py-1.5 duration-300 text-xs"
+                className="max-w-[150px] bg-accent border-border hover:bg-accent/80 h-max w-max py-1.5 duration-300 text-xs"
               >
                 <Rocket className="h-3 w-3" />
                 Deploy to Vercel
               </Button>
             </Link>
           </div>
-          <small className="text-gray-400 font-light">
+          <small className="text-muted-foreground font-light">
             Get your API key from here
           </small>
           <div className="w-full flex justify-center">
             <Button
               size="sm"
               variant="outline"
-              className="w-full bg-sky-300/10 border-sky-200/40 hover:bg-sky-300/20 duration-300 text-xs h-max w-max py-1.5 min-w-[300px]"
+              className="w-full bg-accent border-border hover:bg-accent/80 duration-300 text-xs h-max py-1.5 min-w-[300px]"
             >
               <Key className="h-3 w-3" />
               View API key

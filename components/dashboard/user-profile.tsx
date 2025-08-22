@@ -57,11 +57,11 @@ export function UserProfile({ user }: { user: User }) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="relative rounded-full p-0 h-max pl-2 border border-transparent hover:border-gray-100">
+          className="relative rounded-full p-0 h-max pl-2 border border-transparent hover:border-border">
           <span className="ml-1 leading-tight hidden sm:block">
             {user.user_metadata.name || user.email}
           </span>
-          <Avatar className="h-7 w-7 border-2 text-xs bg-gray-100">
+          <Avatar className="h-7 w-7 border-2 text-xs bg-muted">
             <AvatarImage
               src={user.user_metadata.avatar_url}
               alt={user.user_metadata.full_name || ""}
@@ -89,7 +89,7 @@ export function UserProfile({ user }: { user: User }) {
           Change Password
         </DropdownMenuItem>
         <DropdownMenuItem
-          className="cursor-pointer hover:bg-gray-100 text-red-800"
+          className="cursor-pointer hover:bg-accent text-destructive"
           onClick={handleSignOut}
           disabled={isSigningOut}>
           {isSigningOut ? (

@@ -6,8 +6,8 @@ import { Metadata } from "next";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Chaibuilder - Websites",
-  description: "Manage your Chaibuilder websites",
+  title: "Website Builder - Dashboard",
+  description: "Manage your website builder projects",
 };
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -16,11 +16,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <html dir="ltr" className="smooth-scroll">
       <body className="font-body antialiased">
         <div className="flex h-screen flex-col">
-          <header className="border-b bg-white">
+          <header className="border-b bg-background">
             <div className="container flex h-16 items-center justify-between">
               <div className="flex items-center gap-2">
                 <Logo shouldRedirect={false} />
-                <span className="ml-2 text-xl font-bold tracking-wide uppercase">Chai Builder</span>
+                <span className="ml-2 text-xl font-bold tracking-wide uppercase">Website Builder</span>
               </div>
               <UserProfile user={user} />
             </div>
