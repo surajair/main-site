@@ -11,7 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import Loader from "./loader";
 
@@ -19,6 +19,26 @@ export function UserProfile({ user }: { user: User }) {
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const { data: {session}, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Failed to fetch user data:", error);
+      } else {
+        const user = {
+          accessToken: session?.access_token,
+          email: session?.user?.email,
+          expiresAt: session?.expires_at,
+          id: session?.user?.id,
+          name: session?.user?.user_metadata?.name || session?.user?.email,
+          refreshToken: session?.refresh_token
+        };
+        localStorage.setItem("__logged_in_user", JSON.stringify(user));
+      }
+    };
+
+    fetchUserData();
+  }, []);
   const handleSignOut = async (e: any) => {
     e.preventDefault();
 
