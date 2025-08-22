@@ -1,5 +1,5 @@
 import { getUser } from "@/actions/get-user-action";
-import "@/app/public.css";
+import "@/app/global.css";
 import { UserProfile } from "@/components/dashboard/user-profile";
 import { Logo } from "@/components/logo";
 import { Metadata } from "next";

@@ -1,5 +1,5 @@
 import { getUser } from "@/actions/get-user-action";
-import "@/app/public.css";
+import "@/app/global.css";
 import TopNavigation from "@/components/top-navigation";
 import type { Metadata } from "next";
 import type React from "react";
