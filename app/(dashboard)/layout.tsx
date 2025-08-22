@@ -3,16 +3,8 @@ import "@/app/(public)/public.css";
 import { Clarity } from "@/components/clarity";
 import { UserProfile } from "@/components/dashboard/user-profile";
 import { Logo } from "@/components/logo";
-import { registerFonts } from "@/fonts";
-import { GoogleTagManager } from "@next/third-parties/google";
-import { FontsAndStyles } from "chai-next/blocks/rsc";
-import ChaiBuilder from "chai-next/server";
 import { Metadata } from "next";
 import { Toaster } from "sonner";
-
-ChaiBuilder.init(process.env.CHAIBUILDER_API_KEY!);
-
-registerFonts();
 
 export const metadata: Metadata = {
   title: "Chaibuilder - Websites",
@@ -23,9 +15,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const user = await getUser();
   return (
     <html dir="ltr" className="smooth-scroll">
-      <head>
-        <FontsAndStyles />
-      </head>
       <body className="font-body antialiased">
         <div className="flex h-screen flex-col">
           <header className="border-b bg-white">

@@ -1,20 +1,10 @@
 import { getSession } from "@/actions/get-user-action";
 import "@/app/public.css";
 import { Logo } from "@/components/logo";
-import { Clarity } from "@/components/clarity";
-import { registerFonts } from "@/fonts";
-import { GoogleTagManager } from "@next/third-parties/google";
-import { get } from "lodash";
 import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Toaster } from "sonner";
-import { FontsAndStyles } from "chai-next/blocks/rsc";
-import ChaiBuilder from "chai-next/server";
-
-ChaiBuilder.init(process.env.CHAIBUILDER_API_KEY!);
-
-registerFonts();
 
 export const metadata: Metadata = {
   title: "Chaibuilder - Websites",
@@ -150,16 +140,9 @@ export default async function AuthLayout({
 
   return (
     <html dir="ltr" className="smooth-scroll">
-      <head>
-        <FontsAndStyles />
-      </head>
       <body className="font-body antialiased">
         <Toaster richColors />
         <WithAuthLayout>{children}</WithAuthLayout>
-        <Clarity />
-        {process.env.NEXT_PUBLIC_GTM_ID && (
-          <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
-        )}
       </body>
     </html>
   );
