@@ -9,7 +9,6 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Toaster } from "sonner";
-import { SalesIQ } from "../SalesIQ";
 import { FontsAndStyles } from "chai-next/blocks/rsc";
 import ChaiBuilder from "chai-next/server";
 
@@ -161,7 +160,6 @@ export default async function AuthLayout({
         {process.env.NEXT_PUBLIC_GTM_ID && (
           <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
         )}
-        <SalesIQ />
       </body>
     </html>
   );

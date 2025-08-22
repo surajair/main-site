@@ -9,7 +9,6 @@ import { FontsAndStyles } from "chai-next/blocks/rsc";
 import ChaiBuilder from "chai-next/server";
 import { Metadata } from "next";
 import { Toaster } from "sonner";
-import { SalesIQ } from "../SalesIQ";
 
 ChaiBuilder.init(process.env.CHAIBUILDER_API_KEY!);
 
@@ -43,7 +42,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <Toaster richColors />
         <Clarity />
         {process.env.NEXT_PUBLIC_GTM_ID && <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />}
-        <SalesIQ />
       </body>
     </html>
   );
