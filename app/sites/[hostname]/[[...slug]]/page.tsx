@@ -1,6 +1,6 @@
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
-import ChaiBuilder, { getSupabaseAdmin } from "chai-next/server";
+import ChaiBuilder from "chai-next/server";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
@@ -46,13 +46,13 @@ export default async function Page({
   };
   return (
     <>
-    <head>
-      <FontsAndStyles />
-    </head>
-    <body className={`font-body antialiased`}>
-      <PreviewBanner slug={slug} show={isEnabled} />
-      <RenderChaiBlocks page={page} pageProps={pageProps} />
-    </body>
+      <head>
+        <FontsAndStyles page={page}/>
+      </head>
+      <body className={`font-body antialiased`}>
+        <PreviewBanner slug={slug} show={isEnabled} />
+        <RenderChaiBlocks page={page} pageProps={pageProps} />
+      </body>
     </>
   );
 }
