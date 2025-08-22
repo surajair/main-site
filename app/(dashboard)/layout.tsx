@@ -6,8 +6,8 @@ import { Metadata } from "next";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Website Builder - Dashboard",
-  description: "Manage your website builder projects",
+  title: "Your Brand - Dashboard",
+  description: "Manage your Your Brand projects",
 };
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -20,7 +20,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <div className="container flex h-16 items-center justify-between">
               <div className="flex items-center gap-2">
                 <Logo shouldRedirect={false} />
-                <span className="ml-2 text-xl font-bold tracking-wide uppercase">Website Builder</span>
+                <span className="ml-2 text-xl font-bold tracking-wide uppercase">Your Brand</span>
               </div>
               <UserProfile user={user} />
             </div>

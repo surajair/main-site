@@ -22,7 +22,7 @@ async function TopNavigation({ user }: { user: UserType }) {
         <div className="flex items-center space-x-4">
           <Link href="/" className="text-xl font-bold text-foreground tracking-wide flex items-center gap-x-2">
             <Logo shouldRedirect={false} />
-            WEBSITE BUILDER
+            Your Brand
           </Link>
         </div>
 

@@ -5,8 +5,8 @@ import type { Metadata } from "next";
 import type React from "react";
 
 export const metadata: Metadata = {
-  title: "Website Builder - Project Management",
-  description: "Manage your website builder projects and settings",
+  title: "Your Brand - Project Management",
+  description: "Manage your Your Brand projects and settings",
   generator: "v0.app",
 };
 

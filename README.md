@@ -8,7 +8,7 @@ This is a starter project for Chai builder + NextJS.
 
 ## Features
 
-- Website builder with drag and drop
+- Your Brand with drag and drop
 - One click publish
 - Revisions and restore
 - Page lock (prevent multiple users from editing the same page)

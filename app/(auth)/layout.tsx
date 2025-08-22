@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Website Builder - Dashboard",
+  title: "Your Brand - Dashboard",
   description: "Build and manage your websites with ease",
 };
 
@@ -49,7 +49,7 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
             <Logo shouldRedirect={false} />
           </div>
           <h1 className="text-primary-foreground text-3xl font-bold uppercase leading-tight tracking-wide">
-            Website Builder
+            Your Brand
           </h1>
         </div>
 
@@ -61,7 +61,7 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
             with ease
           </h2>
           <p className="text-primary-foreground/70 text-lg xl:text-xl mb-8 max-w-xl hidden lg:flex">
-            The ultimate website builder with AI-powered features, 
+            The ultimate Your Brand with AI-powered features, 
             drag-and-drop editing, and instant publishing capabilities.
           </p>
 
