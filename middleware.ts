@@ -22,6 +22,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  if (hostname.startsWith('app.')) {
+    return NextResponse.next()
+  }
+
   // Rewrite the request to /sites/[domain]/original-path
   const rewriteUrl = new URL(`/sites/${hostname}${pathname}`, request.url)
   
