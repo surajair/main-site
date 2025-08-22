@@ -19,7 +19,7 @@
 }
 
 :root {
-    --radius: 10px;
+    --radius: 8px;
     --card: 0 0% 100%;
     --ring: 0 0% 63%;
     --input: 0 0% 90%;
