@@ -1,6 +1,5 @@
 import { getUser } from "@/actions/get-user-action";
-import "@/app/(public)/public.css";
-import { Clarity } from "@/components/clarity";
+import "@/app/public.css";
 import { UserProfile } from "@/components/dashboard/user-profile";
 import { Logo } from "@/components/logo";
 import { Metadata } from "next";
@@ -29,8 +28,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="container flex-1 h-full">{children}</div>
         </div>
         <Toaster richColors />
-        <Clarity />
-        {process.env.NEXT_PUBLIC_GTM_ID && <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />}
       </body>
     </html>
   );
