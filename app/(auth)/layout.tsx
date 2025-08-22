@@ -1,5 +1,5 @@
 import { getSession } from "@/actions/get-user-action";
-import "@/app/(public)/public.css";
+import "@/app/public.css";
 import { Logo } from "@/components/logo";
 import { Clarity } from "@/components/clarity";
 import { registerFonts } from "@/fonts";
