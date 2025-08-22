@@ -3,7 +3,7 @@
   "version": "0.1.5",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npx chai-tailwind --watch\" \"next dev --port 3001 --turbopack\"",
+    "dev": "concurrently \"npx chai-tailwind --watch\" \"next dev --port 3000 --turbopack\"",
     "build": "npx chai-tailwind && next build",
     "start": "next start",
     "lint": "next lint & tsc --noEmit",
