@@ -1,5 +1,5 @@
 import { getSession } from "@/actions/get-user-action";
-import "@/app/global.css";
+import "@/app/app.css";
 import { Logo } from "@/components/logo";
 import { Metadata } from "next";
 import Link from "next/link";
