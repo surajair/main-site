@@ -1,6 +1,6 @@
 "use server";
 
-import { supabaseServer } from "@/chai/supabase.server";
+import { getSupabaseAdmin } from "chai-next/server";
 import { revalidatePath } from "next/cache";
 
 export async function updateSite(
@@ -13,6 +13,8 @@ export async function updateSite(
   }
 ) {
   try {
+    const supabaseServer = await getSupabaseAdmin();
+
     // Update the apps table
     const { data, error } = await supabaseServer
       .from("apps")

@@ -1,14 +1,16 @@
 "use server";
 
-import { supabaseServer } from "@/chai/supabase.server";
 import { revalidatePath } from "next/cache";
 import { getSession } from "./get-user-action";
+import { getSupabaseAdmin } from "chai-next/server";
 
 const noIsNotFound = (error: any) => {
   return error && !error.message.includes("not found");
 };
 
 export async function deleteSite(siteId: string) {
+  const supabaseServer = await getSupabaseAdmin();
+
   // Get current user's session
   const session = await getSession();
   if (!session?.user?.id) {

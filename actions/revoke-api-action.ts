@@ -1,14 +1,16 @@
 "use server";
 
-import { supabaseServer } from "@/chai/supabase.server";
 import { Site } from "@/utils/types";
 import { revalidatePath } from "next/cache";
 import { encodedApiKey } from "@/utils/api-key";
+import { getSupabaseAdmin } from "chai-next/server";
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY as string;
 
 export async function revokeApiKey(site: Site) {
   try {
+    const supabaseServer = await getSupabaseAdmin();
+
     // Generate new API key
     const newApiKey = encodedApiKey(site.id, ENCRYPTION_KEY);
 

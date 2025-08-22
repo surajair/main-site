@@ -1,11 +1,12 @@
 "use server";
 
-import { supabaseServer } from "@/chai/supabase.server";
 import { Vercel } from "@vercel/sdk";
+import { getSupabaseAdmin } from "chai-next/server";
 import { revalidatePath } from "next/cache";
 
 export async function deleteDomain(hostingProjectId: string, domain: string, websiteId: string) {
   try {
+    const supabaseServer = await getSupabaseAdmin();
     const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
 
     // Remove domain from Vercel project

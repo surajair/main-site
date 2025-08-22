@@ -1,8 +1,10 @@
 "use server";
 
-import { supabaseServer } from "@/chai/supabase.server";
+import { getSupabaseAdmin } from "chai-next/server";
+
 
 export async function getSites(userId: string, sitesWithDomainOnly = false) {
+  const supabaseServer = await getSupabaseAdmin();
   const { data, error } = await supabaseServer
     .from("apps")
     .select(

@@ -1,6 +1,6 @@
 "use server";
 
-import { supabaseServer } from "@/chai/supabase.server";
+import { getSupabaseAdmin } from "chai-next/server";
 import { encodedApiKey } from "@/utils/api-key";
 import { Site } from "@/utils/types";
 import { Vercel } from "@vercel/sdk";
@@ -95,6 +95,7 @@ export async function createSite(formData: Partial<Site>) {
     let vercel: Vercel | null = null;
     let createProjectResponse: any = null;
     const user = await getUser();
+    const supabaseServer = await getSupabaseAdmin();
 
     const subdomainPrefix = formData?.subdomain;
     const subdomain = subdomainPrefix + "." + process.env.NEXT_PUBLIC_SUBDOMAIN;
@@ -182,6 +183,7 @@ export async function createSite(formData: Partial<Site>) {
 
 export async function createApiKey(appId: string) {
   try {
+    const supabaseServer = await getSupabaseAdmin();
     const apiKey = encodedApiKey(appId, ENCRYPTION_KEY);
     const { data, error } = await supabaseServer.from("app_api_keys").insert({ apiKey, app: appId }).select().single();
     if (error) throw error;
@@ -197,6 +199,7 @@ export async function createApiKey(appId: string) {
 
 export async function createHomePage(appId: string, name: string) {
   try {
+    const supabaseServer = await getSupabaseAdmin();
     const { data, error } = await supabaseServer
       .from("app_pages")
       .insert({

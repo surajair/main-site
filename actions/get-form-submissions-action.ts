@@ -1,6 +1,8 @@
 "use server";
 
-import { supabaseServer } from "@/chai/supabase.server";
+import { getSupabaseAdmin } from "chai-next/server";
+
+
 
 export interface FormSubmissionData {
   [key: string]: string | number | boolean | null | undefined;
@@ -39,6 +41,8 @@ export async function getFormSubmissions({
   try {
     const from = (page - 1) * limit;
     const to = page * limit - 1;
+
+    const supabaseServer = await getSupabaseAdmin();
 
     const {
       data: submissionsData,

@@ -71,6 +71,7 @@ export async function addDomain(site: Site, domain: string) {
 
 export async function verifyDomain(domain: string) {
   try {
+    const supabaseServer = await getSupabaseAdmin();
     const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
 
     const checkConfiguration = await vercel.domains.getDomainConfig({
