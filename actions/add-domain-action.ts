@@ -1,14 +1,15 @@
 "use server";
 
-import { supabaseServer } from "@/chai/supabase.server";
 import { Site } from "@/utils/types";
 import { Vercel } from "@vercel/sdk";
+import { getSupabaseAdmin } from "chai-next/server";
 import { revalidatePath } from "next/cache";
 
 export async function addDomain(site: Site, domain: string) {
   try {
+    const supabase = await getSupabaseAdmin()
     // Check if domain already exists
-    const { data: existingDomain } = await supabaseServer
+    const { data: existingDomain } = await supabase
       .from("app_domains")
       .select("id")
       .eq("domain", domain)
@@ -37,7 +38,7 @@ export async function addDomain(site: Site, domain: string) {
       domain: domain,
     });
 
-    const { error } = await supabaseServer
+    const { error } = await supabase
       .from("app_domains")
       .update({
         domain: domain,
