@@ -46,9 +46,13 @@ export default async function Page({
   };
   return (
     <>
+    <head>
       <FontsAndStyles />
+    </head>
+    <body className={`font-body antialiased`}>
       <PreviewBanner slug={slug} show={isEnabled} />
       <RenderChaiBlocks page={page} pageProps={pageProps} />
+    </body>
     </>
   );
 }
