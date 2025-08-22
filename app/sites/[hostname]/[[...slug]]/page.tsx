@@ -9,10 +9,10 @@ loadWebBlocks();
 export const dynamic = "force-static"; // Remove this if you want to use ssr mode
 
 export const generateMetadata = async (props: {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{hostname: string; slug: string[] }>;
 }) => {
   const nextParams = await props.params;
-  const hostname = 'multi-tenant-murex.vercel.app';
+  const hostname = nextParams.hostname;
   await ChaiBuilder.initByHostname(hostname);
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
   return await ChaiBuilder.getPageSeoData(slug);
