@@ -11,7 +11,7 @@
     "check-env": "node scripts/check-env.cjs"
   },
   "dependencies": {
-    "chai-next": "0.0.10-beta",
+    "chai-next": "0.0.11-beta",
     "next": "15.4.1",
     "react": "19.1.0",
     "react-dom": "19.1.0"
