@@ -19,8 +19,6 @@
 }
 
 :root {
-    --font-body: "Geist", ;
-    --font-heading: "Geist", ;
     --radius: 10px;
     --card: 0 0% 100%;
     --ring: 0 0% 63%;
