@@ -6,5 +6,5 @@ import "chai-next/builder-styles";
 
 export default function Page() {
   const { ready } = useSupabaseUser();
-  return ready ? <ChaiBuilder apiUrl="seditor/api" /> : null;
+  return ready ? <ChaiBuilder /> : null;
 }
