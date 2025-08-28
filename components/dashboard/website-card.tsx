@@ -39,7 +39,10 @@ export default function WebsiteCard({ site }: WebsiteCardProps) {
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7 hover:border hover:border-primary/20"
-                onClick={(e) => e.stopPropagation()}>
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}>
                 <MoreVertical className="h-3 w-3" />
                 <span className="sr-only">Open menu</span>
               </Button>
@@ -64,46 +67,46 @@ export default function WebsiteCard({ site }: WebsiteCardProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-
+      </div>
+      <Link href={`/${site.id}/editor`}>
         {/* Hover-expand Editor Button - Bottom Right */}
         <div className="absolute bottom-2 right-2 pointer-events-auto">
-          <Link href={`/${site.id}/editor`}>
-            <button className="flex items-center gap-2 border border-transparent group-hover:border-border rounded-full h-max pl-3 group-hover:bg-primary duration-300">
-              <span className="text-xs font-semibold leading-none text-primary group-hover:text-white group-hover:opacity-100 opacity-0 duration-300">
-                Go to editor
-              </span>
-              <div className="rounded-full border border-transparent p-1.5 bg-white group-hover:border-primary duration-300">
-                <MoveRight className="w-4 h-4 text-primary group-hover:hidden" />
-                <Edit2 className="w-4 h-4 text-primary hidden group-hover:block" />
-              </div>
-            </button>
-          </Link>
+          <button className="flex items-center gap-2 border border-transparent group-hover:border-border rounded-full h-max pl-3 group-hover:bg-primary duration-300">
+            <span className="text-xs font-semibold leading-none text-primary group-hover:text-white group-hover:opacity-100 opacity-0 duration-300">
+              Go to editor
+            </span>
+            <div className="rounded-full border border-transparent p-1.5 bg-white group-hover:border-primary duration-300">
+              <MoveRight className="w-4 h-4 text-primary group-hover:hidden" />
+              <Edit2 className="w-4 h-4 text-primary hidden group-hover:block" />
+            </div>
+          </button>
         </div>
-      </div>
 
-      {/* Card Content */}
-      <CardHeader>
-        <CardTitle className="text-xl">{site.name}</CardTitle>
-        <span className="text-muted-foreground text-xs leading-tight">{formatDate(site.createdAt)}</span>
-        <CardDescription className="flex items-center gap-1">
-          {site.subdomain || site.domain ? <Globe className="h-4 w-4" /> : <Globe className="h-4 w-4 opacity-0" />}
-          {site.subdomain || site.domain || ""}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pb-3">
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex gap-1">
-            <Badge key={site?.fallbackLang} variant="outline" className="text-[10px]">
-              <Star className="mr-1 w-2.5 h-2.5 text-yellow-500 fill-yellow-500" /> {site?.fallbackLang?.toUpperCase()}
-            </Badge>
-            {site.languages.map((lang) => (
-              <Badge key={lang} variant="outline" className="text-[10px]">
-                {lang.toUpperCase()}
+        {/* Card Content */}
+        <CardHeader>
+          <CardTitle className="text-xl">{site.name}</CardTitle>
+          <span className="text-muted-foreground text-xs leading-tight">{formatDate(site.createdAt)}</span>
+          <CardDescription className="flex items-center gap-1">
+            {site.subdomain || site.domain ? <Globe className="h-4 w-4" /> : <Globe className="h-4 w-4 opacity-0" />}
+            {site.subdomain || site.domain || ""}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pb-3">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex gap-1">
+              <Badge key={site?.fallbackLang} variant="outline" className="text-[10px]">
+                <Star className="mr-1 w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />{" "}
+                {site?.fallbackLang?.toUpperCase()}
               </Badge>
-            ))}
+              {site.languages.map((lang) => (
+                <Badge key={lang} variant="outline" className="text-[10px]">
+                  {lang.toUpperCase()}
+                </Badge>
+              ))}
+            </div>
           </div>
-        </div>
-      </CardContent>
+        </CardContent>
+      </Link>
     </Card>
   );
 }
