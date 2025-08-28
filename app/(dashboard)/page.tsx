@@ -1,5 +1,6 @@
 import { getSites } from "@/actions/get-sites-actions";
 import { getUser } from "@/actions/get-user-action";
+import CreateNewWebsite from "@/components/dashboard-v2/create-new-website";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,18 +23,17 @@ export default async function HomePage() {
   const sites: Site[] = data as Site[];
 
   return (
-    <div className="h-full flex flex-col pt-4">
+    <div className="h-full flex flex-col py-8">
       <div className="flex items-center justify-between mb-8 flex-shrink-0">
         <div>
-          <h1 className="text-4xl font-bold mb-2">Your Websites</h1>
-          <p className="text-muted-foreground">Manage your websites and create amazing content</p>
+          <h1 className="text-2xl font-bold mb-2">Your Websites</h1>
         </div>
-        <Link href="/websites/add-new">
+        <CreateNewWebsite>
           <Button size="lg" className="gap-2">
             <Plus className="h-5 w-5" />
             Add New Website
           </Button>
-        </Link>
+        </CreateNewWebsite>
       </div>
 
       {sites.length > 0 ? (
@@ -43,7 +43,7 @@ export default async function HomePage() {
               <Card
                 key={site.id}
                 className="hover:border-primary/50 duration-300 transition-all cursor-pointer group shadow-none">
-                <Link href={`/websites/website/${site.id}`}>
+                <Link href={`/${site.id}/editor`}>
                   <CardHeader>
                     <CardTitle className="text-xl">{site.name}</CardTitle>
                     <span className="text-muted-foreground text-xs leading-tight">{formatDate(site.createdAt)}</span>
@@ -83,12 +83,12 @@ export default async function HomePage() {
             <Globe className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">No projects yet</h3>
             <p className="text-muted-foreground mb-6">Create your first website to get started</p>
-            <Link href="/websites/add-new">
+            <CreateNewWebsite>
               <Button size="lg" className="gap-2">
                 <Plus className="h-5 w-5" />
                 Create Your First Site
               </Button>
-            </Link>
+            </CreateNewWebsite>
           </div>
         </div>
       )}

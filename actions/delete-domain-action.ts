@@ -27,8 +27,8 @@ export async function deleteDomain(hostingProjectId: string, domain: string, web
 
     if (updateError) throw updateError;
 
-    revalidatePath(`/websites/website/${websiteId}/details`);
-    
+    revalidatePath(`/${websiteId}/details`);
+
     return {
       success: true,
       message: "Domain deleted successfully",

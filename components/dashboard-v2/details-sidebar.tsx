@@ -1,13 +1,16 @@
 "use client";
 
-import { Globe, Key, Settings } from "lucide-react";
-import type React from "react";
+import { BookOpenText, Globe, Key, Settings } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Separator } from "../ui/separator";
 
 const sidebarItems = [
+  { id: "form-submission", label: "Form submission", icon: BookOpenText },
   { id: "general", label: "General", icon: Settings },
   { id: "api-key", label: "API Key", icon: Key },
   { id: "domain", label: "Domain", icon: Globe },
-  // { id: "usage", label: "Usage", icon: BarChart3 },
 ];
 
 interface DetailsSidebarProps {
@@ -15,19 +18,47 @@ interface DetailsSidebarProps {
 }
 
 function DetailsSidebar({ onNavigate }: DetailsSidebarProps) {
-  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
-    e.preventDefault();
-    if (onNavigate) {
-      onNavigate(targetId);
+  const pathname = usePathname();
+  const [activeHash, setActiveHash] = useState("");
+
+  useEffect(() => {
+    // Update active hash when hash changes
+    const updateHash = () => {
+      setActiveHash(window.location.hash.replace("#", ""));
+    };
+
+    updateHash();
+    window.addEventListener("hashchange", updateHash);
+    return () => window.removeEventListener("hashchange", updateHash);
+  }, []);
+
+  useEffect(() => {
+    if (pathname.includes("/form-submission")) {
+      setActiveHash("form-submission");
     } else {
-      const element = document.getElementById(targetId);
-      if (element) {
-        element.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }
+      setActiveHash("general");
     }
+  }, [pathname]);
+
+  useEffect(() => {
+    handleSmoothScroll(activeHash);
+  }, [activeHash]);
+
+  const handleSmoothScroll = (targetId: string) => {
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
+  const isActive = (itemId: string) => {
+    if (itemId === "form-submission") {
+      return pathname.includes("/form-submission");
+    }
+    return false;
   };
 
   return (
@@ -41,15 +72,36 @@ function DetailsSidebar({ onNavigate }: DetailsSidebarProps) {
         {sidebarItems.map((item) => {
           const Icon = item.icon;
 
+          const active = isActive(item.id);
+          const baseClasses =
+            "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors";
+          const activeClasses = active
+            ? "bg-primary text-primary-foreground shadow-sm"
+            : "text-sidebar-foreground hover:bg-gray-100 hover:text-gray-900";
+
+          // Form submission gets its own route, others navigate to details page with hash
+          if (item.id === "form-submission") {
+            return (
+              <>
+                <Link
+                  onClick={() => setActiveHash("form-submission")}
+                  key={item.id}
+                  href={`form-submission`}
+                  className={`${baseClasses} ${activeClasses}`}>
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </Link>
+
+                <Separator className="my-2" />
+              </>
+            );
+          }
+
           return (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              onClick={(e) => handleSmoothScroll(e, item.id)}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-gray-100 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+            <Link key={item.id} href={`details#${item.id}`} className={`${baseClasses} ${activeClasses}`}>
               <Icon className="h-4 w-4" />
               {item.label}
-            </a>
+            </Link>
           );
         })}
       </nav>

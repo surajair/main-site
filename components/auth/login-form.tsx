@@ -1,14 +1,14 @@
 "use client";
 
-import {  Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Input  } from "@/components/ui/input";
-import Link from "next/link";
-import { useState } from "react";
 import { loginWithEmail } from "@/actions/user-auth-action";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { EyeClosed, EyeIcon } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
-import { EyeIcon, EyeClosed } from "lucide-react";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -24,7 +24,7 @@ export default function LoginForm() {
     try {
       await loginWithEmail(email, password);
       toast.success("Login successful", { position: "top-right" });
-      router.push("/sites");
+      router.push("/");
     } catch (error) {
       toast.error(error instanceof Error && error.message ? "Invalid login credentials" : "Failed to login", {
         position: "top-right",
@@ -50,10 +50,7 @@ export default function LoginForm() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
-            <Link
-              href="/forgot-password"
-              className="text-xs text-primary hover:underline"
-            >
+            <Link href="/forgot-password" className="text-xs text-primary hover:underline">
               Forgot password?
             </Link>
           </div>
@@ -74,17 +71,12 @@ export default function LoginForm() {
               onClick={(e) => {
                 e.preventDefault();
                 setShowPassword(!showPassword);
-              }}
-            >
+              }}>
               {!showPassword ? <EyeIcon /> : <EyeClosed />}
             </Button>
           </div>
         </div>
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isLoading}
-        >
+        <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "Signing in..." : "Sign in"}
         </Button>
       </form>

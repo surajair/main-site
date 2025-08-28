@@ -92,7 +92,7 @@ function WebsiteInformation({
   };
 
   return (
-    <section id="general" className="space-y-4 pt-8">
+    <section id="general" className="space-y-4">
       <div className="flex items-center gap-2">
         <Settings className="h-5 w-5" />
         <h2 className="font-semibold">General Settings</h2>

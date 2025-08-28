@@ -21,7 +21,7 @@ export function LogoutButton() {
 
   return (
     <DropdownMenuItem
-      className="text-destructive cursor-pointer hover:bg-destructive/10"
+      className="text-red-600 cursor-pointer hover:bg-red-100"
       onClick={handleLogout}
       disabled={isLoggingOut}>
       <LogOut className="mr-2 h-4 w-4" />

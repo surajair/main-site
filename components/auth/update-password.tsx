@@ -15,7 +15,7 @@ interface UpdatePasswordProps {
   redirectTo?: string;
 }
 
-export default function UpdatePassword({ type = "change", redirectTo = "/sites" }: UpdatePasswordProps) {
+export default function UpdatePassword({ type = "change", redirectTo = "/" }: UpdatePasswordProps) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);

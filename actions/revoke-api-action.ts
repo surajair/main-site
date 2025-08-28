@@ -1,9 +1,9 @@
 "use server";
 
-import { Site } from "@/utils/types";
-import { revalidatePath } from "next/cache";
 import { encodedApiKey } from "@/utils/api-key";
+import { Site } from "@/utils/types";
 import { getSupabaseAdmin } from "chai-next/server";
+import { revalidatePath } from "next/cache";
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY as string;
 
@@ -24,7 +24,7 @@ export async function revokeApiKey(site: Site) {
 
     if (error) throw error;
 
-    revalidatePath("/sites");
+    revalidatePath(`/${site.id}/details`);
     return { success: true, data };
   } catch (error: any) {
     return {

@@ -1,10 +1,13 @@
 import { getSession } from "@/actions/get-user-action";
 import "@/app/app.css";
-import { Logo } from "@/components/logo";
+import { BrandLogo, BrandName } from "@/components/dashboard-v2/branding";
 import { Metadata } from "next";
+import { Geist } from "next/font/google";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Toaster } from "sonner";
+
+const geist = Geist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Your Brand - Dashboard",
@@ -21,22 +24,13 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col-reverse lg:flex-row">
       {/* Left side - Link, Content */}
-      <div className="hidden lg:flex w-full lg:w-1/2 bg-primary p-8 lg:p-16 flex-col justify-center items-center lg:items-start relative overflow-hidden">
+      <div className="hidden lg:flex w-full lg:w-1/2 bg-primary/95 p-8 lg:p-16 flex-col justify-center items-center lg:items-start relative overflow-hidden">
         {/* Background pattern */}
-        <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 opacity-5">
           <svg width="100%" height="100%">
             <defs>
-              <pattern
-                id="grid"
-                width="40"
-                height="40"
-                patternUnits="userSpaceOnUse">
-                <path
-                  d="M 40 0 L 0 0 0 40"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="1"
-                />
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)" />
@@ -46,10 +40,10 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
         {/* Logo and brand */}
         <div className="relative z-10 flex items-center space-x-4 mb-12">
           <div className="border-2 rounded">
-            <Logo shouldRedirect={false} />
+            <BrandLogo shouldRedirect={false} />
           </div>
           <h1 className="text-primary-foreground text-3xl font-bold uppercase leading-tight tracking-wide">
-            Your Brand
+            <BrandName />
           </h1>
         </div>
 
@@ -61,8 +55,8 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
             with ease
           </h2>
           <p className="text-primary-foreground/70 text-lg xl:text-xl mb-8 max-w-xl hidden lg:flex">
-            The ultimate Your Brand with AI-powered features, 
-            drag-and-drop editing, and instant publishing capabilities.
+            The ultimate website builder with AI-powered features, drag-and-drop editing, and instant publishing
+            capabilities.
           </p>
 
           {/* Feature grid */}
@@ -86,32 +80,26 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="w-full lg:w-1/2 h-full bg-background flex items-center justify-center p-8 lg:p-16">
         <div className="w-full max-w-md">
           <div className="flex justify-center mb-8">
-            <Logo width={50} height={50} shouldRedirect={false} />
+            <BrandLogo width={50} height={50} shouldRedirect={false} />
           </div>
 
           {children}
 
           <p className="text-xs text-center text-muted-foreground">
             By signing in, you agree to our
-            <Link
-              href="/terms-and-conditions"
-              className="text-primary hover:underline font-medium">
+            <Link href="/terms-and-conditions" className="text-primary hover:underline font-medium">
               {" "}
               Terms of Service
             </Link>{" "}
             and
-            <Link
-              href="/privacy-policy"
-              className="text-primary hover:underline font-medium">
+            <Link href="/privacy-policy" className="text-primary hover:underline font-medium">
               {" "}
               Privacy Policy
             </Link>
           </p>
 
           <div className="mt-8 text-center">
-            <Link
-              href="/docs"
-              className="text-sm text-muted-foreground hover:text-primary">
+            <Link href="/docs" className="text-sm text-muted-foreground hover:text-primary">
               Learn more about our platform
             </Link>
           </div>
@@ -130,17 +118,13 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
  * @param param0
  * @returns
  */
-export default async function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
-  if (session) redirect("/sites");
+  if (session) redirect("/");
 
   return (
     <html dir="ltr" className="smooth-scroll">
-      <body className="font-body antialiased">
+      <body className={`${geist.className} antialiased`}>
         <Toaster richColors />
         <WithAuthLayout>{children}</WithAuthLayout>
       </body>
@@ -152,18 +136,8 @@ export default async function AuthLayout({
 const features = [
   {
     icon: (
-      <svg
-        className="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M4 6h16M4 12h16m-7 6h7"
-        />
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
       </svg>
     ),
     title: "Visual Builder",
@@ -171,18 +145,8 @@ const features = [
   },
   {
     icon: (
-      <svg
-        className="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M13 10V3L4 14h7v7l9-11h-7z"
-        />
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
       </svg>
     ),
     title: "Instant Deploy",
@@ -190,12 +154,7 @@ const features = [
   },
   {
     icon: (
-      <svg
-        className="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg">
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -209,12 +168,7 @@ const features = [
   },
   {
     icon: (
-      <svg
-        className="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg">
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"

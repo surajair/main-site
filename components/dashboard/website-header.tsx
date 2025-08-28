@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Site } from "@/utils/types";
 import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
-import { Site } from "@/utils/types";
 
 interface WebsiteHeaderProps {
   projectName: string;
@@ -36,7 +36,7 @@ export function WebsiteHeader({ projectName, siteData }: WebsiteHeaderProps) {
     <div className="border-b bg-card">
       <div className="flex items-center justify-between pb-4">
         <div className="flex items-center">
-          <Link href="/websites">
+          <Link href="/">
             <Button variant="ghost" size="default">
               <ArrowLeft className="h-4 w-4 mr-2" />
               All Websites

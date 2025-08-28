@@ -7,13 +7,9 @@ import { revalidatePath } from "next/cache";
 
 export async function addDomain(site: Site, domain: string) {
   try {
-    const supabase = await getSupabaseAdmin()
+    const supabase = await getSupabaseAdmin();
     // Check if domain already exists
-    const { data: existingDomain } = await supabase
-      .from("app_domains")
-      .select("id")
-      .eq("domain", domain)
-      .single();
+    const { data: existingDomain } = await supabase.from("app_domains").select("id").eq("domain", domain).single();
 
     if (existingDomain) {
       throw new Error(`Domain "${domain}" already exists`);
@@ -48,7 +44,7 @@ export async function addDomain(site: Site, domain: string) {
 
     if (error) throw error;
 
-    revalidatePath(`/websites/website/${site.id}/details`);
+    revalidatePath(`/${site.id}/details`);
     return {
       success: true,
       data: checkConfiguration,

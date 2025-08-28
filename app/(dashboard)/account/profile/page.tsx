@@ -14,7 +14,7 @@ export default async function Page() {
   return (
     <div className="w-full flex flex-col items-center p-6 space-y-4">
       <div className="flex items-center space-x-4 w-full max-w-2xl">
-        <Link href="/websites">
+        <Link href="/">
           <Button variant="outline" size="sm">
             <ArrowLeftIcon className="w-4 h-4" /> Back to Websites
           </Button>
@@ -23,7 +23,7 @@ export default async function Page() {
 
       <div className="bg-white rounded-lg shadow-sm border p-6 max-w-2xl w-full">
         <h1 className="text-2xl font-semibold text-gray-900 mb-6">Profile</h1>
-        
+
         {/* User Profile Header */}
         <div className="flex items-center space-x-4 mb-8">
           <Avatar className="h-16 w-16 border-2 text-xl bg-gray-100">

@@ -20,14 +20,18 @@ export default async function WebsiteDetailsPage({ params }: WebsiteDetailsPageP
     const siteData = await getSite(user.id, websiteId);
 
     return (
-      <ScrollArea className="h-[85vh] px-8 scroll-smooth overflow-y-auto" style={{ scrollBehavior: "smooth" }}>
-        <WebsiteInformation websiteId={websiteId} siteData={siteData} />
-        <ApiKeySection websiteId={websiteId} siteData={siteData} />
-        <AddDomainModal websiteId={websiteId} siteData={siteData} />
-        {/* <UsageAnalytics /> */}
-        <DeleteWebsiteButton websiteId={websiteId} siteData={siteData} />
-        <div className="h-48" />
-      </ScrollArea>
+      <div className="flex-1">
+        <ScrollArea
+          className="h-[calc(100vh-10rem)] scroll-smooth overflow-y-auto"
+          style={{ scrollBehavior: "smooth" }}>
+          <WebsiteInformation websiteId={websiteId} siteData={siteData} />
+          <ApiKeySection websiteId={websiteId} siteData={siteData} />
+          <AddDomainModal websiteId={websiteId} siteData={siteData} />
+          {/* <UsageAnalytics /> */}
+          <DeleteWebsiteButton websiteId={websiteId} siteData={siteData} />
+          <div className="h-48" />
+        </ScrollArea>
+      </div>
     );
   } catch (error) {
     return (

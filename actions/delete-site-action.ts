@@ -1,8 +1,8 @@
 "use server";
 
+import { getSupabaseAdmin } from "chai-next/server";
 import { revalidatePath } from "next/cache";
 import { getSession } from "./get-user-action";
-import { getSupabaseAdmin } from "chai-next/server";
 
 const noIsNotFound = (error: any) => {
   return error && !error.message.includes("not found");
@@ -28,6 +28,6 @@ export async function deleteSite(siteId: string) {
     throw error;
   }
 
-  revalidatePath("/sites");
+  revalidatePath("/");
   return true;
 }
