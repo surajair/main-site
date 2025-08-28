@@ -11,22 +11,22 @@ export const dynamic = "force-static"; // Remove this if you want to use ssr mod
 export const generateMetadata = async (props: { params: Promise<{ hostname: string; slug: string[] }> }) => {
   const nextParams = await props.params;
   const hostname = nextParams.hostname.replace("%3A", ":").replace("%2E", ".");
-  await ChaiBuilder.initByHostname(hostname);
-  const { isEnabled } = await draftMode();
-  await ChaiBuilder.loadSiteSettings(isEnabled);
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
+
+  const { isEnabled } = await draftMode();
+  await ChaiBuilder.initByHostname(hostname, isEnabled);
+
   return await ChaiBuilder.getPageSeoData(slug);
 };
 
 export default async function Page({ params }: { params: Promise<{ hostname: string; slug: string[] }> }) {
   const nextParams = await params;
   const hostname = nextParams.hostname.replace("%3A", ":").replace("%2E", ".");
-  await ChaiBuilder.initByHostname(hostname);
+  const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
 
   const { isEnabled } = await draftMode();
-  await ChaiBuilder.loadSiteSettings(isEnabled);
+  await ChaiBuilder.initByHostname(hostname, isEnabled);
 
-  const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
   const page = await ChaiBuilder.getPage(slug);
 
   if ("error" in page) {
