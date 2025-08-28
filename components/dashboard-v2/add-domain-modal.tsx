@@ -118,7 +118,7 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
             <CardDescription>Your website&lsquo;s default domain provided by our platform</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-2 py-2 px-4 bg-muted rounded-lg">
+            <div className="flex items-center gap-2 py-2 px-4 bg-gray-200 rounded-lg">
               <Globe className="h-4 w-4 text-muted-foreground" />
               <a
                 className="flex items-center gap-x-2 hover:text-blue-500 transition-colors"
@@ -148,7 +148,7 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                     value={customDomain}
                     onChange={(e) => setCustomDomain(e.target.value)}
                     placeholder="example.com"
-                    className="font-mono"
+                    className=" "
                     disabled={addDomainPending}
                   />
                   <Button type="submit" disabled={addDomainPending}>
@@ -257,11 +257,11 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                                           )
                                           .map((record: any, index: number) => (
                                             <tr key={`a-${index}`}>
-                                              <td className="px-4 py-3 font-mono text-gray-900">A</td>
-                                              <td className="px-4 py-3 font-mono text-gray-900">
+                                              <td className="px-4 py-3   text-gray-900">A</td>
+                                              <td className="px-4 py-3   text-gray-900">
                                                 {record.name || record.host || "@"}
                                               </td>
-                                              <td className="px-4 py-3 font-mono text-gray-900">
+                                              <td className="px-4 py-3   text-gray-900">
                                                 {record.value || record.ip || record.address}
                                               </td>
                                             </tr>
@@ -276,9 +276,9 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                                           (record.value || record.ip || record.address),
                                       )) && (
                                       <tr>
-                                        <td className="px-4 py-3 font-mono text-gray-900">A</td>
-                                        <td className="px-4 py-3 font-mono text-gray-900">@</td>
-                                        <td className="px-4 py-3 font-mono text-gray-900">216.198.79.1</td>
+                                        <td className="px-4 py-3   text-gray-900">A</td>
+                                        <td className="px-4 py-3   text-gray-900">@</td>
+                                        <td className="px-4 py-3   text-gray-900">216.198.79.1</td>
                                       </tr>
                                     )}
 
@@ -292,11 +292,11 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                                         )
                                         .map((record: any, index: number) => (
                                           <tr key={`cname-${index}`}>
-                                            <td className="px-4 py-3 font-mono text-gray-900">CNAME</td>
-                                            <td className="px-4 py-3 font-mono text-gray-900">
+                                            <td className="px-4 py-3   text-gray-900">CNAME</td>
+                                            <td className="px-4 py-3   text-gray-900">
                                               {record.name || record.host || "@"}
                                             </td>
-                                            <td className="px-4 py-3 font-mono text-gray-900">
+                                            <td className="px-4 py-3   text-gray-900">
                                               {record.value || record.target || record.alias}
                                             </td>
                                           </tr>
@@ -304,9 +304,9 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
 
                                     {/* TXT Record for verification */}
                                     <tr>
-                                      <td className="px-4 py-3 font-mono text-gray-900">TXT</td>
-                                      <td className="px-4 py-3 font-mono text-gray-900">_vercel</td>
-                                      <td className="px-4 py-3 font-mono text-gray-900">
+                                      <td className="px-4 py-3   text-gray-900">TXT</td>
+                                      <td className="px-4 py-3   text-gray-900">_vercel</td>
+                                      <td className="px-4 py-3   text-gray-900">
                                         {domainConfig?.verification
                                           ? `vc-domain-verify=${siteData.domain},${domainConfig.verification}`
                                           : `vc-domain-verify=${siteData.domain},af451ef51bfde534abd2`}

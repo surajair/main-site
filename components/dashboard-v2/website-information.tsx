@@ -119,7 +119,7 @@ function WebsiteInformation({
 
             <div className="space-y-2">
               <Label>Default Language</Label>
-              <div className="p-3 bg-muted rounded-lg">
+              <div className="p-3 bg-gray-200 rounded-lg">
                 <span className="text-sm font-medium">English (en)</span>
                 <p className="text-xs text-muted-foreground mt-1">Default language cannot be changed</p>
               </div>
