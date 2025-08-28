@@ -1,11 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
 import { supabase } from "@/chai/supabase";
 import { Button } from "@/components/ui/button";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useSearchParams, useRouter } from "next/navigation";
-import Loader from "../dashboard/loader";
 
 const ErrorAndSuccessHandler = ({ showToast }: { showToast: () => void }) => {
   const router = useRouter();
@@ -61,10 +60,9 @@ export default function LoginButton() {
         onClick={handleGoogleSignIn}
         disabled={loading}
         variant="outline"
-        className="w-full h-12 text-base font-medium border-2 hover:bg-accent mb-6 rounded-xl"
-      >
+        className="w-full h-12 text-base font-medium border-2 hover:bg-accent mb-6 rounded-xl">
         {loading ? (
-          <Loader fullscreen={false} />
+          <div className="animate-spin w-5 h-5 border-2 border-dashed rounded-full border-primary" />
         ) : (
           <>
             <svg className="mr-3 h-5 w-5" viewBox="0 0 24 24">
