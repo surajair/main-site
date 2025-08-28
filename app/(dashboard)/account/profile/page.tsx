@@ -11,8 +11,6 @@ export default async function Page() {
   const displayName = user.user_metadata.full_name;
   const email = user.email;
 
-  console.log("##", user);
-
   return (
     <div className="w-full flex flex-col items-center p-6 space-y-4">
       <div className="flex items-center space-x-4 w-full max-w-2xl">
