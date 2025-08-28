@@ -3,7 +3,6 @@
 import { updateSite } from "@/actions/update-site-action";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader, Settings } from "lucide-react";
@@ -18,6 +17,7 @@ interface WebsiteInformationProps {
     createdAt: any;
     fallbackLang: any;
     languages: any;
+    subdomain?: any;
     app_api_keys: { apiKey: any }[];
   };
   initialWebsiteName?: string;
@@ -108,13 +108,26 @@ function WebsiteInformation({
             <input type="hidden" name="websiteId" value={websiteId} />
             <div className="space-y-2">
               <Label htmlFor="website-name">Website Name</Label>
-              <Input
-                id="website-name"
-                name="websiteName"
-                value={websiteName}
-                onChange={(e) => setWebsiteName(e.target.value)}
-                placeholder="Enter website name"
-              />
+              <div className="flex items-center gap-2 border border-border rounded">
+                <Input
+                  id="website-name"
+                  name="websiteName"
+                  value={websiteName}
+                  onChange={(e) =>
+                    setWebsiteName(
+                      e.target.value
+                        .toLowerCase()
+                        .replace(/\s+/g, "-")
+                        .replace(/[^a-z0-9-]/g, ""),
+                    )
+                  }
+                  placeholder="my-website"
+                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 font-medium"
+                />
+                <span className="text-sm pr-4 italic text-muted-foreground">
+                  .{process.env.NEXT_PUBLIC_SUBDOMAIN || "example.com"}
+                </span>
+              </div>
             </div>
 
             <div className="space-y-2">

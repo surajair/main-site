@@ -50,7 +50,6 @@ async function TopNavigation({ user }: { user: UserType }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center" side="bottom" className="w-56">
-              <DropdownMenuSeparator />
               <DropdownMenuItem asChild className="cursor-pointer hover:bg-gray-100">
                 <Link href="/account/profile" className="flex items-center">
                   <User className="mr-2 h-4 w-4" />

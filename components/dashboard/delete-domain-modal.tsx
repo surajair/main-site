@@ -57,7 +57,7 @@ function DeleteDomainModal({ websiteId, domain }: DeleteDomainModalProps) {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete Domain</AlertDialogTitle>
+          <AlertDialogTitle>Remove Domain</AlertDialogTitle>
           <AlertDialogDescription>
             Are you sure you want to remove &lsquo;{domain}&rsquo; from this website? This action cannot be undone.
           </AlertDialogDescription>
@@ -70,14 +70,14 @@ function DeleteDomainModal({ websiteId, domain }: DeleteDomainModalProps) {
             <AlertDialogAction
               type="submit"
               disabled={deleteDomainPending}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 bg-red-600 hover:bg-red-700 text-white">
               {deleteDomainPending ? (
                 <>
                   <Loader className="h-3 w-3 animate-spin mr-2" />
                   Deleting...
                 </>
               ) : (
-                "Delete Domain"
+                "Remove Domain"
               )}
             </AlertDialogAction>
           </form>

@@ -146,7 +146,14 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                     id="custom-domain"
                     name="customDomain"
                     value={customDomain}
-                    onChange={(e) => setCustomDomain(e.target.value)}
+                    onChange={(e) =>
+                      setCustomDomain(
+                        e.target.value
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")
+                          .replace(/[^a-z0-9.-]/g, ""),
+                      )
+                    }
                     placeholder="example.com"
                     className=" "
                     disabled={addDomainPending}

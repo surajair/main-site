@@ -64,7 +64,6 @@ export async function createSite(formData: Partial<Site>) {
       languages: formData.languages,
       fallbackLang: formData.fallbackLang,
       theme: DEFAULT_THEME,
-      siteId: subdomainPrefix || "",
     };
 
     const { data: appData, error: appError } = await supabaseServer
@@ -117,7 +116,7 @@ export async function createSite(formData: Partial<Site>) {
       status: "active",
     });
 
-    revalidatePath("/sites");
+    revalidatePath("/");
     return { success: true, data: appData };
   } catch (error: any) {
     if (error?.message.includes("already exists")) {
@@ -133,7 +132,7 @@ export async function createApiKey(appId: string) {
     const apiKey = encodedApiKey(appId, ENCRYPTION_KEY as string);
     const { data, error } = await supabaseServer.from("app_api_keys").insert({ apiKey, app: appId }).select().single();
     if (error) throw error;
-    revalidatePath("/sites");
+    revalidatePath(`/${appId}/details`);
     return { success: true, apiKey: data.apiKey };
   } catch (error: any) {
     return {

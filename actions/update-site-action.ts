@@ -15,6 +15,17 @@ export async function updateSite(
   try {
     const supabaseServer = await getSupabaseAdmin();
 
+    if (updates?.name) {
+      const name = updates.name;
+      const subdomain = name + "." + process.env.NEXT_PUBLIC_SUBDOMAIN;
+      const { data } = await supabaseServer.from("app_domains").select("id").eq("subdomain", subdomain);
+      if (data && data?.length > 0) {
+        throw new Error(`The subdomain "${subdomain}" is already in use. Please try a different subdomain.`);
+      }
+
+      await supabaseServer.from("app_domains").update({ subdomain }).eq("app", siteId);
+    }
+
     // Update the apps table
     const { data, error } = await supabaseServer.from("apps").update(updates).eq("id", siteId).select().single();
 
