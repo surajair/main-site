@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Site } from "@/utils/types";
-import { FileText, Globe, MoreVertical, MoveRight, Settings, Star } from "lucide-react";
+import { BookOpenText, Edit2, Globe, MoreVertical, MoveRight, Settings, Star } from "lucide-react";
 import Link from "next/link";
 
 function formatDate(dateString: string) {
@@ -36,11 +36,11 @@ export default function WebsiteCard({ site }: WebsiteCardProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                variant="secondary"
+                variant="ghost"
                 size="icon"
-                className="h-8 w-8 bg-white/90 hover:bg-white border border-primary/20"
+                className="h-7 w-7 hover:border hover:border-primary/20"
                 onClick={(e) => e.stopPropagation()}>
-                <MoreVertical className="h-4 w-4" />
+                <MoreVertical className="h-3 w-3" />
                 <span className="sr-only">Open menu</span>
               </Button>
             </DropdownMenuTrigger>
@@ -49,16 +49,16 @@ export default function WebsiteCard({ site }: WebsiteCardProps) {
                 onClick={() => {
                   window.location.href = `/${site.id}/details`;
                 }}
-                className="cursor-pointer hover:bg-gray-100">
-                <Settings className="h-4 w-4 mr-2" />
+                className="cursor-pointer hover:bg-gray-100 text-xs font-medium">
+                <Settings className="h-4 w-4" />
                 Website Details
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
                   window.location.href = `/${site.id}/form-submission`;
                 }}
-                className="cursor-pointer hover:bg-gray-100">
-                <FileText className="h-4 w-4 mr-2" />
+                className="cursor-pointer hover:bg-gray-100 text-xs font-medium">
+                <BookOpenText className="h-4 w-4" />
                 Form Submissions
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -68,28 +68,14 @@ export default function WebsiteCard({ site }: WebsiteCardProps) {
         {/* Hover-expand Editor Button - Bottom Right */}
         <div className="absolute bottom-2 right-2 pointer-events-auto">
           <Link href={`/${site.id}/editor`}>
-            <button
-              className={`
-                relative flex items-center justify-start h-[40px]
-                text-white font-roboto cursor-pointer overflow-hidden
-                transition-all duration-200 ease-in-out
-                bg-primary/80 hover:bg-primary border-none
-                ${"rounded-full group-hover:pr-2 group-hover:pl-0"}
-              `}>
-              {/* Short Icon */}
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center">
-                <MoveRight className="w-4 h-4 text-white" />
+            <button className="flex items-center gap-2 border border-transparent group-hover:border-border rounded-full h-max pl-3 group-hover:bg-primary duration-300">
+              <span className="text-xs font-semibold leading-none text-primary group-hover:text-white group-hover:opacity-100 opacity-0 duration-300">
+                Go to editor
               </span>
-
-              {/* Long Text */}
-              <span
-                className={`
-                  ml-10 group-hover:ml-9 whitespace-nowrap
-                  transition-all duration-200
-                  ${"opacity-0 text-[0px] w-0 group-hover:opacity-100 group-hover:text-sm group-hover:w-auto"}
-                `}>
-                Go to Editor
-              </span>
+              <div className="rounded-full border border-transparent p-1.5 bg-white group-hover:border-primary duration-300">
+                <MoveRight className="w-4 h-4 text-primary group-hover:hidden" />
+                <Edit2 className="w-4 h-4 text-primary hidden group-hover:block" />
+              </div>
             </button>
           </Link>
         </div>
