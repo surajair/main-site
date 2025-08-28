@@ -64,7 +64,7 @@ function DeleteWebsiteButton({ websiteId, siteData }: DeleteWebsiteButtonProps) 
         <CardContent>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" disabled={deletePending}>
+              <Button variant="destructive" disabled={deletePending} className="bg-red-600 hover:bg-red-700 text-white">
                 {deletePending ? (
                   <>
                     <Loader className="h-3 w-3 animate-spin" />
@@ -99,7 +99,7 @@ function DeleteWebsiteButton({ websiteId, siteData }: DeleteWebsiteButtonProps) 
                   <AlertDialogAction
                     type="submit"
                     disabled={deleteConfirmation.toLowerCase() !== "delete" || deletePending}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90 bg-red-600 hover:bg-red-700 text-white">
                     {deletePending ? (
                       <>
                         <Loader className="h-3 w-3 animate-spin" />

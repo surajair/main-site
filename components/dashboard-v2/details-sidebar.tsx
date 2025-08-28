@@ -1,13 +1,13 @@
 "use client";
 
-import { BookOpenText, Globe, Key, Settings } from "lucide-react";
+import { BookOpenText, Globe, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Separator } from "../ui/separator";
 
 const sidebarItems = [
-  { id: "form-submission", label: "Form submission", icon: BookOpenText },
+  { id: "form-submission", label: "Form submissions", icon: BookOpenText },
   { id: "general", label: "General", icon: Settings },
   // { id: "api-key", label: "API Key", icon: Key },
   { id: "domain", label: "Domain", icon: Globe },
@@ -82,7 +82,7 @@ function DetailsSidebar({ onNavigate }: DetailsSidebarProps) {
           // Form submission gets its own route, others navigate to details page with hash
           if (item.id === "form-submission") {
             return (
-              <>
+              <div key={item.id}>
                 <Link
                   onClick={() => setActiveHash("form-submission")}
                   key={item.id}
@@ -92,8 +92,8 @@ function DetailsSidebar({ onNavigate }: DetailsSidebarProps) {
                   {item.label}
                 </Link>
 
-                <Separator className="my-2" />
-              </>
+                <Separator key={`${item.id}-separator`} className="my-2" />
+              </div>
             );
           }
 

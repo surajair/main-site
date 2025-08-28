@@ -99,7 +99,11 @@ export default function WebsiteCard({ site }: WebsiteCardProps) {
       <CardHeader>
         <CardTitle className="text-xl">{site.name}</CardTitle>
         <span className="text-muted-foreground text-xs leading-tight">{formatDate(site.createdAt)}</span>
-        <CardDescription className="flex items-center gap-1">
+        <CardDescription onClick={
+          () => {
+            window.open(`https://${site.subdomain || site.domain}`, "_blank");
+          }
+        } className="flex items-center gap-1 hover:cursor-pointer hover:text-blue-500 transition-colors">
           {site.subdomain || site.domain ? <Globe className="h-4 w-4" /> : <Globe className="h-4 w-4 opacity-0" />}
           {site.subdomain || site.domain || ""}
         </CardDescription>
