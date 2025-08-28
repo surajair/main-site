@@ -57,7 +57,7 @@ export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
         // Reset form
         setInputValue("");
         setDefaultLanguage("en");
-        router.push(`/${result.data.id}/details`);
+        router.push(`/${result.data.id}/editor`);
       } else {
         toast.error(result.error || "Failed to create website");
         setIsCreating(false);
