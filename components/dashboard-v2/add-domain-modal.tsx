@@ -216,11 +216,7 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                             )}
                           </Button>
                         )}
-                        <DeleteDomainModal
-                          websiteId={websiteId}
-                          domain={siteData.domain!}
-                          hostingProjectId={siteData.hostingProjectId!}
-                        />
+                        <DeleteDomainModal websiteId={websiteId} domain={siteData.domain!} />
                       </div>
                     </div>
                     {!siteData.domainConfigured && (

@@ -4,14 +4,14 @@ import { Vercel } from "@vercel/sdk";
 import { getSupabaseAdmin } from "chai-next/server";
 import { revalidatePath } from "next/cache";
 
-export async function deleteDomain(hostingProjectId: string, domain: string, websiteId: string) {
+export async function deleteDomain(domain: string, websiteId: string) {
   try {
     const supabaseServer = await getSupabaseAdmin();
     const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
 
     // Remove domain from Vercel project
     await vercel.projects.removeProjectDomain({
-      idOrName: hostingProjectId,
+      idOrName: process.env.VERCEL_PROJECT_ID!,
       teamId: process.env.VERCEL_TEAM_ID!,
       domain: domain,
     });

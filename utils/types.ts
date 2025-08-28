@@ -7,7 +7,6 @@ export type Site = {
   apiKey: string;
   domain?: string;
   subdomain?: string;
-  hostingProjectId?: string;
   hosting?: string;
   domainConfigured?: boolean;
 };

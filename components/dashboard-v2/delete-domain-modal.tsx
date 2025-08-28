@@ -20,23 +20,21 @@ import { toast } from "sonner";
 interface DeleteDomainModalProps {
   websiteId: string;
   domain: string;
-  hostingProjectId: string;
 }
 
-function DeleteDomainModal({ websiteId, domain, hostingProjectId }: DeleteDomainModalProps) {
+function DeleteDomainModal({ websiteId, domain }: DeleteDomainModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [deleteDomainState, deleteDomainAction, deleteDomainPending] = useActionState(
     async (prevState: any, formData: FormData) => {
       const websiteId = formData.get("websiteId") as string;
       const domain = formData.get("domain") as string;
-      const hostingProjectId = formData.get("hostingProjectId") as string;
 
-      if (!websiteId || !domain || !hostingProjectId) {
+      if (!websiteId || !domain) {
         toast.error("Missing required information");
         return { success: false, error: "Missing required information" };
       }
 
-      const result = await deleteDomain(hostingProjectId, domain, websiteId);
+      const result = await deleteDomain(domain, websiteId);
 
       if (result.success) {
         toast.success("Domain deleted successfully!");
@@ -69,7 +67,6 @@ function DeleteDomainModal({ websiteId, domain, hostingProjectId }: DeleteDomain
           <form action={deleteDomainAction} onClick={(e) => e.stopPropagation()}>
             <input type="hidden" name="websiteId" value={websiteId} />
             <input type="hidden" name="domain" value={domain} />
-            <input type="hidden" name="hostingProjectId" value={hostingProjectId} />
             <AlertDialogAction
               type="submit"
               disabled={deleteDomainPending}

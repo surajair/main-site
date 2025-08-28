@@ -15,14 +15,10 @@ export async function addDomain(site: Site, domain: string) {
       throw new Error(`Domain "${domain}" already exists`);
     }
 
-    if (!site.hostingProjectId) {
-      throw new Error(`No hosting project found for website ${site.name}`);
-    }
-
     const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
 
     await vercel.projects.addProjectDomain({
-      idOrName: site.hostingProjectId,
+      idOrName: process.env.VERCEL_PROJECT_ID!,
       teamId: process.env.VERCEL_TEAM_ID!,
       requestBody: { name: domain },
     });

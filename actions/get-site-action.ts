@@ -2,7 +2,6 @@
 
 import { getSupabaseAdmin } from "chai-next/server";
 
-
 export async function getSite(userId: string, websiteId: string) {
   const supabaseServer = await getSupabaseAdmin();
   const { data, error } = await supabaseServer
@@ -22,7 +21,6 @@ export async function getSite(userId: string, websiteId: string) {
         subdomain,
         hosting,
         domainConfigured,
-        hostingProjectId
       )
     `,
     )
@@ -44,11 +42,10 @@ export async function getSite(userId: string, websiteId: string) {
     createdAt: data.createdAt,
     fallbackLang: data.fallbackLang,
     languages: data.languages,
-    apiKey: apiKeyData.apiKey || '',
+    apiKey: apiKeyData.apiKey || "",
     app_api_keys: data.app_api_keys || [],
     domain: domainData.domain || undefined,
     subdomain: domainData.subdomain || undefined,
-    hostingProjectId: domainData.hostingProjectId || undefined,
     hosting: domainData.hosting || undefined,
     domainConfigured: domainData.domainConfigured || false,
   };
