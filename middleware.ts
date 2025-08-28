@@ -34,7 +34,10 @@ export function middleware(request: NextRequest) {
     // For other subdomains, rewrite to sites route
     if (hostname !== appDomain) {
       // Use full hostname for development (e.g., 'site.localhost:3000')
-      const rewriteUrl = new URL(`/sites/${hostname}${pathname}`, request.url);
+      const rewriteUrl = new URL(
+        `/sites/${hostname.replace(".localhost:3000", ".verbproject.com")}${pathname}`,
+        request.url,
+      );
       return NextResponse.rewrite(rewriteUrl);
     }
   } else {
