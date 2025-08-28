@@ -27,6 +27,6 @@ export const BrandLogo = ({
   );
 };
 
-export const BrandName = () => {
-  return <span>YOUR BRAND</span>;
+export const BrandName = ({ className }: { className?: string }) => {
+  return <span className={className}>YOUR BRAND</span>;
 };
