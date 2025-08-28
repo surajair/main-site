@@ -187,7 +187,7 @@ export default function SubmissionsPage() {
           </div>
 
           {!isLoading && filteredSubmissions.length === 0 && (
-            <div className="text-center py-8">
+            <div className="text-center h-full w-full flex flex-col justify-center items-center ">
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
                 {debouncedSearchTerm ? "No submissions found matching your search." : "No submissions yet."}

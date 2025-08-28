@@ -25,7 +25,7 @@ export default async function WebsiteDetailsPage({ params }: WebsiteDetailsPageP
           className="h-[calc(100vh-10rem)] scroll-smooth overflow-y-auto"
           style={{ scrollBehavior: "smooth" }}>
           <WebsiteInformation websiteId={websiteId} siteData={siteData} />
-          <ApiKeySection websiteId={websiteId} siteData={siteData} />
+          {/* <ApiKeySection websiteId={websiteId} siteData={siteData} /> */}
           <AddDomainModal websiteId={websiteId} siteData={siteData} />
           {/* <UsageAnalytics /> */}
           <DeleteWebsiteButton websiteId={websiteId} siteData={siteData} />
