@@ -24,9 +24,7 @@ export async function addDomain(site: Site, domain: string) {
     await vercel.projects.addProjectDomain({
       idOrName: site.hostingProjectId,
       teamId: process.env.VERCEL_TEAM_ID!,
-      requestBody: {
-        name: domain,
-      },
+      requestBody: { name: domain },
     });
 
     const checkConfiguration = await vercel.domains.getDomainConfig({

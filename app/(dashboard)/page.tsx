@@ -81,7 +81,7 @@ export default async function HomePage() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center py-12">
             <Globe className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No projects yet</h3>
+            <h3 className="text-xl font-semibold mb-2">No sites yet</h3>
             <p className="text-muted-foreground mb-6">Create your first website to get started</p>
             <CreateNewWebsite>
               <Button size="lg" className="gap-2">

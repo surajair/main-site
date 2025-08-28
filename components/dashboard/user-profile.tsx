@@ -1,6 +1,7 @@
 "use client";
 
 import { supabase } from "@/chai/supabase";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +9,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -21,7 +21,10 @@ export function UserProfile({ user }: { user: User }) {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const { data: {session}, error } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
       if (error) {
         console.error("Failed to fetch user data:", error);
       } else {
@@ -31,7 +34,7 @@ export function UserProfile({ user }: { user: User }) {
           expiresAt: session?.expires_at,
           id: session?.user?.id,
           name: session?.user?.user_metadata?.name || session?.user?.email,
-          refreshToken: session?.refresh_token
+          refreshToken: session?.refresh_token,
         };
         localStorage.setItem("__logged_in_user", JSON.stringify(user));
       }
@@ -39,6 +42,7 @@ export function UserProfile({ user }: { user: User }) {
 
     fetchUserData();
   }, []);
+
   const handleSignOut = async (e: any) => {
     e.preventDefault();
 
@@ -58,17 +62,10 @@ export function UserProfile({ user }: { user: User }) {
         <Button
           variant="ghost"
           className="relative rounded-full p-0 h-max pl-2 border border-transparent hover:border-border">
-          <span className="ml-1 leading-tight hidden sm:block">
-            {user.user_metadata.name || user.email}
-          </span>
+          <span className="ml-1 leading-tight hidden sm:block">{user.user_metadata.name || user.email}</span>
           <Avatar className="h-7 w-7 border-2 text-xs bg-muted">
-            <AvatarImage
-              src={user.user_metadata.avatar_url}
-              alt={user.user_metadata.full_name || ""}
-            />
-            <AvatarFallback>
-              {user?.user_metadata?.name?.charAt(0) || "U"}
-            </AvatarFallback>
+            <AvatarImage src={user.user_metadata.avatar_url} alt={user.user_metadata.full_name || ""} />
+            <AvatarFallback>{user?.user_metadata?.name?.charAt(0) || "U"}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -76,9 +73,7 @@ export function UserProfile({ user }: { user: User }) {
         <div className="flex items-center justify-start gap-2 p-2">
           <div className="flex flex-col space-y-1 leading-none">
             <p className="font-medium">{user.user_metadata.full_name}</p>
-            <p className="w-[200px] truncate text-sm text-muted-foreground">
-              {user.email}
-            </p>
+            <p className="w-[200px] truncate text-sm text-muted-foreground">{user.email}</p>
           </div>
         </div>
         <DropdownMenuSeparator />

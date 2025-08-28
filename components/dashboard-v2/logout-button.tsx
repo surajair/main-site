@@ -1,5 +1,4 @@
 "use client";
-
 import { logout } from "@/actions/user-auth-action";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { LogOut } from "lucide-react";

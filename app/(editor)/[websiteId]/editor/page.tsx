@@ -1,8 +1,10 @@
 "use client";
 
+import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import ChaiBuilder from "chai-next";
 import "chai-next/builder-styles";
 
 export default function Page() {
-  return <ChaiBuilder />;
+  const { ready } = useSupabaseUser();
+  return ready ? <ChaiBuilder /> : null;
 }

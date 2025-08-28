@@ -95,7 +95,7 @@ export async function createSite(formData: Partial<Site>) {
         app: appData.id,
         hosting: "vercel",
         subdomain: subdomain,
-        domainConfigured: true,
+        domainConfigured: false,
       });
     }
 
