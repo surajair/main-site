@@ -4,7 +4,7 @@ import { getSupabaseAdmin } from "chai-next/server";
 
 export async function getSite(userId: string, websiteId: string) {
   const supabaseServer = await getSupabaseAdmin();
-  const { data, error } = await supabaseServer
+  const { data, error }: any = await supabaseServer
     .from("apps")
     .select(
       `
@@ -20,7 +20,7 @@ export async function getSite(userId: string, websiteId: string) {
         domain,
         subdomain,
         hosting,
-        domainConfigured,
+        domainConfigured
       )
     `,
     )

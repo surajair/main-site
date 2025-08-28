@@ -20,7 +20,7 @@ export async function getSites(userId: string, sitesWithDomainOnly = false) {
         domain,
         subdomain,
         hosting,
-        domainConfigured,
+        domainConfigured
       )
     `,
     )
@@ -32,7 +32,7 @@ export async function getSites(userId: string, sitesWithDomainOnly = false) {
 
   // Transform the data to flatten app_domains and apiKey into Site objects
   return data
-    ?.map((site) => {
+    ?.map((site: any) => {
       const domainData = site.app_domains?.[0] || {};
       const apiKeyData = site.app_api_keys?.[0] || {};
 
