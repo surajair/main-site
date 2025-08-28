@@ -1,21 +1,10 @@
 import { getSites } from "@/actions/get-sites-actions";
 import { getUser } from "@/actions/get-user-action";
 import CreateNewWebsite from "@/components/dashboard-v2/create-new-website";
-import { Badge } from "@/components/ui/badge";
+import WebsiteCard from "@/components/dashboard/website-card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Site } from "@/utils/types";
-import { Globe, MoveRight, Plus, Star } from "lucide-react";
-import Link from "next/link";
-
-function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
+import { Globe, Plus } from "lucide-react";
 
 export default async function HomePage() {
   const user = await getUser();
@@ -40,40 +29,7 @@ export default async function HomePage() {
         <div className="flex-1 overflow-y-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
             {sites.map((site) => (
-              <Card
-                key={site.id}
-                className="hover:border-primary/50 duration-300 transition-all cursor-pointer group shadow-none">
-                <Link href={`/${site.id}/editor`}>
-                  <CardHeader>
-                    <CardTitle className="text-xl">{site.name}</CardTitle>
-                    <span className="text-muted-foreground text-xs leading-tight">{formatDate(site.createdAt)}</span>
-                    <CardDescription className="flex items-center gap-1">
-                      {site.subdomain || site.domain ? (
-                        <Globe className="h-4 w-4" />
-                      ) : (
-                        <Globe className="h-4 w-4 opacity-0" />
-                      )}
-                      {site.subdomain || site.domain || ""}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex gap-1">
-                        <Badge key={site?.fallbackLang} variant="outline" className="text-[10px]">
-                          <Star className="mr-1 w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />{" "}
-                          {site?.fallbackLang?.toUpperCase()}
-                        </Badge>
-                        {site.languages.map((lang) => (
-                          <Badge key={lang} variant="outline" className="text-[10px]">
-                            {lang.toUpperCase()}
-                          </Badge>
-                        ))}
-                      </div>
-                      <MoveRight className="duration-300 group-hover:text-primary group-hover:translate-x-1" />
-                    </div>
-                  </CardContent>
-                </Link>
-              </Card>
+              <WebsiteCard key={site.id} site={site} />
             ))}
           </div>
         </div>

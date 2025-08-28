@@ -9,7 +9,7 @@ import { Separator } from "../ui/separator";
 const sidebarItems = [
   { id: "form-submission", label: "Form submission", icon: BookOpenText },
   { id: "general", label: "General", icon: Settings },
-  { id: "api-key", label: "API Key", icon: Key },
+  // { id: "api-key", label: "API Key", icon: Key },
   { id: "domain", label: "Domain", icon: Globe },
 ];
 

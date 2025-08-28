@@ -34,7 +34,7 @@ export function WebsiteHeader({ projectName, siteData }: WebsiteHeaderProps) {
 
   return (
     <div className="border-b bg-card">
-      <div className="flex items-center justify-between pb-4">
+      <div className="flex items-center justify-between py-2">
         <div className="flex items-center">
           <Link href="/">
             <Button variant="ghost" size="default">

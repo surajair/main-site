@@ -99,23 +99,20 @@ export default function SubmissionsPage() {
         </div>
       </div>
       {/* Search and Stats */}
-      {!isLoading && (
-        <div className="flex items-center justify-between gap-4">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search submissions..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-              disabled={isLoading}
-            />
-          </div>
-          <div className="flex gap-4 text-sm text-muted-foreground">
-            <span>Total: {submissionsData?.total || 0}</span>
-          </div>
+      <div className="flex items-center justify-between gap-4">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search submissions..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
         </div>
-      )}
+        <div className="flex gap-4 text-sm text-muted-foreground">
+          <span>Total: {submissionsData?.total || 0}</span>
+        </div>
+      </div>
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-8 h-[calc(100vh-210px)]">
@@ -187,7 +184,7 @@ export default function SubmissionsPage() {
           </div>
 
           {!isLoading && filteredSubmissions.length === 0 && (
-            <div className="text-center py-8">
+            <div className="text-center h-full w-full flex flex-col justify-center items-center ">
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
                 {debouncedSearchTerm ? "No submissions found matching your search." : "No submissions yet."}

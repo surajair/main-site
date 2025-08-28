@@ -125,7 +125,7 @@ function WebsiteInformation({
               </div>
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label>Additional Languages (Optional)</Label>
               <p className="text-xs text-muted-foreground">Select up to 2 additional languages for your website</p>
               <div className="grid grid-cols-3 gap-3">
@@ -144,7 +144,7 @@ function WebsiteInformation({
                 ))}
               </div>
               <p className="text-xs text-muted-foreground">Selected: {additionalLanguages.length}/2</p>
-            </div>
+            </div> */}
 
             <div className="flex justify-end">
               <Button type="submit" disabled={updatePending || !hasChanges} className="w-auto">
