@@ -64,7 +64,10 @@ export function UserProfile({ user }: { user: User }) {
           className="relative rounded-full p-0 h-max pl-2 border border-transparent hover:border-border">
           <span className="ml-1 leading-tight hidden sm:block">{user.user_metadata.name || user.email}</span>
           <Avatar className="h-7 w-7 border-2 text-xs bg-muted">
-            <AvatarImage src={user.user_metadata.avatar_url} alt={user.user_metadata.full_name || ""} />
+            <AvatarImage
+              src={user.user_metadata.avatar_url || "https://avatar.iran.liara.run/public/boy"}
+              alt={user.user_metadata.full_name || ""}
+            />
             <AvatarFallback>{user?.user_metadata?.name?.charAt(0) || "U"}</AvatarFallback>
           </Avatar>
         </Button>

@@ -32,7 +32,10 @@ async function TopNavigation({ user }: { user: UserType }) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center space-x-2 h-11 hover:bg-primary/5">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.user_metadata?.avatar_url} alt={user.user_metadata?.full_name || ""} />
+                  <AvatarImage
+                    src={user?.user_metadata?.avatar_url || "https://avatar.iran.liara.run/public/boy"}
+                    alt={user.user_metadata?.full_name || ""}
+                  />
                   <AvatarFallback className="border border-border">
                     {user.user_metadata?.full_name || "U"}
                   </AvatarFallback>
