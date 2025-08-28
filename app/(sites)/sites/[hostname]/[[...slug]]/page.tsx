@@ -12,10 +12,10 @@ export const generateMetadata = async (props: { params: Promise<{ hostname: stri
   const nextParams = await props.params;
   const hostname = nextParams.hostname.replace("%3A", ":").replace("%2E", ".");
   await ChaiBuilder.initByHostname(hostname);
+  const { isEnabled } = await draftMode();
+  await ChaiBuilder.loadSiteSettings(isEnabled);
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
-  console.log("Generating metadata for:", slug, "on", hostname);
-
-  return {}; //await ChaiBuilder.getPageSeoData(slug);
+  return await ChaiBuilder.getPageSeoData(slug);
 };
 
 export default async function Page({ params }: { params: Promise<{ hostname: string; slug: string[] }> }) {
@@ -29,7 +29,6 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
   const page = await ChaiBuilder.getPage(slug);
 
-  console.log("Rendering page:", slug, "in", isEnabled ? "Draft Mode" : "Live Mode");
   if ("error" in page) {
     return notFound();
   }
