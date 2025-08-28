@@ -1,9 +1,8 @@
 import { getSite } from "@/actions/get-site-action";
 import { getUser } from "@/actions/get-user-action";
-import AddDomainModal from "@/components/dashboard-v2/add-domain-modal";
-import ApiKeySection from "@/components/dashboard-v2/api-key-section";
-import DeleteWebsiteButton from "@/components/dashboard-v2/delete-website-button";
-import WebsiteInformation from "@/components/dashboard-v2/website-information";
+import AddDomainModal from "@/components/dashboard/add-domain-modal";
+import DeleteWebsiteButton from "@/components/dashboard/delete-website-button";
+import WebsiteInformation from "@/components/dashboard/website-information";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 interface WebsiteDetailsPageProps {

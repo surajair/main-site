@@ -10,8 +10,8 @@ import {
 import { User as UserType } from "@supabase/supabase-js";
 import { ChevronDown, CreditCard, User } from "lucide-react";
 import Link from "next/link";
-import { BrandLogo, BrandName } from "./dashboard-v2/branding";
-import { LogoutButton } from "./dashboard-v2/logout-button";
+import { BrandLogo, BrandName } from "./dashboard/branding";
+import { LogoutButton } from "./dashboard/logout-button";
 
 async function TopNavigation({ user }: { user: UserType }) {
   return (

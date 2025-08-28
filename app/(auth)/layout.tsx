@@ -1,6 +1,6 @@
 import { getSession } from "@/actions/get-user-action";
 import "@/app/app.css";
-import { BrandLogo, BrandName } from "@/components/dashboard-v2/branding";
+import { BrandLogo, BrandName } from "@/components/dashboard/branding";
 import { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";

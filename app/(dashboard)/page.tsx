@@ -1,7 +1,7 @@
 import { getSites } from "@/actions/get-sites-actions";
 import { getUser } from "@/actions/get-user-action";
-import CreateNewWebsite from "@/components/dashboard-v2/create-new-website";
-import WebsiteCard from "@/components/dashboard-v2/website-card";
+import CreateNewWebsite from "@/components/dashboard/create-new-website";
+import WebsiteCard from "@/components/dashboard/website-card";
 import { Button } from "@/components/ui/button";
 import { Site } from "@/utils/types";
 import { Globe, Plus } from "lucide-react";
