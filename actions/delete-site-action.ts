@@ -1,5 +1,6 @@
 "use server";
 
+import { Vercel } from "@vercel/sdk";
 import { getSupabaseAdmin } from "chai-next/server";
 import { revalidatePath } from "next/cache";
 import { getSession } from "./get-user-action";
@@ -15,6 +16,30 @@ export async function deleteSite(siteId: string) {
   const session = await getSession();
   if (!session?.user?.id) {
     throw new Error("Unauthorized: User not authenticated");
+  }
+
+  const { data: appData } = await supabaseServer
+    .from("app_domains")
+    .select("domain, subdomain")
+    .eq("app", siteId)
+    .single();
+
+  const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
+
+  if (appData?.subdomain) {
+    await vercel.projects.removeProjectDomain({
+      idOrName: process.env.VERCEL_PROJECT_ID!,
+      teamId: process.env.VERCEL_TEAM_ID!,
+      domain: appData.subdomain,
+    });
+  }
+
+  if (appData?.domain) {
+    await vercel.projects.removeProjectDomain({
+      idOrName: process.env.VERCEL_PROJECT_ID!,
+      teamId: process.env.VERCEL_TEAM_ID!,
+      domain: appData.domain,
+    });
   }
 
   // Mark as deleted by setting deletedAt
