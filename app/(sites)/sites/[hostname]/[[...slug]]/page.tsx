@@ -8,23 +8,19 @@ loadWebBlocks();
 
 export const dynamic = "force-static"; // Remove this if you want to use ssr mode
 
-export const generateMetadata = async (props: {
-  params: Promise<{hostname: string; slug: string[] }>;
-}) => {
+export const generateMetadata = async (props: { params: Promise<{ hostname: string; slug: string[] }> }) => {
   const nextParams = await props.params;
-  const hostname = nextParams.hostname;
+  const hostname = nextParams.hostname.replace("%3A", ":").replace("%2E", ".");
   await ChaiBuilder.initByHostname(hostname);
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
   return await ChaiBuilder.getPageSeoData(slug);
 };
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ hostname: string; slug: string[] }>;
-}) {
+export default async function Page({ params }: { params: Promise<{ hostname: string; slug: string[] }> }) {
   const nextParams = await params;
-  const hostname = nextParams.hostname;
+  const hostname = nextParams.hostname.replace("%3A", ":").replace("%2E", ".");
+  console.log("Hostname:", hostname);
+
   await ChaiBuilder.initByHostname(hostname);
 
   const { isEnabled } = await draftMode();
@@ -47,7 +43,7 @@ export default async function Page({
   return (
     <>
       <head>
-        <FontsAndStyles page={page}/>
+        <FontsAndStyles page={page} />
       </head>
       <body className={`font-body antialiased`}>
         <PreviewBanner slug={slug} show={isEnabled} />

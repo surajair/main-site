@@ -1,10 +1,11 @@
-"use client";
-
-import { useSupabaseUser } from "@/hooks/use-supabase-user";
-import ChaiBuilder from "chai-next";
 import "chai-next/builder-styles";
+import { getSupabaseAdmin } from "chai-next/server";
+import Editor from "./editor";
 
-export default function Page() {
-  const { ready } = useSupabaseUser();
-  return ready ? <ChaiBuilder apiUrl="editor/api" /> : null;
+export default async function Page({ params }: { params: Promise<{ websiteId: string }> }) {
+  const { websiteId } = await params;
+  const supabaseServer = await getSupabaseAdmin();
+  const { data } = await supabaseServer.from("app_domains").select("subdomain,domain").eq("app", websiteId).single();
+
+  return <Editor domain={data?.subdomain} />;
 }
