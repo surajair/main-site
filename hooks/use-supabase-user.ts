@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 
 export const useSupabaseUser = () => {
   const [ready, setReady] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     if (ready) return;
-    setReady(true);
     const fetchUserData = async () => {
       const {
         data: { session },
@@ -23,6 +23,7 @@ export const useSupabaseUser = () => {
           refreshToken: session?.refresh_token,
         };
         localStorage.setItem("__logged_in_user", JSON.stringify(user));
+        setIsLoggedIn(true);
       }
       setReady(true);
     };
@@ -30,5 +31,5 @@ export const useSupabaseUser = () => {
     fetchUserData();
   }, []);
 
-  return { ready };
+  return { ready, isLoggedIn };
 };
