@@ -19,6 +19,9 @@ export async function updateSite(
     if (updates?.name) {
       const name = updates.name;
       const subdomain = name + "." + process.env.NEXT_PUBLIC_SUBDOMAIN;
+      if (subdomain.includes("localhost")) {
+        return { success: false, error: "Failed to update domain" };
+      }
       const { data } = await supabaseServer.from("app_domains").select("id").eq("subdomain", subdomain);
       if (data && data?.length > 0) {
         throw new Error(`The subdomain "${subdomain}" is already in use. Please try a different subdomain.`);
