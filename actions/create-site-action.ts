@@ -83,12 +83,13 @@ export async function createSite(formData: Partial<Site>) {
     const apiKey = encodedApiKey(appData.id, ENCRYPTION_KEY as string);
 
     if (subdomain) {
-      const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
-      await vercel.projects.addProjectDomain({
-        idOrName: process.env.VERCEL_PROJECT_ID!,
-        teamId: process.env.VERCEL_TEAM_ID!,
-        requestBody: { name: subdomain },
-      });
+      if (!(subdomain.split('.')[1] !== "localhost")) {
+        const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
+        await vercel.projects.addProjectDomain({
+          idOrName: process.env.VERCEL_PROJECT_ID!,
+          teamId: process.env.VERCEL_TEAM_ID!,
+          requestBody: { name: subdomain },
+      });}
 
       await supabaseServer.from("app_domains").insert({
         app: appData.id,
