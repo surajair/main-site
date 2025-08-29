@@ -26,19 +26,19 @@ export async function deleteSite(siteId: string) {
 
   const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
 
-  if (appData?.subdomain) {
-    await vercel.projects.removeProjectDomain({
-      idOrName: process.env.VERCEL_PROJECT_ID!,
-      teamId: process.env.VERCEL_TEAM_ID!,
-      domain: appData.subdomain,
-    });
-  }
-
   if (appData?.domain) {
     await vercel.projects.removeProjectDomain({
       idOrName: process.env.VERCEL_PROJECT_ID!,
       teamId: process.env.VERCEL_TEAM_ID!,
       domain: appData.domain,
+    });
+  }
+
+  if (appData?.subdomain) {
+    await vercel.projects.removeProjectDomain({
+      idOrName: process.env.VERCEL_PROJECT_ID!,
+      teamId: process.env.VERCEL_TEAM_ID!,
+      domain: appData.subdomain,
     });
   }
 
