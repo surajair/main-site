@@ -1,5 +1,6 @@
 "use server";
 
+import { Vercel } from "@vercel/sdk";
 import { getSupabaseAdmin } from "chai-next/server";
 import { revalidatePath } from "next/cache";
 
@@ -22,6 +23,28 @@ export async function updateSite(
       if (data && data?.length > 0) {
         throw new Error(`The subdomain "${subdomain}" is already in use. Please try a different subdomain.`);
       }
+
+      const { data: appDomainData } = await supabaseServer
+        .from("app_domains")
+        .select("subdomain")
+        .eq("app", siteId)
+        .single();
+
+      if (appDomainData?.subdomain) {
+        const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
+        await vercel.projects.removeProjectDomain({
+          idOrName: process.env.VERCEL_PROJECT_ID!,
+          teamId: process.env.VERCEL_TEAM_ID!,
+          domain: appDomainData?.subdomain,
+        });
+      }
+
+      const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
+      await vercel.projects.addProjectDomain({
+        idOrName: process.env.VERCEL_PROJECT_ID!,
+        teamId: process.env.VERCEL_TEAM_ID!,
+        requestBody: { name: subdomain },
+      });
 
       await supabaseServer.from("app_domains").update({ subdomain }).eq("app", siteId);
     }
