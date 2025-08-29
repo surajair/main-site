@@ -68,18 +68,19 @@ export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
     }
   };
 
-  const handleClose = () => {
+  const handleClose = (open: boolean) => {
     if (!isCreating) {
-      setOpen(false);
-      // Reset form when closing
-      setInputValue("");
-      setDefaultLanguage("en");
-      setIsCreating(false);
+      setOpen(open);
+      if (!open) {
+        setInputValue("");
+        setDefaultLanguage("en");
+        setIsCreating(false);
+      }
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>

@@ -35,6 +35,7 @@ interface DeleteWebsiteButtonProps {
 
 function DeleteWebsiteButton({ websiteId, siteData }: DeleteWebsiteButtonProps) {
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const router = useRouter();
 
   const [deleteState, deleteAction, deletePending] = useActionState(
@@ -52,6 +53,13 @@ function DeleteWebsiteButton({ websiteId, siteData }: DeleteWebsiteButtonProps) 
     { success: false },
   );
 
+  const handleDialogClose = (open: boolean) => {
+    setIsDialogOpen(open);
+    if (!open) {
+      setDeleteConfirmation("");
+    }
+  };
+
   return (
     <section className="pt-8">
       <Card className="border-destructive/20 shadow-none">
@@ -62,7 +70,7 @@ function DeleteWebsiteButton({ websiteId, siteData }: DeleteWebsiteButtonProps) 
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <AlertDialog>
+          <AlertDialog open={isDialogOpen} onOpenChange={handleDialogClose}>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" disabled={deletePending} className="bg-red-600 hover:bg-red-700 text-white">
                 {deletePending ? (
@@ -95,7 +103,7 @@ function DeleteWebsiteButton({ websiteId, siteData }: DeleteWebsiteButtonProps) 
                   />
                 </div>
                 <AlertDialogFooter className="pt-4">
-                  <AlertDialogCancel onClick={() => setDeleteConfirmation("")}>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     type="submit"
                     disabled={deleteConfirmation.toLowerCase() !== "delete" || deletePending}
