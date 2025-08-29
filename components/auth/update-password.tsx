@@ -139,7 +139,7 @@ export default function UpdatePassword({ type = "change", redirectTo = "/" }: Up
             </Button>
           </div>
         </div>
-        <Button type="submit" className="w-full bg-fuchsia-800 hover:bg-fuchsia-700" disabled={isLoading}>
+        <Button type="submit" className="w-full bg-primary/80 hover:bg-primary" disabled={isLoading}>
           {isLoading ? "Updating..." : buttonText}
         </Button>
       </form>

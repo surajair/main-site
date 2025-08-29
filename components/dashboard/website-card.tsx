@@ -86,9 +86,16 @@ export default function WebsiteCard({ site }: WebsiteCardProps) {
         <CardHeader>
           <CardTitle className="text-xl">{site.name}</CardTitle>
           <span className="text-muted-foreground text-xs leading-tight">{formatDate(site.createdAt)}</span>
-          <CardDescription className="flex items-center gap-1">
+          <CardDescription className="flex items-center gap-1 hover:text-primary">
             {site.subdomain || site.domain ? <Globe className="h-4 w-4" /> : <Globe className="h-4 w-4 opacity-0" />}
-            <a href={`https://${site.subdomain || site.domain}`} className="leading-none">
+            <a
+              href={`https://${site.subdomain || site.domain}`}
+              className="leading-none"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.open(`http://${site.subdomain || site.domain}`, "_blank");
+              }}>
               {site.subdomain || site.domain || ""}
             </a>
           </CardDescription>
