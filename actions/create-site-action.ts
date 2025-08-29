@@ -83,7 +83,7 @@ export async function createSite(formData: Partial<Site>) {
     const apiKey = encodedApiKey(appData.id, ENCRYPTION_KEY as string);
 
     if (subdomain) {
-      if (!(subdomain.split('.')[1] !== "localhost")) {
+      if (!(subdomain?.includes("localhost"))) {
         const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
         await vercel.projects.addProjectDomain({
           idOrName: process.env.VERCEL_PROJECT_ID!,
