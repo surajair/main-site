@@ -18,6 +18,18 @@ interface BrandingProps {
 }
 
 export default function Branding({ websiteId, initial }: BrandingProps) {
+  const isValidImageUrl = (val?: string) => {
+    if (!val) return false;
+    try {
+      const u = new URL(val);
+      if (!/^https?:$/.test(u.protocol)) return false;
+      const pathname = u.pathname.toLowerCase();
+      return /(\.png|\.jpg|\.jpeg|\.svg|\.webp|\.ico|\.gif)$/.test(pathname);
+    } catch {
+      return false;
+    }
+  };
+
   const [logoURL, setLogoURL] = useState(initial?.logoURL ?? "");
   const [faviconURL, setFaviconURL] = useState(initial?.faviconURL ?? "");
 
@@ -56,7 +68,7 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
             <div className="space-y-2">
               <Label htmlFor="logoURL">Logo URL</Label>
               <Input id="logoURL" value={logoURL} onChange={(e) => setLogoURL(e.target.value)} />
-              {logoURL ? (
+              {isValidImageUrl(logoURL) ? (
                 <div className="pt-1">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={logoURL} alt="logo" className="h-10 w-auto object-contain" />
@@ -67,7 +79,7 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
             <div className="space-y-2">
               <Label htmlFor="faviconURL">Favicon URL</Label>
               <Input id="faviconURL" value={faviconURL} onChange={(e) => setFaviconURL(e.target.value)} />
-              {faviconURL ? (
+              {isValidImageUrl(faviconURL) ? (
                 <div className="pt-1">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={faviconURL} alt="favicon" className="h-6 w-6 object-contain" />

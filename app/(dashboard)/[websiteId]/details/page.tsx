@@ -3,10 +3,10 @@ import { getUser } from "@/actions/get-user-action";
 import { getWebsiteData } from "@/actions/get-website-data-action";
 import AddDomainModal from "@/components/dashboard/add-domain-modal";
 import DeleteWebsiteButton from "@/components/dashboard/delete-website-button";
-import WebsiteInformation from "@/components/dashboard/website-information";
 import AnalyticsTracking from "@/components/dashboard/website-settings/analytics-tracking";
 import Branding from "@/components/dashboard/website-settings/branding";
 import ContactSocial from "@/components/dashboard/website-settings/contact-social";
+import General from "@/components/dashboard/website-settings/general";
 import LegalCompliance from "@/components/dashboard/website-settings/legal-compliance";
 import SeoMetadata from "@/components/dashboard/website-settings/seo-metadata";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
@@ -30,7 +30,7 @@ export default async function WebsiteDetailsPage({ params }: WebsiteDetailsPageP
         <ScrollArea
           className="h-[calc(100vh-10rem)] scroll-smooth overflow-y-auto space-y-5"
           style={{ scrollBehavior: "smooth" }}>
-          <WebsiteInformation websiteId={websiteId} siteData={siteData} initialData={initialData.data} />
+          <General websiteId={websiteId} initial={initialData.data} />
           {/* <ApiKeySection websiteId={websiteId} siteData={siteData} /> */}
           <AddDomainModal websiteId={websiteId} siteData={siteData} />
           <Branding websiteId={websiteId} initial={initialData.data} />

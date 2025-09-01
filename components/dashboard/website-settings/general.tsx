@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader } from "lucide-react";
+import { Loader, Settings } from "lucide-react";
 import { useActionState, useState } from "react";
 import { toast } from "sonner";
 
@@ -58,15 +58,19 @@ export default function General({ websiteId, initial }: GeneralProps) {
 
   return (
     <section id="general" className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Settings className="h-5 w-5" />
+        <h2 className="font-semibold">General Settings</h2>
+      </div>
       <Card className="shadow-none">
         <CardHeader>
           <CardTitle>General</CardTitle>
-          <CardDescription>Basic site information</CardDescription>
+          <CardDescription>Website name, tagline, language, and timezone</CardDescription>
         </CardHeader>
         <CardContent>
           <form action={saveAll} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="siteName">Site name</Label>
+              <Label htmlFor="siteName">Website name</Label>
               <Input id="siteName" value={siteName} onChange={(e) => setSiteName(e.target.value)} />
             </div>
 
@@ -75,23 +79,25 @@ export default function General({ websiteId, initial }: GeneralProps) {
               <Input id="siteTagline" value={siteTagline} onChange={(e) => setSiteTagline(e.target.value)} />
             </div>
 
-            <div className="space-y-2">
-              <Label>Language</Label>
-              <Select value={language} onValueChange={(v) => setLanguage(v)}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="hi">Hindi</SelectItem>
-                  <SelectItem value="es">Spanish</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Language</Label>
+                <Select value={language} onValueChange={(v) => setLanguage(v)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="hi">Hindi</SelectItem>
+                    <SelectItem value="es">Spanish</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="space-y-2">
-              <Label>Timezone</Label>
-              <Input value={timezone} onChange={(e) => setTimezone(e.target.value)} />
+              <div className="space-y-2">
+                <Label>Timezone</Label>
+                <Input className="w-full" value={timezone} onChange={(e) => setTimezone(e.target.value)} />
+              </div>
             </div>
 
             <div className="flex justify-end">
