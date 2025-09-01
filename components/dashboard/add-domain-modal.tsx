@@ -105,7 +105,7 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
   if (!defaultDomain) return null;
 
   return (
-    <section id="domain" className="space-y-4 pt-8">
+    <section id="domain" className="space-y-4">
       <div className="flex items-center gap-2">
         <Globe className="h-5 w-5" />
         <h2 className=" font-semibold">Domain Settings</h2>

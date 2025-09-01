@@ -1,8 +1,14 @@
 import { getSite } from "@/actions/get-site-action";
 import { getUser } from "@/actions/get-user-action";
+import { getWebsiteData } from "@/actions/get-website-data-action";
 import AddDomainModal from "@/components/dashboard/add-domain-modal";
 import DeleteWebsiteButton from "@/components/dashboard/delete-website-button";
 import WebsiteInformation from "@/components/dashboard/website-information";
+import AnalyticsTracking from "@/components/dashboard/website-settings/analytics-tracking";
+import Branding from "@/components/dashboard/website-settings/branding";
+import ContactSocial from "@/components/dashboard/website-settings/contact-social";
+import LegalCompliance from "@/components/dashboard/website-settings/legal-compliance";
+import SeoMetadata from "@/components/dashboard/website-settings/seo-metadata";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 interface WebsiteDetailsPageProps {
@@ -17,15 +23,21 @@ export default async function WebsiteDetailsPage({ params }: WebsiteDetailsPageP
   try {
     const user = await getUser();
     const siteData = await getSite(user.id, websiteId);
+    const initialData = await getWebsiteData(websiteId);
 
     return (
       <div className="flex-1">
         <ScrollArea
-          className="h-[calc(100vh-10rem)] scroll-smooth overflow-y-auto"
+          className="h-[calc(100vh-10rem)] scroll-smooth overflow-y-auto space-y-5"
           style={{ scrollBehavior: "smooth" }}>
-          <WebsiteInformation websiteId={websiteId} siteData={siteData} />
+          <WebsiteInformation websiteId={websiteId} siteData={siteData} initialData={initialData.data} />
           {/* <ApiKeySection websiteId={websiteId} siteData={siteData} /> */}
           <AddDomainModal websiteId={websiteId} siteData={siteData} />
+          <Branding websiteId={websiteId} initial={initialData.data} />
+          <ContactSocial websiteId={websiteId} initial={initialData.data} />
+          <LegalCompliance websiteId={websiteId} initial={initialData.data} />
+          <SeoMetadata websiteId={websiteId} initial={initialData.data} />
+          <AnalyticsTracking websiteId={websiteId} initial={initialData.data} />
           {/* <UsageAnalytics /> */}
           <DeleteWebsiteButton websiteId={websiteId} siteData={siteData} />
           <div className="h-48" />

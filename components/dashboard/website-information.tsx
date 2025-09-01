@@ -9,6 +9,7 @@ import { Loader, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
+import General from "./website-settings/general";
 interface WebsiteInformationProps {
   websiteId: string;
   siteData: {
@@ -22,6 +23,7 @@ interface WebsiteInformationProps {
   };
   initialWebsiteName?: string;
   initialAdditionalLanguages?: string[];
+  initialData?: any;
 }
 
 function WebsiteInformation({
@@ -29,6 +31,7 @@ function WebsiteInformation({
   siteData,
   initialWebsiteName,
   initialAdditionalLanguages,
+  initialData,
 }: WebsiteInformationProps) {
   const router = useRouter();
   const [websiteName, setWebsiteName] = useState(initialWebsiteName || siteData.name || "My Awesome Website");
@@ -97,7 +100,7 @@ function WebsiteInformation({
         <Settings className="h-5 w-5" />
         <h2 className="font-semibold">General Settings</h2>
       </div>
-
+      <General websiteId={websiteId} initial={initialData} />
       <Card className="shadow-none">
         <CardHeader>
           <CardTitle>Website Information</CardTitle>
