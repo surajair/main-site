@@ -55,7 +55,6 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
       toast.error("Enter a valid subdomain");
       return { success: false } as any;
     }
-    console.log("Sanitized subdomain:", sanitized);
     const res = await updateSite(siteData.id, { name: sanitized });
     if (res.success) {
       toast.success("Subdomain updated");
