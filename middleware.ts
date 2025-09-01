@@ -30,13 +30,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Production environment handling
-
-  // For app subdomain in production, continue without rewriting
-  if (hostname === appDomain) {
-    return NextResponse.next();
-  }
-
   // For custom domains or other subdomains, rewrite to sites route
   const rewriteUrl = new URL(`/sites/${hostname}${pathname}`, request.url);
   return NextResponse.rewrite(rewriteUrl);
