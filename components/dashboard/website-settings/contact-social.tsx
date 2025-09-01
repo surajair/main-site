@@ -32,6 +32,19 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
   const [contactPhone, setContactPhone] = useState(initial?.contactPhone ?? "");
   const [contactAddress, setContactAddress] = useState(initial?.contactAddress ?? "");
   const [socialLinks, setSocialLinks] = useState<SocialLinks>(initial?.socialLinks ?? {});
+
+  const [baseline, setBaseline] = useState({
+    contactEmail: initial?.contactEmail ?? "",
+    contactPhone: initial?.contactPhone ?? "",
+    contactAddress: initial?.contactAddress ?? "",
+    socialLinks: initial?.socialLinks ?? {},
+  });
+
+  const hasChanges =
+    contactEmail !== baseline.contactEmail ||
+    contactPhone !== baseline.contactPhone ||
+    contactAddress !== baseline.contactAddress ||
+    JSON.stringify(socialLinks) !== JSON.stringify(baseline.socialLinks);
   const [newKey, setNewKey] = useState("");
   const [newValue, setNewValue] = useState("");
 
@@ -60,6 +73,12 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
       });
       if (!res.success) throw new Error(res.error);
       toast.success("Contact & Social saved");
+      setBaseline({
+        contactEmail,
+        contactPhone,
+        contactAddress,
+        socialLinks: { ...socialLinks },
+      });
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save Contact & Social");
@@ -123,7 +142,7 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit" disabled={saving}>
+              <Button type="submit" disabled={saving || !hasChanges}>
                 {saving ? <Loader className="h-3 w-3 animate-spin" /> : "Save"}
               </Button>
             </div>

@@ -28,6 +28,20 @@ export default function LegalCompliance({ websiteId, initial }: LegalComplianceP
   const [recaptchaSiteKey, setRecaptchaSiteKey] = useState(initial?.recaptchaSiteKey ?? "");
   const [recaptchaSecretKey, setRecaptchaSecretKey] = useState(initial?.recaptchaSecretKey ?? "");
 
+  const [baseline, setBaseline] = useState({
+    cookieConsentEnabled: initial?.cookieConsentEnabled ?? false,
+    privacyPolicyURL: initial?.privacyPolicyURL ?? "",
+    termsURL: initial?.termsURL ?? "",
+    recaptchaSiteKey: initial?.recaptchaSiteKey ?? "",
+    recaptchaSecretKey: initial?.recaptchaSecretKey ?? "",
+  });
+  const hasChanges =
+    cookieConsentEnabled !== baseline.cookieConsentEnabled ||
+    privacyPolicyURL !== baseline.privacyPolicyURL ||
+    termsURL !== baseline.termsURL ||
+    recaptchaSiteKey !== baseline.recaptchaSiteKey ||
+    recaptchaSecretKey !== baseline.recaptchaSecretKey;
+
   const [state, saveAll, saving] = useActionState(async () => {
     try {
       const res = await updateWebsiteData({
@@ -36,6 +50,13 @@ export default function LegalCompliance({ websiteId, initial }: LegalComplianceP
       });
       if (!res.success) throw new Error(res.error);
       toast.success("Legal & Compliance saved");
+      setBaseline({
+        cookieConsentEnabled,
+        privacyPolicyURL,
+        termsURL,
+        recaptchaSiteKey,
+        recaptchaSecretKey,
+      });
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save Legal & Compliance");
@@ -97,7 +118,7 @@ export default function LegalCompliance({ websiteId, initial }: LegalComplianceP
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit" disabled={saving}>
+              <Button type="submit" disabled={saving || !hasChanges}>
                 {saving ? <Loader className="h-3 w-3 animate-spin" /> : "Save"}
               </Button>
             </div>

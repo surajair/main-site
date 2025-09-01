@@ -26,6 +26,19 @@ export default function General({ websiteId, initial }: GeneralProps) {
   const [language, setLanguage] = useState(initial?.language ?? "en");
   const [timezone, setTimezone] = useState(initial?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone);
 
+  const [baseline, setBaseline] = useState({
+    siteName: initial?.siteName ?? "",
+    siteTagline: initial?.siteTagline ?? "",
+    language: initial?.language ?? "en",
+    timezone: initial?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
+  });
+
+  const hasChanges =
+    siteName !== baseline.siteName ||
+    siteTagline !== baseline.siteTagline ||
+    language !== baseline.language ||
+    timezone !== baseline.timezone;
+
   const [state, saveAll, saving] = useActionState(async () => {
     try {
       const res = await updateWebsiteData({
@@ -35,6 +48,7 @@ export default function General({ websiteId, initial }: GeneralProps) {
       if (!res.success) throw new Error(res.error);
 
       toast.success("General settings saved");
+      setBaseline({ siteName, siteTagline, language, timezone });
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save general settings");
@@ -81,7 +95,7 @@ export default function General({ websiteId, initial }: GeneralProps) {
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit" className="shrink-0" disabled={saving}>
+              <Button type="submit" className="shrink-0" disabled={saving || !hasChanges}>
                 {saving ? <Loader className="h-3 w-3 animate-spin" /> : "Save"}
               </Button>
             </div>

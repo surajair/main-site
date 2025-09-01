@@ -27,6 +27,18 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
   const [customTrackingScripts, setCustomTrackingScripts] = useState<string[]>(initial?.customTrackingScripts ?? []);
   const [scriptInput, setScriptInput] = useState("");
 
+  const [baseline, setBaseline] = useState({
+    googleAnalyticsId: initial?.googleAnalyticsId ?? "",
+    googleTagManagerId: initial?.googleTagManagerId ?? "",
+    metaPixelId: initial?.metaPixelId ?? "",
+    customTrackingScripts: initial?.customTrackingScripts ?? [],
+  });
+  const hasChanges =
+    googleAnalyticsId !== baseline.googleAnalyticsId ||
+    googleTagManagerId !== baseline.googleTagManagerId ||
+    metaPixelId !== baseline.metaPixelId ||
+    JSON.stringify(customTrackingScripts) !== JSON.stringify(baseline.customTrackingScripts);
+
   const addScript = () => {
     const v = scriptInput.trim();
     if (!v) return;
@@ -43,6 +55,12 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
       });
       if (!res.success) throw new Error(res.error);
       toast.success("Analytics & Tracking saved");
+      setBaseline({
+        googleAnalyticsId,
+        googleTagManagerId,
+        metaPixelId,
+        customTrackingScripts: [...customTrackingScripts],
+      });
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save Analytics & Tracking");
@@ -118,7 +136,7 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit" disabled={saving}>
+              <Button type="submit" disabled={saving || !hasChanges}>
                 {saving ? <Loader className="h-3 w-3 animate-spin" /> : "Save"}
               </Button>
             </div>

@@ -21,16 +21,17 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
   const [logoURL, setLogoURL] = useState(initial?.logoURL ?? "");
   const [faviconURL, setFaviconURL] = useState(initial?.faviconURL ?? "");
 
+  const [baseline, setBaseline] = useState({
+    logoURL: initial?.logoURL ?? "",
+    faviconURL: initial?.faviconURL ?? "",
+  });
+  const hasChanges = logoURL !== baseline.logoURL || faviconURL !== baseline.faviconURL;
+
   const [state, saveAll, saving] = useActionState(async () => {
     try {
       const res = await updateWebsiteData({ id: websiteId, updates: { logoURL, faviconURL } });
       if (!res.success) throw new Error(res.error || "Failed to update branding");
-      // Optional: sync local state with server’s canonical data
-      if ((res as any).data) {
-        const d = (res as any).data as Record<string, any>;
-        if (typeof d.logoURL === "string") setLogoURL(d.logoURL);
-        if (typeof d.faviconURL === "string") setFaviconURL(d.faviconURL);
-      }
+      setBaseline({ logoURL, faviconURL });
       toast.success("Branding saved");
       return { success: true };
     } catch (e: any) {
@@ -75,7 +76,7 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit" className="shrink-0" disabled={saving}>
+              <Button type="submit" className="shrink-0" disabled={saving || !hasChanges}>
                 {saving ? <Loader className="h-3 w-3 animate-spin" /> : "Save"}
               </Button>
             </div>

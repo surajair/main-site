@@ -32,6 +32,23 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
   const [googleSiteVerification, setGoogleSiteVerification] = useState(initial?.googleSiteVerification ?? "");
   const [enableRobotsCrawling, setEnableRobotsCrawling] = useState<boolean>(initial?.enableRobotsCrawling ?? true);
 
+  const [baseline, setBaseline] = useState({
+    sitePageTitle: initial?.sitePageTitle ?? "",
+    siteMetaDescription: initial?.siteMetaDescription ?? "",
+    siteMetaKeywords: initial?.siteMetaKeywords ?? [],
+    siteOpenGraphImageURL: initial?.siteOpenGraphImageURL ?? "",
+    googleSiteVerification: initial?.googleSiteVerification ?? "",
+    enableRobotsCrawling: initial?.enableRobotsCrawling ?? true,
+  });
+
+  const hasChanges =
+    sitePageTitle !== baseline.sitePageTitle ||
+    siteMetaDescription !== baseline.siteMetaDescription ||
+    JSON.stringify(siteMetaKeywords) !== JSON.stringify(baseline.siteMetaKeywords) ||
+    siteOpenGraphImageURL !== baseline.siteOpenGraphImageURL ||
+    googleSiteVerification !== baseline.googleSiteVerification ||
+    enableRobotsCrawling !== baseline.enableRobotsCrawling;
+
   const addKeyword = () => {
     const v = keywordInput.trim();
     if (!v) return;
@@ -56,6 +73,14 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
       });
       if (!res.success) throw new Error(res.error);
       toast.success("SEO & Metadata saved");
+      setBaseline({
+        sitePageTitle,
+        siteMetaDescription,
+        siteMetaKeywords: [...siteMetaKeywords],
+        siteOpenGraphImageURL,
+        googleSiteVerification,
+        enableRobotsCrawling,
+      });
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save SEO & Metadata");
@@ -145,7 +170,7 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit" disabled={saving}>
+              <Button type="submit" disabled={saving || !hasChanges}>
                 {saving ? <Loader className="h-3 w-3 animate-spin" /> : "Save"}
               </Button>
             </div>
