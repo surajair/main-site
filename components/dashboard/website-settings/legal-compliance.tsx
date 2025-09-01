@@ -99,7 +99,7 @@ export default function LegalCompliance({ websiteId, initial }: LegalComplianceP
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="recaptchaSiteKey">ReCAPTCHA site key</Label>
+              <Label htmlFor="recaptchaSiteKey">ReCAPTCHA website key</Label>
               <Input
                 id="recaptchaSiteKey"
                 value={recaptchaSiteKey}

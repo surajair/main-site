@@ -1,13 +1,14 @@
 "use client";
 
 import { addDomain, verifyDomain } from "@/actions/add-domain-action";
+import { updateSite } from "@/actions/update-site-action";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Site } from "@/utils/types";
-import { AlertCircle, CheckCircle, ExternalLink, Globe, Loader, RefreshCw } from "lucide-react";
+import { AlertCircle, CheckCircle, ExternalLink, Globe, Loader, Pencil, RefreshCw } from "lucide-react";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import DeleteDomainModal from "./delete-domain-modal";
@@ -22,6 +23,48 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
   const [verifyingDomains, setVerifyingDomains] = useState<Set<string>>(new Set());
   const [expandedDomain, setExpandedDomain] = useState<string | null>(null);
   const [domainConfig, setDomainConfig] = useState<any>(null);
+  const [editingSubdomain, setEditingSubdomain] = useState(false);
+  const subdomainSuffix = process.env.NEXT_PUBLIC_SUBDOMAIN;
+  const subdomainBase = useMemo(() => {
+    if (!siteData.subdomain) return "";
+    const suffix = subdomainSuffix ? `.${subdomainSuffix}` : "";
+    return suffix && siteData.subdomain.endsWith(suffix)
+      ? siteData.subdomain.slice(0, -suffix.length)
+      : siteData.subdomain;
+  }, [siteData.subdomain, subdomainSuffix]);
+  const [subdomainInput, setSubdomainInput] = useState(subdomainBase);
+
+  const [_, saveSubdomain, savingSubdomain] = useActionState(async () => {
+    let name = subdomainInput?.trim().toLowerCase();
+    if (!name) {
+      toast.error("Subdomain is required");
+      return { success: false } as any;
+    }
+    const suffix = subdomainSuffix ? `.${subdomainSuffix}` : "";
+    if (suffix && name.endsWith(suffix)) {
+      name = name.slice(0, -suffix.length);
+    }
+    if (name.includes(".")) {
+      name = name.split(".")[0];
+    }
+    const sanitized = name
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+    if (!sanitized) {
+      toast.error("Enter a valid subdomain");
+      return { success: false } as any;
+    }
+    console.log("Sanitized subdomain:", sanitized);
+    const res = await updateSite(siteData.id, { name: sanitized });
+    if (res.success) {
+      toast.success("Subdomain updated");
+      window.location.reload();
+    } else {
+      toast.error(res.error || "Failed to update subdomain");
+    }
+    return res as any;
+  }, null as any);
 
   const defaultDomain = useMemo(() => {
     // Show domain if available and configured, otherwise show subdomain
@@ -179,9 +222,60 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                   <CheckCircle className="h-4 w-4 text-green-500" />
                   <span>{siteData.subdomain}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline">Subdomain</Badge>
-                </div>
+                {!editingSubdomain ? (
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline">Subdomain</Badge>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        setSubdomainInput(subdomainBase);
+                        setEditingSubdomain(true);
+                      }}
+                      title="Edit subdomain">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <form action={saveSubdomain} className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <Input
+                        value={subdomainInput}
+                        onChange={(e) => {
+                          const raw = e.target.value.toLowerCase().trim();
+                          const suffix = subdomainSuffix ? `.${subdomainSuffix}` : "";
+                          let withoutSuffix = raw;
+                          if (suffix && withoutSuffix.endsWith(suffix)) {
+                            withoutSuffix = withoutSuffix.slice(0, -suffix.length);
+                          }
+                          if (withoutSuffix.includes(".")) {
+                            withoutSuffix = withoutSuffix.split(".")[0];
+                          }
+                          const sanitized = withoutSuffix.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+                          setSubdomainInput(sanitized);
+                        }}
+                        placeholder="your-name"
+                        className="w-56 shrink-0"
+                      />
+                      {subdomainSuffix ? <span>.{subdomainSuffix}</span> : null}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button type="submit" size="sm" variant="secondary" disabled={!!savingSubdomain}>
+                        {savingSubdomain ? (
+                          <>
+                            <Loader className="h-3 w-3 animate-spin" />
+                            Saving
+                          </>
+                        ) : (
+                          "Save"
+                        )}
+                      </Button>
+                      <Button type="button" size="sm" variant="outline" onClick={() => setEditingSubdomain(false)}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </form>
+                )}
               </div>
 
               {/* Custom Domain */}

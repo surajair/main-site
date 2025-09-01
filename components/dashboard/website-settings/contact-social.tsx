@@ -119,7 +119,7 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
               <div className="space-y-2">
                 {Object.entries(socialLinks).map(([key, val]) => (
                   <div key={key} className="flex items-center gap-2">
-                    <span className="w-56 text-sm text-muted-foreground capitalize">{key}</span>
+                    <span className="w-56 shrink-0 text-sm text-muted-foreground capitalize">{key}</span>
                     <Input value={val} onChange={(e) => setSocialLinks((s) => ({ ...s, [key]: e.target.value }))} />
                     <Button type="button" variant="ghost" onClick={() => removeSocial(key)} className="shrink-0">
                       <Trash2 className="h-4 w-4" />
@@ -131,12 +131,12 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
                     placeholder="Platform name"
                     value={newKey}
                     onChange={(e) => setNewKey(e.target.value)}
-                    className="w-56"
+                    className="w-56 shrink-0"
                   />
                   <Input placeholder="https://..." value={newValue} onChange={(e) => setNewValue(e.target.value)} />
                 </div>
-                <div className="w-full flex items-center justify-end">
-                  <Button type="button" variant="secondary" onClick={addSocial} className="mt-2  w-40">
+                <div className="w-full flex items-center justify-start">
+                  <Button type="button" variant="ghost" onClick={addSocial} className="mt-2  w-40">
                     Add social link
                   </Button>
                 </div>
