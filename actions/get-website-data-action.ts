@@ -3,7 +3,6 @@
 import { getSupabaseAdmin } from "chai-next/server";
 
 export async function getWebsiteData(websiteId: string) {
-  console.log("Fetching website data for:", websiteId);
   const supabaseServer = await getSupabaseAdmin();
   const { data, error }: any = await supabaseServer
     .from("apps")
