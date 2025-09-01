@@ -135,8 +135,8 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
                   />
                   <Input placeholder="https://..." value={newValue} onChange={(e) => setNewValue(e.target.value)} />
                 </div>
-                <div>
-                  <Button type="button" variant="ghost" onClick={addSocial} className="mt-2 w-40">
+                <div className="w-full flex items-center justify-end">
+                  <Button type="button" variant="secondary" onClick={addSocial} className="mt-2  w-40">
                     Add social link
                   </Button>
                 </div>

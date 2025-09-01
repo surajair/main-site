@@ -30,7 +30,7 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
   const [keywordInput, setKeywordInput] = useState("");
   const [siteOpenGraphImageURL, setSiteOpenGraphImageURL] = useState(initial?.siteOpenGraphImageURL ?? "");
   const [googleSiteVerification, setGoogleSiteVerification] = useState(initial?.googleSiteVerification ?? "");
-  const [enableRobotsCrawling, setEnableRobotsCrawling] = useState<boolean>(initial?.enableRobotsCrawling ?? true);
+  const [enableRobotsCrawling, setEnableRobotsCrawling] = useState<boolean>(initial?.enableRobotsCrawling ?? false);
 
   const [baseline, setBaseline] = useState({
     sitePageTitle: initial?.sitePageTitle ?? "",
