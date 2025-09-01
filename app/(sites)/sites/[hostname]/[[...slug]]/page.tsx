@@ -27,9 +27,13 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   const { isEnabled } = await draftMode();
   await ChaiBuilder.initByHostname(hostname, isEnabled);
 
-  const page = await ChaiBuilder.getPage(slug);
-
-  if ("error" in page) {
+  let page = null;
+  try {
+    page = await ChaiBuilder.getPage(slug);
+    if ("error" in page) {
+      return notFound();
+    }
+  } catch (err) {
     return notFound();
   }
 
