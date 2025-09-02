@@ -1,0 +1,45 @@
+{
+  "features": {
+    "create_site": true,
+    "create_subdomain": true,
+    "create_page": true,
+    "create_partial": true,
+    "style_page": true,
+    "multi_user": false,
+    "multilingual": true
+  },
+  "plans": {
+    "free": {
+      "custom_domain": false,
+      "remove_branding": false,
+      "export_code": false,
+      "collaborators": false,
+      "password_protect": false,
+      "seo_tools": false,
+      "analytics": false,
+      "backup_restore": false,
+      "priority_support": false
+    },
+    "pro": {
+      "no_of_sites": 3,
+      "custom_domain": true
+    }
+  },
+  "roles": {
+    "admin": null,
+    "editor": {
+      "create_site": true,
+      "create_subdomain": true,
+      "create_page": true,
+      "create_partial": true,
+      "style_page": true
+    },
+    "desginer": {
+      "create_site": false,
+      "create_subdomain": false,
+      "create_page": true,
+      "create_partial": true,
+      "style_page": true
+    }
+  }
+}
