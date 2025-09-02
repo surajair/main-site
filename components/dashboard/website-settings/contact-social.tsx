@@ -101,17 +101,32 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
           <form action={saveAll} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="contactEmail">Contact email</Label>
-              <Input id="contactEmail" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} />
+              <Input
+                id="contactEmail"
+                placeholder="eg: user@example.com"
+                value={contactEmail}
+                onChange={(e) => setContactEmail(e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="contactPhone">Phone</Label>
-              <Input id="contactPhone" value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} />
+              <Input
+                id="contactPhone"
+                placeholder="eg: +1234567890"
+                value={contactPhone}
+                onChange={(e) => setContactPhone(e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="contactAddress">Address</Label>
-              <Input id="contactAddress" value={contactAddress} onChange={(e) => setContactAddress(e.target.value)} />
+              <Input
+                id="contactAddress"
+                placeholder="eg: 123 Main St, City, Country"
+                value={contactAddress}
+                onChange={(e) => setContactAddress(e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">

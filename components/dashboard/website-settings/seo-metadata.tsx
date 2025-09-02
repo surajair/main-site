@@ -103,7 +103,12 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
           <form action={saveAll} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="sitePageTitle">Page title</Label>
-              <Input id="sitePageTitle" value={sitePageTitle} onChange={(e) => setSitePageTitle(e.target.value)} />
+              <Input
+                id="sitePageTitle"
+                placeholder="Enter page title"
+                value={sitePageTitle}
+                onChange={(e) => setSitePageTitle(e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">
@@ -111,6 +116,7 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
               <Textarea
                 id="siteMetaDescription"
                 value={siteMetaDescription}
+                placeholder="Enter meta description"
                 onChange={(e) => setSiteMetaDescription(e.target.value)}
               />
             </div>
@@ -121,9 +127,20 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
                 <Input
                   placeholder="Add keyword"
                   value={keywordInput}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addKeyword();
+                    }
+                  }}
                   onChange={(e) => setKeywordInput(e.target.value)}
                 />
-                <Button type="button" onClick={addKeyword} variant="secondary">
+                <Button
+                  disabled={!keywordInput}
+                  type="button"
+                  onClick={addKeyword}
+                  variant="secondary"
+                  className="border border-solid border-primary">
                   Add
                 </Button>
               </div>
@@ -149,6 +166,7 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
               <Input
                 id="siteOpenGraphImageURL"
                 value={siteOpenGraphImageURL}
+                placeholder="eg: https://example.com/og-image.png"
                 onChange={(e) => setSiteOpenGraphImageURL(e.target.value)}
               />
             </div>
@@ -158,15 +176,22 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
               <Input
                 id="googleSiteVerification"
                 value={googleSiteVerification}
+                placeholder="eg: ABC123XYZ"
                 onChange={(e) => setGoogleSiteVerification(e.target.value)}
               />
             </div>
 
-            <div className="flex items-center justify-between py-1">
+            <div className="flex items-center gap-4">
+              <Switch
+                id="enableRobotsCrawling"
+                checked={enableRobotsCrawling}
+                onCheckedChange={setEnableRobotsCrawling}
+              />
               <div>
-                <Label>Allow robots crawling</Label>
+                <Label htmlFor="enableRobotsCrawling" className="cursor-pointer">
+                  Allow robots crawling
+                </Label>
               </div>
-              <Switch checked={enableRobotsCrawling} onCheckedChange={setEnableRobotsCrawling} />
             </div>
 
             <div className="flex justify-end">

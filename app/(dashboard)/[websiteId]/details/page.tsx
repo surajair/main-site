@@ -9,6 +9,7 @@ import ContactSocial from "@/components/dashboard/website-settings/contact-socia
 import General from "@/components/dashboard/website-settings/general";
 import LegalCompliance from "@/components/dashboard/website-settings/legal-compliance";
 import SeoMetadata from "@/components/dashboard/website-settings/seo-metadata";
+import SpamProtection from "@/components/dashboard/website-settings/spam-protection";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 interface WebsiteDetailsPageProps {
@@ -36,6 +37,7 @@ export default async function WebsiteDetailsPage({ params }: WebsiteDetailsPageP
           <Branding websiteId={websiteId} initial={initialData.data} />
           <ContactSocial websiteId={websiteId} initial={initialData.data} />
           <LegalCompliance websiteId={websiteId} initial={initialData.data} />
+          <SpamProtection websiteId={websiteId} initial={initialData.data} />
           <SeoMetadata websiteId={websiteId} initial={initialData.data} />
           <AnalyticsTracking websiteId={websiteId} initial={initialData.data} />
           {/* <UsageAnalytics /> */}

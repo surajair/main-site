@@ -1,6 +1,16 @@
 "use client";
 
-import { Activity, BookOpenText, Globe, Image as ImageIcon, Search, Settings, Share2, ShieldCheck } from "lucide-react";
+import {
+  Activity,
+  BookOpenText,
+  Globe,
+  Image as ImageIcon,
+  Search,
+  Settings,
+  Share2,
+  Shield,
+  ShieldCheck,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,6 +24,7 @@ const sidebarItems = [
   { id: "branding", label: "Branding", icon: ImageIcon },
   { id: "contact-social", label: "Contact & Social", icon: Share2 },
   { id: "legal-compliance", label: "Legal Compliance", icon: ShieldCheck },
+  { id: "spam-protection", label: "Spam Protection", icon: Shield },
   { id: "seo-metadata", label: "SEO Metadata", icon: Search },
   { id: "analytics-tracking", label: "Analytics Tracking", icon: Activity },
 ];

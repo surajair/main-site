@@ -12,7 +12,6 @@ export async function getWebsiteData(websiteId: string) {
     .single();
 
   if (error) throw error;
-  console.log("Website data retrieved:", websiteData);
   return {
     data: websiteData?.data,
   };

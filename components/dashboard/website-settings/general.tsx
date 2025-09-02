@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader, Settings } from "lucide-react";
 import { useActionState, useState } from "react";
 import { toast } from "sonner";
+import { timeZones } from "./timezones";
 
 interface GeneralProps {
   websiteId: string;
@@ -19,6 +20,11 @@ interface GeneralProps {
     timezone?: string;
   };
 }
+const CURRENT_LANGUAGE = {
+  en: "English",
+  hi: "Hindi",
+  es: "Spanish",
+};
 
 export default function General({ websiteId, initial }: GeneralProps) {
   const [siteName, setSiteName] = useState(initial?.siteName ?? "");
@@ -71,32 +77,45 @@ export default function General({ websiteId, initial }: GeneralProps) {
           <form action={saveAll} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="siteName">Website name</Label>
-              <Input id="siteName" value={siteName} onChange={(e) => setSiteName(e.target.value)} />
+              <Input
+                placeholder="eg: My Website"
+                id="siteName"
+                value={siteName}
+                onChange={(e) => setSiteName(e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="siteTagline">Tagline</Label>
-              <Input id="siteTagline" value={siteTagline} onChange={(e) => setSiteTagline(e.target.value)} />
+              <Input
+                placeholder="eg: The best website ever"
+                id="siteTagline"
+                value={siteTagline}
+                onChange={(e) => setSiteTagline(e.target.value)}
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Disable This Language Select and Show Only the Language which is not Editable */}
               <div className="space-y-2">
                 <Label>Language</Label>
-                <Select value={language} onValueChange={(v) => setLanguage(v)}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="hi">Hindi</SelectItem>
-                    <SelectItem value="es">Spanish</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Input id={language} value={CURRENT_LANGUAGE[language as keyof typeof CURRENT_LANGUAGE]} readOnly />
               </div>
 
               <div className="space-y-2">
                 <Label>Timezone</Label>
-                <Input className="w-full" value={timezone} onChange={(e) => setTimezone(e.target.value)} />
+                <Select value={timezone} onValueChange={(v) => setTimezone(v)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Timezone" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {timeZones.map((zone) => (
+                      <SelectItem key={zone} value={zone}>
+                        {zone}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

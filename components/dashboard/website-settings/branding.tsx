@@ -67,7 +67,12 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
           <form action={saveAll} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="logoURL">Logo URL</Label>
-              <Input id="logoURL" value={logoURL} onChange={(e) => setLogoURL(e.target.value)} />
+              <Input
+                id="logoURL"
+                placeholder="eg: https://example.com/logo.png"
+                value={logoURL}
+                onChange={(e) => setLogoURL(e.target.value)}
+              />
               {isValidImageUrl(logoURL) ? (
                 <div className="pt-1">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -78,7 +83,12 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
 
             <div className="space-y-2">
               <Label htmlFor="faviconURL">Favicon URL</Label>
-              <Input id="faviconURL" value={faviconURL} onChange={(e) => setFaviconURL(e.target.value)} />
+              <Input
+                id="faviconURL"
+                placeholder="eg: https://example.com/favicon.ico"
+                value={faviconURL}
+                onChange={(e) => setFaviconURL(e.target.value)}
+              />
               {isValidImageUrl(faviconURL) ? (
                 <div className="pt-1">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
