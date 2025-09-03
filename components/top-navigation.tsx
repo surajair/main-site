@@ -14,6 +14,8 @@ import { BrandLogo, BrandName } from "./dashboard/branding";
 import { LogoutButton } from "./dashboard/logout-button";
 
 async function TopNavigation({ user }: { user: UserType }) {
+  const plan = user.user_metadata?.plan || "Free Plan";
+  const role = user.user_metadata?.role || "Admin";
   return (
     <header className="bg-white border-b border-gray-200 h-16">
       <div className="flex items-center justify-between h-full container">
@@ -44,7 +46,10 @@ async function TopNavigation({ user }: { user: UserType }) {
                   <span className="text-sm font-medium">
                     {user.user_metadata?.full_name || user.user_metadata?.email}
                   </span>
-                  <span className="text-xs text-primary">{user.user_metadata?.plan || "Free"} Plan</span>
+                  <span className="text-xs flex items-center gap-x-1 text-primary">
+                    <span>{role}</span> <span>-</span>
+                    <span>{plan}</span>
+                  </span>
                 </div>
                 <ChevronDown className="h-4 w-4" />
               </Button>

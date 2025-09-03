@@ -1,6 +1,6 @@
 {
   "features": {
-    "create_site": false,
+    "create_site": true,
     "create_subdomain": true,
     "create_page": true,
     "create_partial": true,
@@ -43,7 +43,8 @@
       "create_subdomain": false,
       "create_page": false,
       "create_partial": false,
-      "style_page": false
+      "style_page": false,
+      "website_settings": false
     }
   }
 }
