@@ -1,7 +1,7 @@
-import { getUser } from "@/lib/getter/users";
 import "@/app/app.css";
 import TopNavigation from "@/components/top-navigation";
 import { Toaster } from "@/components/ui/sonner";
+import { getUser } from "@/lib/getter/users";
 import { FeatureFlagProvider } from "@/lib/openfeature/feature-flag-provider";
 import { fetchFeatureFlags } from "@/lib/openfeature/server";
 import type { Metadata } from "next";
