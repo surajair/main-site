@@ -1,9 +1,9 @@
 "use server";
 
+import { getSession } from "@/lib/getter/users";
 import { Vercel } from "@vercel/sdk";
 import { getSupabaseAdmin } from "chai-next/server";
 import { revalidatePath } from "next/cache";
-import { getSession } from "@/lib/getter/users";
 
 const noIsNotFound = (error: any) => {
   return error && !error.message.includes("not found");
@@ -41,6 +41,8 @@ export async function deleteSite(siteId: string) {
       domain: appData.subdomain,
     });
   }
+
+  await supabaseServer.from("app_domains").delete().eq("app", siteId);
 
   // Mark as deleted by setting deletedAt
   const { error } = await supabaseServer
