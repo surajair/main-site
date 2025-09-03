@@ -113,13 +113,17 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
 
             <div className="space-y-2">
               <Label>Custom tracking scripts</Label>
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
                 <Textarea
                   placeholder="<script>...</script> or a URL"
                   value={scriptInput}
                   onChange={(e) => setScriptInput(e.target.value)}
                 />
-                <Button type="button" variant="secondary" onClick={addScript} className="shrink-0">
+                <Button
+                  type="button"
+                  onClick={addScript}
+                  className="shrink-0"
+                  disabled={scriptInput?.trim().length < 3}>
                   Add
                 </Button>
               </div>

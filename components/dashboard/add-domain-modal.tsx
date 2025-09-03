@@ -200,11 +200,7 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                     className=" "
                     disabled={addDomainPending}
                   />
-                  <Button
-                    variant={"default"}
-                    type="submit"
-                    className={customDomain.length < 3 ? "pointer-events-none opacity-50" : ""}
-                    disabled={addDomainPending || customDomain.length < 3}>
+                  <Button type="submit" disabled={addDomainPending || customDomain.length < 3}>
                     {addDomainPending ? (
                       <>
                         <Loader className="h-3 w-3 animate-spin" />
@@ -267,11 +263,7 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                       ) : null}
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button
-                        type="submit"
-                        size="sm"
-                        variant={subdomainInput !== subdomainBase ? "default" : "outline"}
-                        disabled={!!savingSubdomain || subdomainInput === subdomainBase}>
+                      <Button type="submit" size="sm" disabled={!!savingSubdomain || subdomainInput === subdomainBase}>
                         {savingSubdomain ? (
                           <>
                             <Loader className="h-3 w-3 animate-spin" />

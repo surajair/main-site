@@ -175,10 +175,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
 
               {/* Create Button */}
               <div className="flex gap-3 pt-4">
-                <Button
-                  onClick={handleCreateWebsite}
-                  disabled={!websiteName.trim() || !subdomain.trim() || isCreating}
-                  className="flex-1 flex items-center gap-x-3">
+                <Button onClick={handleCreateWebsite} disabled={!websiteName.trim() || !subdomain.trim() || isCreating}>
                   {isCreating ? (
                     <>
                       <Loader className="h-3 w-3 animate-spin" />
