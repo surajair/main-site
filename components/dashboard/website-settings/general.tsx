@@ -107,12 +107,15 @@ export default function General({ websiteId, initial }: GeneralProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Disable This Language Select and Show Only the Language which is not Editable */}
               <div className="space-y-2">
-                <Label>Language</Label>
+                <Label>
+                  Language <small className="text-muted-foreground">(Cannot be changed)</small>
+                </Label>
                 <Input
-                  className="bg-slate-300"
+                  className="bg-gray-100"
                   id={language}
                   value={CURRENT_LANGUAGE[language as keyof typeof CURRENT_LANGUAGE]}
                   readOnly
+                  disabled
                 />
               </div>
 
