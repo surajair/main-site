@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getFeatureFlag } from "@/lib/openfeature/server";
 import { User as UserType } from "@supabase/supabase-js";
 import { ChevronDown, CreditCard, User } from "lucide-react";
 import Link from "next/link";
@@ -14,6 +15,7 @@ import { BrandLogo, BrandName } from "./dashboard/branding";
 import { LogoutButton } from "./dashboard/logout-button";
 
 async function TopNavigation({ user }: { user: UserType }) {
+  const showBillingInfo = await getFeatureFlag("billing", false);
   const plan = user.user_metadata?.plan || "Free Plan";
   const role = user.user_metadata?.role || "Admin";
   return (
@@ -61,12 +63,14 @@ async function TopNavigation({ user }: { user: UserType }) {
                   Profile
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild className="cursor-pointer hover:bg-gray-100">
-                <Link href="/account/billing-and-plans" className="flex items-center">
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Billing & Plans
-                </Link>
-              </DropdownMenuItem>
+              {showBillingInfo && (
+                <DropdownMenuItem asChild className="cursor-pointer hover:bg-gray-100">
+                  <Link href="/account/billing-and-plans" className="flex items-center">
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Billing & Plans
+                  </Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <LogoutButton />
             </DropdownMenuContent>
