@@ -1,11 +1,11 @@
-import { OpenFeature } from "@openfeature/server-sdk";
+import { InMemoryProvider, OpenFeature } from "@openfeature/server-sdk";
 import { readFileSync } from "fs";
 import { join } from "path";
 
-const client = OpenFeature.getClient();
-
 type Role = "admin" | "editor" | "designer";
 type Plan = "free" | "pro";
+
+const client = OpenFeature.getClient();
 
 export async function fetchFeatureFlags(role: Role, plan: Plan): Promise<any> {
   try {
@@ -48,25 +48,29 @@ export async function fetchFeatureFlags(role: Role, plan: Plan): Promise<any> {
         defaultVariant: "default",
       };
     });
+
+    // * Setting provider for Server SDK
+    const provider = new InMemoryProvider(flags);
+    OpenFeature.setProvider(provider);
+
     return flags;
   } catch (error) {
     return {};
   }
 }
 
-// Function overloads for better type inference
-export async function getFeatureFlag<T>(key: string, defaultValue: T): Promise<T | any> {
+export async function getFeatureFlag<T>(key: string, defaultValue: T): Promise<T> {
   if (typeof defaultValue === "boolean") {
-    return await client.getBooleanValue(key, defaultValue);
+    return (await client.getBooleanValue(key, defaultValue)) as T;
   }
 
   if (typeof defaultValue === "string") {
-    return await client.getStringValue(key, defaultValue);
+    return (await client.getStringValue(key, defaultValue)) as T;
   }
 
   if (typeof defaultValue === "number") {
-    return await client.getNumberValue(key, defaultValue);
+    return (await client.getNumberValue(key, defaultValue)) as T;
   }
 
-  return await client.getObjectValue(key, defaultValue as any);
+  return (await client.getObjectValue(key, defaultValue as any)) as T;
 }
