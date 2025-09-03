@@ -1,17 +1,15 @@
-import { getSites } from "@/lib/getter/sites";
-import { getUser } from "@/lib/getter/users";
 import CreateNewWebsite from "@/components/dashboard/create-new-website";
 import WebsiteCard from "@/components/dashboard/website-card";
 import { Button } from "@/components/ui/button";
-import { getFeatureFlag } from "@/lib/openfeature/server";
-import { Site } from "@/lib/getter/sites";
+import { getSites } from "@/lib/getter/sites";
+import { getUser } from "@/lib/getter/users";
+import { Site } from "@/utils/types";
 import { Globe, Plus } from "lucide-react";
 
 export default async function HomePage() {
   const user = await getUser();
   const data = await getSites(user.id, true);
   const sites: Site[] = data as Site[];
-  const isCreateSite = await getFeatureFlag("create_site", false);
 
   return (
     <div className="h-full flex flex-col py-8">
@@ -20,7 +18,7 @@ export default async function HomePage() {
           <h1 className="text-2xl font-bold mb-2">Your Websites</h1>
         </div>
         <CreateNewWebsite totalSites={sites.length}>
-          <Button size="lg" className="gap-2" disabled={!isCreateSite}>
+          <Button size="lg" className="gap-2">
             <Plus className="h-5 w-5" />
             Add New Website
           </Button>

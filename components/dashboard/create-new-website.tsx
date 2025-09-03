@@ -48,6 +48,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
   const [defaultLanguage, setDefaultLanguage] = useState("en");
   const [isCreating, setIsCreating] = useState(false);
   const { value: siteLimits } = useFlag("no_of_sites", 1);
+  const { value: canCreateSite } = useFlag("create_site", true);
 
   const handleWebsiteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -109,6 +110,8 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
       }
     }
   };
+
+  if (!canCreateSite) return null;
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
