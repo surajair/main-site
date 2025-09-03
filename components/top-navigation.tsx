@@ -15,9 +15,10 @@ import { BrandLogo, BrandName } from "./dashboard/branding";
 import { LogoutButton } from "./dashboard/logout-button";
 
 async function TopNavigation({ user }: { user: UserType }) {
-  const showBillingInfo = await getFeatureFlag("billing", false);
   const plan = user.user_metadata?.plan || "Free Plan";
   const role = user.user_metadata?.role || "Admin";
+  const showBillingInfo = await getFeatureFlag("billing", false);
+
   return (
     <header className="bg-white border-b border-gray-200 h-16">
       <div className="flex items-center justify-between h-full container">
