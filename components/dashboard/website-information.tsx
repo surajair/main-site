@@ -156,7 +156,7 @@ function WebsiteInformation({
                     Saving
                   </>
                 ) : (
-                  "Save Changes"
+                  "Save"
                 )}
               </Button>
             </div>

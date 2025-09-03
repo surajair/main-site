@@ -19,13 +19,13 @@ interface BrandingProps {
 
 export default function Branding({ websiteId, initial }: BrandingProps) {
   const isValidImageUrl = (val?: string) => {
-   if (!val) return false;
-   try {
-     new URL(val);
-     return true;
-   } catch {
-     return false;
-   }
+    if (!val) return false;
+    try {
+      new URL(val);
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const [logoURL, setLogoURL] = useState(initial?.logoURL ?? "");
@@ -97,7 +97,14 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
 
             <div className="flex justify-end">
               <Button type="submit" className="shrink-0" disabled={saving || !hasChanges}>
-                {saving ? <Loader className="h-3 w-3 animate-spin" /> : "Save"}
+                {saving ? (
+                  <>
+                    <Loader className="h-3 w-3 animate-spin" />
+                    Saving
+                  </>
+                ) : (
+                  "Save"
+                )}
               </Button>
             </div>
           </form>

@@ -200,7 +200,14 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
 
             <div className="flex justify-end">
               <Button type="submit" disabled={saving || !hasChanges}>
-                {saving ? <Loader className="h-3 w-3 animate-spin" /> : "Save"}
+                {saving ? (
+                  <>
+                    <Loader className="h-3 w-3 animate-spin" />
+                    Saving
+                  </>
+                ) : (
+                  "Save"
+                )}
               </Button>
             </div>
           </form>
