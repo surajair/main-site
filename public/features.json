@@ -18,7 +18,8 @@
     "site_library": false,
     "multipage_publish_menu": false,
     "revision_restore": false,
-    "ai": false
+    "ai": false,
+    "billing": true
   },
   "plans": {
     "free": {
@@ -37,14 +38,17 @@
   },
   "roles": {
     "admin": { "*": true },
-    "editor": {},
+    "editor": {
+      "billing": false
+    },
     "designer": {
       "create_site": false,
       "create_subdomain": false,
       "create_page": false,
       "create_partial": false,
       "style_page": false,
-      "website_settings": false
+      "website_settings": false,
+      "billing": false
     }
   }
 }
