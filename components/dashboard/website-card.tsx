@@ -9,7 +9,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Site } from "@/lib/getter/sites";
+import { Site } from "@/utils/types";
+import { useFlag } from "@openfeature/react-sdk";
 import { BookOpenText, Edit2, Globe, MoreVertical, MoveRight, Settings, Star } from "lucide-react";
 import Link from "next/link";
 
@@ -27,6 +28,7 @@ interface WebsiteCardProps {
 }
 
 export default function WebsiteCard({ site }: WebsiteCardProps) {
+  const { value: websiteSettings } = useFlag("website_settings", false);
   return (
     <Card className="hover:border-primary/50 duration-300 transition-all group shadow-none relative overflow-hidden">
       {/* Always-visible Controls Layer */}
@@ -35,17 +37,19 @@ export default function WebsiteCard({ site }: WebsiteCardProps) {
         <div className="absolute top-2 right-2 pointer-events-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 hover:border hover:border-primary/20"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}>
-                <MoreVertical className="h-3 w-3" />
-                <span className="sr-only">Open menu</span>
-              </Button>
+              {websiteSettings && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 hover:border hover:border-primary/20"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}>
+                  <MoreVertical className="h-3 w-3" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-white cursor-pointer">
               <DropdownMenuItem
