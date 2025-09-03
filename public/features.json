@@ -6,40 +6,33 @@
     "create_partial": true,
     "style_page": true,
     "multi_user": false,
-    "multilingual": true
+    "multilingual": true,
+    "publish": true
   },
   "plans": {
     "free": {
       "custom_domain": false,
-      "remove_branding": false,
-      "export_code": false,
-      "collaborators": false,
-      "password_protect": false,
-      "seo_tools": false,
-      "analytics": false,
-      "backup_restore": false,
-      "priority_support": false
+      "no_of_sites": 1,
+      "no_of_pages_per_site": 3,
+      "no_of_publish_per_site": 10
     },
     "pro": {
       "no_of_sites": 3,
-      "custom_domain": true
+      "custom_domain": true,
+      "no_of_pages_per_site": 10,
+      "no_of_publish_per_site": 50,
+      "multi_user": true
     }
   },
   "roles": {
-    "admin": null,
-    "editor": {
-      "create_site": true,
-      "create_subdomain": true,
-      "create_page": true,
-      "create_partial": true,
-      "style_page": true
-    },
-    "desginer": {
+    "admin": {},
+    "editor": {},
+    "designer": {
       "create_site": false,
       "create_subdomain": false,
-      "create_page": true,
-      "create_partial": true,
-      "style_page": true
+      "create_page": false,
+      "create_partial": false,
+      "style_page": false
     }
   }
 }

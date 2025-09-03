@@ -2,6 +2,7 @@ import { getUser } from "@/actions/get-user-action";
 import "@/app/app.css";
 import TopNavigation from "@/components/top-navigation";
 import { Toaster } from "@/components/ui/sonner";
+import { FeatureFlagProvider } from "@/lib/openfeature/provider";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import type React from "react";
@@ -23,9 +24,11 @@ export default async function RootLayout({
   return (
     <html dir="ltr" className="smooth-scroll">
       <body className={`${geist.className} flex h-screen flex-col`}>
-        <Toaster richColors theme="light" />
-        <TopNavigation user={user} />
-        <main className="flex-1 container h-[calc(100vh-4rem)] pb-2 overflow-hidden">{children}</main>
+        <FeatureFlagProvider>
+          <Toaster richColors theme="light" />
+          <TopNavigation user={user} />
+          <main className="flex-1 container h-[calc(100vh-4rem)] pb-2 overflow-hidden">{children}</main>
+        </FeatureFlagProvider>
       </body>
     </html>
   );
