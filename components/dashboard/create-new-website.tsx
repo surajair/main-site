@@ -28,25 +28,35 @@ const allLanguages = [
 interface CreateNewWebsiteProps {
   children: React.ReactNode;
 }
+export function toKebabCase(str = "") {
+  return String(str)
+    .replace(/([a-z\d])([A-Z])/g, "$1-$2")
+    .replace(/[\s_]+/g, "-")
+    .replace(/-+/g, "-")
+    .toLowerCase()
+    .replace(/^-|-$/g, "");
+}
 
 export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState("");
+  const [websiteName, setWebsiteName] = useState("");
   const [defaultLanguage, setDefaultLanguage] = useState("en");
   const [isCreating, setIsCreating] = useState(false);
 
   const handleCreateWebsite = async () => {
-    if (!inputValue.trim()) return;
+    if (!websiteName.trim()) return;
 
     setIsCreating(true);
 
     try {
+      const subdomain = toKebabCase(websiteName.trim());
+
       const formData = {
-        name: inputValue,
+        name: websiteName.trim(),
         fallbackLang: defaultLanguage,
         languages: [],
-        subdomain: inputValue,
+        subdomain: subdomain,
       };
 
       const result = await createSite(formData);
@@ -55,7 +65,7 @@ export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
         toast.success("Website created successfully!");
         setOpen(false);
         // Reset form
-        setInputValue("");
+        setWebsiteName("");
         setDefaultLanguage("en");
         router.push(`/${result.data.id}/editor`);
       } else {
@@ -72,7 +82,7 @@ export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
     if (!isCreating) {
       setOpen(open);
       if (!open) {
-        setInputValue("");
+        setWebsiteName("");
         setDefaultLanguage("en");
         setIsCreating(false);
       }
@@ -91,25 +101,26 @@ export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
           <CardContent className="space-y-4 p-0">
             {/* Input Field */}
             <div className="space-y-2">
+              <Label htmlFor="websiteName">Website Name</Label>
               <div className="flex items-center gap-2 border border-border rounded">
                 <Input
-                  id="inputValue"
-                  value={inputValue}
-                  onChange={(e) =>
-                    setInputValue(
-                      e.target.value
-                        .toLowerCase()
-                        .replace(/\s+/g, "-")
-                        .replace(/[^a-z0-9-]/g, ""),
-                    )
-                  }
-                  placeholder="my-website"
+                  id="websiteName"
+                  value={websiteName}
+                  onChange={(e) => setWebsiteName(e.target.value)}
+                  placeholder="My Awesome Website"
                   className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 font-medium"
                 />
-                <span className="text-sm pr-2 italic text-muted-foreground">
-                  .{process.env.NEXT_PUBLIC_SUBDOMAIN || "example.com"}
-                </span>
               </div>
+
+              {/* URL Preview */}
+              {websiteName && (
+                <div className="p-3 bg-gray-200 rounded-md">
+                  <Label className="text-sm text-gray-600">Subdomain</Label>
+                  <p className="font-mono text-sm text-blue-600">
+                    {toKebabCase(websiteName)}.{process.env.NEXT_PUBLIC_SUBDOMAIN || "example.com"}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Default Language */}
@@ -134,7 +145,7 @@ export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
             <div className="flex gap-3 pt-4">
               <Button
                 onClick={handleCreateWebsite}
-                disabled={!inputValue.trim() || isCreating}
+                disabled={!websiteName.trim() || isCreating}
                 className="flex-1 flex items-center gap-x-3">
                 {isCreating ? (
                   <>

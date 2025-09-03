@@ -1,7 +1,7 @@
 "use client";
 
 import { addDomain, verifyDomain } from "@/actions/add-domain-action";
-import { updateSite } from "@/actions/update-site-action";
+import { updateSubdomain } from "@/actions/update-site-action";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -55,7 +55,7 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
       toast.error("Enter a valid subdomain");
       return { success: false } as any;
     }
-    const res = await updateSite(siteData.id, { name: sanitized });
+    const res = await updateSubdomain(siteData.id, sanitized);
     if (res.success) {
       toast.success("Subdomain updated");
       window.location.reload();
@@ -217,26 +217,28 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
             <div className="space-y-3">
               {/* Default Subdomain */}
               <div className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>{siteData.subdomain}</span>
-                </div>
                 {!editingSubdomain ? (
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline">Subdomain</Badge>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => {
-                        setSubdomainInput(subdomainBase);
-                        setEditingSubdomain(true);
-                      }}
-                      title="Edit subdomain">
-                      <Pencil className="h-4 w-4" />
-                    </Button>
+                  <div className="flex items-center w-full justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span>{siteData.subdomain}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline">Subdomain</Badge>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          setSubdomainInput(subdomainBase);
+                          setEditingSubdomain(true);
+                        }}
+                        title="Edit subdomain">
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 ) : (
-                  <form action={saveSubdomain} className="flex items-center gap-2">
+                  <form action={saveSubdomain} className="flex justify-between w-full items-center gap-2">
                     <div className="flex items-center gap-1">
                       <Input
                         value={subdomainInput}

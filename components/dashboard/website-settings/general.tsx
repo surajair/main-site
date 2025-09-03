@@ -1,5 +1,6 @@
 "use client";
 
+import { updateWebsiteName } from "@/actions/update-site-action";
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,9 +48,16 @@ export default function General({ websiteId, initial }: GeneralProps) {
 
   const [state, saveAll, saving] = useActionState(async () => {
     try {
+      // Update website name through the dedicated function
+      if (siteName !== baseline.siteName) {
+        const nameResult = await updateWebsiteName(websiteId, siteName);
+        if (!nameResult.success) throw new Error(nameResult.error);
+      }
+
+      // Update other settings through website data
       const res = await updateWebsiteData({
         id: websiteId,
-        updates: { siteName, siteTagline, language, timezone },
+        updates: { siteTagline, language, timezone },
       });
       if (!res.success) throw new Error(res.error);
 

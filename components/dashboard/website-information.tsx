@@ -1,6 +1,6 @@
 "use client";
 
-import { updateSite } from "@/actions/update-site-action";
+import { updateWebsiteName } from "@/actions/update-site-action";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -58,16 +58,13 @@ function WebsiteInformation({
   const [updateState, updateAction, updatePending] = useActionState(
     async (prevState: any, formData: FormData) => {
       const websiteName = formData.get("websiteName") as string;
-      const result = await updateSite(websiteId, {
-        name: websiteName,
-        languages: additionalLanguages,
-      });
+      const result = await updateWebsiteName(websiteId, websiteName);
 
       if (result.success) {
-        toast.success("Website information updated successfully!");
+        toast.success("Website name updated successfully!");
         router.refresh();
       } else {
-        toast.error(result.error || "Failed to update website information");
+        toast.error(result.error || "Failed to update website name");
       }
 
       return result;
@@ -111,26 +108,15 @@ function WebsiteInformation({
             <input type="hidden" name="websiteId" value={websiteId} />
             <div className="space-y-2">
               <Label htmlFor="website-name">Website Name</Label>
-              <div className="flex items-center gap-2 border border-border rounded">
-                <Input
-                  id="website-name"
-                  name="websiteName"
-                  value={websiteName}
-                  onChange={(e) =>
-                    setWebsiteName(
-                      e.target.value
-                        .toLowerCase()
-                        .replace(/\s+/g, "-")
-                        .replace(/[^a-z0-9-]/g, ""),
-                    )
-                  }
-                  placeholder="my-website"
-                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 font-medium"
-                />
-                <span className="text-sm pr-4 italic text-muted-foreground">
-                  .{process.env.NEXT_PUBLIC_SUBDOMAIN || "example.com"}
-                </span>
-              </div>
+              <Input
+                id="website-name"
+                name="websiteName"
+                value={websiteName}
+                onChange={(e) => setWebsiteName(e.target.value)}
+                placeholder="My Awesome Website"
+                className="font-medium"
+              />
+              <p className="text-xs text-muted-foreground">This is the display name for your website</p>
             </div>
 
             <div className="space-y-2">

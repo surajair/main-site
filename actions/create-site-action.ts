@@ -47,6 +47,7 @@ export async function createSite(formData: Partial<Site>) {
     const user = await getUser();
     const supabaseServer = await getSupabaseAdmin();
 
+    const websiteName = formData?.name;
     const subdomainPrefix = formData?.subdomain;
     const subdomain = subdomainPrefix + "." + process.env.NEXT_PUBLIC_SUBDOMAIN;
 
@@ -60,16 +61,19 @@ export async function createSite(formData: Partial<Site>) {
     // Create entry in apps table
     const newApp = {
       user: user.id,
-      name: formData.name,
+      name: websiteName,
       languages: formData.languages,
       fallbackLang: formData.fallbackLang,
       theme: DEFAULT_THEME,
+      data: {
+        siteName: websiteName,
+      },
     };
 
     const { data: appData, error: appError } = await supabaseServer
       .from("apps")
       .insert(newApp)
-      .select("id, user, name, theme, languages, fallbackLang")
+      .select("id, user, name, theme, languages, fallbackLang, data")
       .single();
     if (appError) throw appError;
 
@@ -77,19 +81,20 @@ export async function createSite(formData: Partial<Site>) {
     const { error: onlineError } = await supabaseServer.from("apps_online").insert(appData);
     if (onlineError) throw onlineError;
 
-    await createHomePage(appData.id, formData.name as string, supabaseServer);
+    await createHomePage(appData.id, websiteName as string, supabaseServer);
 
     // Creating and adding api key
     const apiKey = encodedApiKey(appData.id, ENCRYPTION_KEY as string);
 
     if (subdomain) {
-      if (!(subdomain?.includes("localhost"))) {
+      if (!subdomain?.includes("localhost")) {
         const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
         await vercel.projects.addProjectDomain({
           idOrName: process.env.VERCEL_PROJECT_ID!,
           teamId: process.env.VERCEL_TEAM_ID!,
           requestBody: { name: subdomain },
-      });}
+        });
+      }
 
       await supabaseServer.from("app_domains").insert({
         app: appData.id,
