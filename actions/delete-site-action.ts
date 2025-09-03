@@ -3,7 +3,7 @@
 import { Vercel } from "@vercel/sdk";
 import { getSupabaseAdmin } from "chai-next/server";
 import { revalidatePath } from "next/cache";
-import { getSession } from "./get-user-action";
+import { getSession } from "@/lib/getter/users";
 
 const noIsNotFound = (error: any) => {
   return error && !error.message.includes("not found");

@@ -113,7 +113,7 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
               <Label htmlFor="contactPhone">Phone</Label>
               <Input
                 id="contactPhone"
-                placeholder="eg: +1234567890"
+                placeholder="eg: XXXXXX"
                 value={contactPhone}
                 onChange={(e) => setContactPhone(e.target.value)}
               />

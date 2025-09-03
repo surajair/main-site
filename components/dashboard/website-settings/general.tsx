@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader, Settings } from "lucide-react";
 import { useActionState, useState } from "react";
 import { toast } from "sonner";
-import { timeZones } from "./timezones";
 
 interface GeneralProps {
   websiteId: string;
@@ -26,6 +25,8 @@ const CURRENT_LANGUAGE = {
   hi: "Hindi",
   es: "Spanish",
 };
+
+const timeZones = Intl.supportedValuesOf("timeZone");
 
 export default function General({ websiteId, initial }: GeneralProps) {
   const [siteName, setSiteName] = useState(initial?.siteName ?? "");
@@ -107,7 +108,12 @@ export default function General({ websiteId, initial }: GeneralProps) {
               {/* Disable This Language Select and Show Only the Language which is not Editable */}
               <div className="space-y-2">
                 <Label>Language</Label>
-                <Input id={language} value={CURRENT_LANGUAGE[language as keyof typeof CURRENT_LANGUAGE]} readOnly />
+                <Input
+                  className="bg-slate-300"
+                  id={language}
+                  value={CURRENT_LANGUAGE[language as keyof typeof CURRENT_LANGUAGE]}
+                  readOnly
+                />
               </div>
 
               <div className="space-y-2">

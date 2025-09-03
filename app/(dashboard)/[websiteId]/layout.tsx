@@ -1,5 +1,5 @@
-import { getSite } from "@/actions/get-site-action";
-import { getUser } from "@/actions/get-user-action";
+import { getSite } from "@/lib/getter/sites";
+import { getUser } from "@/lib/getter/users";
 import DetailsSidebar from "@/components/dashboard/details-sidebar";
 import { WebsiteHeader } from "@/components/dashboard/website-header";
 import { ArrowLeft } from "lucide-react";

@@ -1,4 +1,4 @@
-import { getUser } from "@/actions/get-user-action";
+import { getUser } from "@/lib/getter/users";
 import "@/app/app.css";
 import TopNavigation from "@/components/top-navigation";
 import { Toaster } from "@/components/ui/sonner";

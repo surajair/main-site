@@ -1,6 +1,6 @@
 "use client";
 
-import { FormSubmission, getFormSubmissions, GetFormSubmissionsResponse } from "@/actions/get-form-submissions-action";
+import { FormSubmission, getFormSubmissions, GetFormSubmissionsResponse } from "@/lib/getter/forms";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

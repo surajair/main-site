@@ -1,4 +1,4 @@
-import { getUser } from "@/actions/get-user-action";
+import { getUser } from "@/lib/getter/users";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "lucide-react";

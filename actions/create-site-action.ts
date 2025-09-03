@@ -5,7 +5,7 @@ import { Site } from "@/utils/types";
 import { Vercel } from "@vercel/sdk";
 import { getSupabaseAdmin } from "chai-next/server";
 import { revalidatePath } from "next/cache";
-import { getUser } from "./get-user-action";
+import { getUser } from "@/lib/getter/users";
 import { HOME_PAGE_BLOCKS } from "./home-page";
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 

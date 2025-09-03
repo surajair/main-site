@@ -139,8 +139,12 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
                   disabled={!keywordInput}
                   type="button"
                   onClick={addKeyword}
-                  variant="secondary"
-                  className="border border-solid border-primary">
+                  variant={!keywordInput ? "secondary" : "default"}
+                  className={
+                    !keywordInput
+                      ? "border border-solid border-gray-300 text-gray-500"
+                      : "border border-solid border-primary bg-primary text-primary-foreground hover:bg-primary/90"
+                  }>
                   Add
                 </Button>
               </div>
@@ -176,7 +180,7 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
               <Input
                 id="googleSiteVerification"
                 value={googleSiteVerification}
-                placeholder="eg: ABC123XYZ"
+                placeholder="eg: XXXXXX"
                 onChange={(e) => setGoogleSiteVerification(e.target.value)}
               />
             </div>
@@ -189,7 +193,7 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
               />
               <div>
                 <Label htmlFor="enableRobotsCrawling" className="cursor-pointer">
-                  Allow robots crawling
+                  Disallow robot crawling
                 </Label>
               </div>
             </div>

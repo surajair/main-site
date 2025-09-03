@@ -2,8 +2,6 @@
 
 import { getSupabaseAdmin } from "chai-next/server";
 
-
-
 export interface FormSubmissionData {
   [key: string]: string | number | boolean | null | undefined;
 }
@@ -32,6 +30,15 @@ export interface GetFormSubmissionsResponse {
   hasPrevPage: boolean;
 }
 
+/**
+ * Get form submissions for a website with pagination and search
+ * @param params - Parameters object
+ * @param params.websiteId - The website ID
+ * @param params.page - Page number (default: 1)
+ * @param params.limit - Items per page (default: 10)
+ * @param params.search - Search term (default: "")
+ * @returns Form submissions with pagination info
+ */
 export async function getFormSubmissions({
   websiteId,
   page = 1,

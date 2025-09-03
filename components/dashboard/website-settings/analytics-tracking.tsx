@@ -86,7 +86,7 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
               <Input
                 id="googleAnalyticsId"
                 value={googleAnalyticsId}
-                placeholder="eg: UA-123456789-1"
+                placeholder="eg: UA-XXXXXX"
                 onChange={(e) => setGoogleAnalyticsId(e.target.value)}
               />
             </div>
@@ -96,7 +96,7 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
               <Input
                 id="googleTagManagerId"
                 value={googleTagManagerId}
-                placeholder="eg: GTM-123456"
+                placeholder="eg: GTM-XXXXXX"
                 onChange={(e) => setGoogleTagManagerId(e.target.value)}
               />
             </div>
@@ -106,7 +106,7 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
               <Input
                 id="metaPixelId"
                 value={metaPixelId}
-                placeholder="eg: 123456789012345"
+                placeholder="eg: XXXXXX"
                 onChange={(e) => setMetaPixelId(e.target.value)}
               />
             </div>

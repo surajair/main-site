@@ -64,7 +64,7 @@ export default function SpamProtection({ websiteId, initial }: SpamProtectionPro
               <Input
                 id="recaptchaSiteKey"
                 value={recaptchaSiteKey}
-                placeholder="eg: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXqg6y0"
+                placeholder="eg: XXXXXX"
                 onChange={(e) => setRecaptchaSiteKey(e.target.value)}
               />
             </div>
@@ -74,7 +74,7 @@ export default function SpamProtection({ websiteId, initial }: SpamProtectionPro
               <Input
                 id="recaptchaSecretKey"
                 type={showRecaptchaSecretKey ? "text" : "password"}
-                placeholder="eg: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXqg6y0"
+                placeholder="eg: XXXXXX"
                 value={recaptchaSecretKey}
                 onChange={(e) => setRecaptchaSecretKey(e.target.value)}
               />

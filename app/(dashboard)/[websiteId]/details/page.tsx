@@ -1,6 +1,5 @@
-import { getSite } from "@/actions/get-site-action";
-import { getUser } from "@/actions/get-user-action";
-import { getWebsiteData } from "@/actions/get-website-data-action";
+import { getSite, getSiteData } from "@/lib/getter/sites";
+import { getUser } from "@/lib/getter/users";
 import AddDomainModal from "@/components/dashboard/add-domain-modal";
 import DeleteWebsiteButton from "@/components/dashboard/delete-website-button";
 import AnalyticsTracking from "@/components/dashboard/website-settings/analytics-tracking";
@@ -24,7 +23,7 @@ export default async function WebsiteDetailsPage({ params }: WebsiteDetailsPageP
   try {
     const user = await getUser();
     const siteData = await getSite(user.id, websiteId);
-    const initialData = await getWebsiteData(websiteId);
+    const initialData = await getSiteData(websiteId);
 
     return (
       <div className="flex-1">

@@ -1,10 +1,10 @@
-import { getSites } from "@/actions/get-sites-actions";
-import { getUser } from "@/actions/get-user-action";
+import { getSites } from "@/lib/getter/sites";
+import { getUser } from "@/lib/getter/users";
 import CreateNewWebsite from "@/components/dashboard/create-new-website";
 import WebsiteCard from "@/components/dashboard/website-card";
 import { Button } from "@/components/ui/button";
 import { getFeatureFlag } from "@/lib/openfeature/server";
-import { Site } from "@/utils/types";
+import { Site } from "@/lib/getter/sites";
 import { Globe, Plus } from "lucide-react";
 
 export default async function HomePage() {

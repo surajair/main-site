@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Site } from "@/utils/types";
+import { Site } from "@/lib/getter/sites";
 import { BookOpenText, Edit2, Globe, MoreVertical, MoveRight, Settings, Star } from "lucide-react";
 import Link from "next/link";
 

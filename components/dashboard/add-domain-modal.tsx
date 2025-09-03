@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Site } from "@/utils/types";
+import { Site } from "@/lib/getter/sites";
 import { AlertCircle, CheckCircle, ExternalLink, Globe, Loader, Pencil, RefreshCw } from "lucide-react";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -261,7 +261,12 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                       {subdomainSuffix ? <span>.{subdomainSuffix}</span> : null}
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button type="submit" size="sm" variant="secondary" disabled={!!savingSubdomain}>
+                      <Button 
+                        type="submit" 
+                        size="sm" 
+                        className={subdomainInput !== subdomainBase ? "bg-primary hover:bg-primary/90 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700"} 
+                        disabled={!!savingSubdomain || subdomainInput === subdomainBase}
+                      >
                         {savingSubdomain ? (
                           <>
                             <Loader className="h-3 w-3 animate-spin" />

@@ -43,9 +43,25 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [websiteName, setWebsiteName] = useState("");
+  const [subdomain, setSubdomain] = useState("");
+  const [isSubdomainModified, setIsSubdomainModified] = useState(false);
   const [defaultLanguage, setDefaultLanguage] = useState("en");
   const [isCreating, setIsCreating] = useState(false);
   const { value: siteLimits } = useFlag("no_of_sites", 1);
+
+  const handleWebsiteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setWebsiteName(value);
+    if (!isSubdomainModified) {
+      setSubdomain(toKebabCase(value));
+    }
+  };
+
+  const handleSubdomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toLowerCase().replace(/\s+/g, "");
+    setSubdomain(value);
+    setIsSubdomainModified(true);
+  };
 
   const handleCreateWebsite = async () => {
     if (!websiteName.trim()) return;
@@ -53,13 +69,13 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
     setIsCreating(true);
 
     try {
-      const subdomain = toKebabCase(websiteName.trim());
+      const finalSubdomain = subdomain.trim() || toKebabCase(websiteName.trim());
 
       const formData = {
         name: websiteName.trim(),
         fallbackLang: defaultLanguage,
         languages: [],
-        subdomain: subdomain,
+        subdomain: finalSubdomain,
       };
 
       const result = await createSite(formData);
@@ -86,6 +102,8 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
       setOpen(open);
       if (!open) {
         setWebsiteName("");
+        setSubdomain("");
+        setIsSubdomainModified(false);
         setDefaultLanguage("en");
         setIsCreating(false);
       }
@@ -110,21 +128,28 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
                   <Input
                     id="websiteName"
                     value={websiteName}
-                    onChange={(e) => setWebsiteName(e.target.value)}
+                    onChange={handleWebsiteNameChange}
                     placeholder="My Awesome Website"
                     className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 font-medium"
                   />
                 </div>
+              </div>
 
-                {/* URL Preview */}
-                {websiteName && (
-                  <div className="p-3 bg-gray-200 rounded-md">
-                    <Label className="text-sm text-gray-600">Subdomain</Label>
-                    <p className="font-mono text-sm text-blue-600">
-                      {toKebabCase(websiteName)}.{process.env.NEXT_PUBLIC_SUBDOMAIN || "example.com"}
-                    </p>
-                  </div>
-                )}
+              {/* Subdomain Input Field */}
+              <div className="space-y-2">
+                <Label htmlFor="subdomain">Subdomain</Label>
+                <div className="flex items-center gap-2 border border-border rounded">
+                  <Input
+                    id="subdomain"
+                    value={subdomain}
+                    onChange={handleSubdomainChange}
+                    placeholder="my-awesome-website"
+                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 font-medium font-mono"
+                  />
+                  <span className="text-sm text-muted-foreground pr-3">
+                    .{process.env.NEXT_PUBLIC_SUBDOMAIN || "example.com"}
+                  </span>
+                </div>
               </div>
 
               {/* Default Language */}
@@ -149,7 +174,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
               <div className="flex gap-3 pt-4">
                 <Button
                   onClick={handleCreateWebsite}
-                  disabled={!websiteName.trim() || isCreating}
+                  disabled={!websiteName.trim() || !subdomain.trim() || isCreating}
                   className="flex-1 flex items-center gap-x-3">
                   {isCreating ? (
                     <>

@@ -1,4 +1,4 @@
-import { getSession } from "@/actions/get-user-action";
+import { getSession } from "@/lib/getter/users";
 import "@/app/app.css";
 import { BrandLogo, BrandName } from "@/components/dashboard/branding";
 import { Metadata } from "next";

@@ -1,6 +1,11 @@
 "use client";
 
+import Link from "next/link";
+
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  const link = process.env.APP_DOMAIN?.includes("localhost")
+    ? "http://" + process.env.APP_DOMAIN
+    : "https://" + process.env.APP_DOMAIN;
   return (
     <html className="h-full">
       <body className="h-full">
@@ -19,9 +24,9 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
                 className="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
                 Try again
               </button>
-              <a href="https://chaibuilder.com" className="text-sm font-semibold text-white">
+              <Link href={link} className="text-sm font-semibold text-white">
                 Go back home <span aria-hidden="true">&rarr;</span>
-              </a>
+              </Link>
             </div>
           </div>
         </main>

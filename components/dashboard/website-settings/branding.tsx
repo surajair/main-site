@@ -19,15 +19,13 @@ interface BrandingProps {
 
 export default function Branding({ websiteId, initial }: BrandingProps) {
   const isValidImageUrl = (val?: string) => {
-    if (!val) return false;
-    try {
-      const u = new URL(val);
-      if (!/^https?:$/.test(u.protocol)) return false;
-      const pathname = u.pathname.toLowerCase();
-      return /(\.png|\.jpg|\.jpeg|\.svg|\.webp|\.ico|\.gif)$/.test(pathname);
-    } catch {
-      return false;
-    }
+   if (!val) return false;
+   try {
+     new URL(val);
+     return true;
+   } catch {
+     return false;
+   }
   };
 
   const [logoURL, setLogoURL] = useState(initial?.logoURL ?? "");
