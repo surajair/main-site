@@ -9,22 +9,17 @@ import { useRouter } from "next/navigation";
 const LogoAndBack = () => {
   const router = useRouter();
   return (
-    <Button variant={"ghost"} onClick={() => router.push("/")} className="flex items-center gap-2">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="lucide lucide-arrow-left-icon lucide-arrow-left">
-        <path d="m12 19-7-7 7-7" />
-        <path d="M19 12H5" />
+    <Button
+      variant={"ghost"}
+      onClick={() => router.push("/")}
+      className="flex items-center gap-1 hover:bg-transparent hover:text-primary p-1">
+      <svg width="800" height="800" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M21 11H5.41l5.3-5.29a1 1 0 1 0-1.42-1.42l-7 7a1.2 1.2 0 0 0-.21.33.94.94 0 0 0 0 .76 1.2 1.2 0 0 0 .21.33l7 7a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42L5.41 13H21a1 1 0 0 0 0-2"
+          fill="currentColor"
+        />
       </svg>
-      <p className="font-bold">Back</p>
+      <p className="">Back</p>
     </Button>
   );
 };
