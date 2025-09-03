@@ -1,6 +1,7 @@
-import { getUser } from "@/lib/getter/users";
+import { ProfileForm } from "@/components/dashboard/profile-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { getUser } from "@/lib/getter/users";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -8,7 +9,7 @@ export default async function Page() {
   const user = await getUser();
 
   // Extract user info with fallbacks
-  const displayName = user.user_metadata.full_name;
+  const displayName = user.user_metadata?.full_name;
   const email = user.email;
 
   return (
@@ -43,17 +44,7 @@ export default async function Page() {
         <div className="mb-8">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Details</h3>
           <div className="space-y-4">
-            {displayName && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                <input
-                  type="text"
-                  value={displayName}
-                  readOnly
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 cursor-not-allowed"
-                />
-              </div>
-            )}
+            <ProfileForm initialName={displayName || ""} />
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
               <input
