@@ -135,16 +135,7 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
                   }}
                   onChange={(e) => setKeywordInput(e.target.value)}
                 />
-                <Button
-                  disabled={!keywordInput}
-                  type="button"
-                  onClick={addKeyword}
-                  variant={!keywordInput ? "secondary" : "default"}
-                  className={
-                    !keywordInput
-                      ? "border border-solid border-gray-300 text-gray-500"
-                      : "border border-solid border-primary bg-primary text-primary-foreground hover:bg-primary/90"
-                  }>
+                <Button disabled={!keywordInput} type="button" onClick={addKeyword} variant="default">
                   Add
                 </Button>
               </div>
@@ -200,7 +191,14 @@ export default function SeoMetadata({ websiteId, initial }: SeoMetadataProps) {
 
             <div className="flex justify-end">
               <Button type="submit" disabled={saving || !hasChanges}>
-                {saving ? <Loader className="h-3 w-3 animate-spin" /> : "Save"}
+                {saving ? (
+                  <>
+                    <Loader className="h-3 w-3 animate-spin" />
+                    Saving
+                  </>
+                ) : (
+                  "Save"
+                )}
               </Button>
             </div>
           </form>

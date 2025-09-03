@@ -32,11 +32,14 @@ interface CreateNewWebsiteProps {
 }
 export function toKebabCase(str = "") {
   return String(str)
-    .replace(/([a-z\d])([A-Z])/g, "$1-$2")
-    .replace(/[\s_]+/g, "-")
-    .replace(/-+/g, "-")
     .toLowerCase()
-    .replace(/^-|-$/g, "");
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 export default function CreateNewWebsite({ children, totalSites }: CreateNewWebsiteProps) {
@@ -59,9 +62,9 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
   };
 
   const handleSubdomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.toLowerCase().replace(/\s+/g, "");
+    const value = toKebabCase(e.target.value);
     setSubdomain(value);
-    setIsSubdomainModified(true);
+    setIsSubdomainModified(value?.length > 0);
   };
 
   const handleCreateWebsite = async () => {
@@ -133,7 +136,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
                     value={websiteName}
                     onChange={handleWebsiteNameChange}
                     placeholder="My Awesome Website"
-                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 font-medium"
+                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                 </div>
               </div>
@@ -147,7 +150,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
                     value={subdomain}
                     onChange={handleSubdomainChange}
                     placeholder="my-awesome-website"
-                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 font-medium font-mono"
+                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                   <span className="text-sm text-muted-foreground pr-3">
                     .{process.env.NEXT_PUBLIC_SUBDOMAIN || "example.com"}
@@ -176,9 +179,9 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
               {/* Create Button */}
               <div className="flex gap-3 pt-4">
                 <Button
+                  className="w-full"
                   onClick={handleCreateWebsite}
-                  disabled={!websiteName.trim() || !subdomain.trim() || isCreating}
-                  className="flex-1 flex items-center gap-x-3">
+                  disabled={!websiteName.trim() || !subdomain.trim() || isCreating}>
                   {isCreating ? (
                     <>
                       <Loader className="h-3 w-3 animate-spin" />

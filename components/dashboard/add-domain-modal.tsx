@@ -200,7 +200,7 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                     className=" "
                     disabled={addDomainPending}
                   />
-                  <Button type="submit" disabled={addDomainPending}>
+                  <Button type="submit" disabled={addDomainPending || customDomain.length < 3}>
                     {addDomainPending ? (
                       <>
                         <Loader className="h-3 w-3 animate-spin" />
@@ -258,15 +258,12 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                         placeholder="your-name"
                         className="w-56 shrink-0"
                       />
-                      {subdomainSuffix ? <span>.{subdomainSuffix}</span> : null}
+                      {subdomainSuffix ? (
+                        <span className="italic text-muted-foreground">.{subdomainSuffix}</span>
+                      ) : null}
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button 
-                        type="submit" 
-                        size="sm" 
-                        className={subdomainInput !== subdomainBase ? "bg-primary hover:bg-primary/90 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700"} 
-                        disabled={!!savingSubdomain || subdomainInput === subdomainBase}
-                      >
+                      <Button type="submit" size="sm" disabled={!!savingSubdomain || subdomainInput === subdomainBase}>
                         {savingSubdomain ? (
                           <>
                             <Loader className="h-3 w-3 animate-spin" />
