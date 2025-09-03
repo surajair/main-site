@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getFeatureFlag } from "@/lib/openfeature/server";
 import { User as UserType } from "@supabase/supabase-js";
 import { ChevronDown, CreditCard, User } from "lucide-react";
 import Link from "next/link";
@@ -14,6 +15,10 @@ import { BrandLogo, BrandName } from "./dashboard/branding";
 import { LogoutButton } from "./dashboard/logout-button";
 
 async function TopNavigation({ user }: { user: UserType }) {
+  const plan = user.user_metadata?.plan || "Free Plan";
+  const role = user.user_metadata?.role || "Admin";
+  const showBillingInfo = await getFeatureFlag("billing", false);
+
   return (
     <header className="bg-white border-b border-gray-200 h-16">
       <div className="flex items-center justify-between h-full container">
@@ -44,7 +49,10 @@ async function TopNavigation({ user }: { user: UserType }) {
                   <span className="text-sm font-medium">
                     {user.user_metadata?.full_name || user.user_metadata?.email}
                   </span>
-                  <span className="text-xs text-primary">{user.user_metadata?.plan || "Free"} Plan</span>
+                  <span className="text-xs flex items-center gap-x-1 text-primary">
+                    <span>{role}</span> <span>-</span>
+                    <span>{plan}</span>
+                  </span>
                 </div>
                 <ChevronDown className="h-4 w-4" />
               </Button>
@@ -56,12 +64,14 @@ async function TopNavigation({ user }: { user: UserType }) {
                   Profile
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild className="cursor-pointer hover:bg-gray-100">
-                <Link href="/account/billing-and-plans" className="flex items-center">
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Billing & Plans
-                </Link>
-              </DropdownMenuItem>
+              {showBillingInfo && (
+                <DropdownMenuItem asChild className="cursor-pointer hover:bg-gray-100">
+                  <Link href="/account/billing-and-plans" className="flex items-center">
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Billing & Plans
+                  </Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <LogoutButton />
             </DropdownMenuContent>

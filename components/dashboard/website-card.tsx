@@ -9,8 +9,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Site } from "@/lib/getter/sites";
-import { BookOpenText, Edit2, Globe, MoreVertical, MoveRight, Settings, Star } from "lucide-react";
+import { Site } from "@/utils/types";
+import { useFlag } from "@openfeature/react-sdk";
+import { BookOpenText, Edit, Globe, MoreVertical, MoveRight, Settings, Star } from "lucide-react";
 import Link from "next/link";
 
 function formatDate(dateString: string) {
@@ -27,6 +28,7 @@ interface WebsiteCardProps {
 }
 
 export default function WebsiteCard({ site }: WebsiteCardProps) {
+  const { value: websiteSettings } = useFlag("website_settings", false);
   return (
     <Card className="hover:border-primary/50 duration-300 transition-all group shadow-none relative overflow-hidden">
       {/* Always-visible Controls Layer */}
@@ -35,17 +37,19 @@ export default function WebsiteCard({ site }: WebsiteCardProps) {
         <div className="absolute top-2 right-2 pointer-events-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 hover:border hover:border-primary/20"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}>
-                <MoreVertical className="h-3 w-3" />
-                <span className="sr-only">Open menu</span>
-              </Button>
+              {websiteSettings && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 hover:border hover:border-primary/20"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}>
+                  <MoreVertical className="h-3 w-3" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-white cursor-pointer">
               <DropdownMenuItem
@@ -70,17 +74,14 @@ export default function WebsiteCard({ site }: WebsiteCardProps) {
       </div>
       <Link href={`/${site.id}/editor`}>
         {/* Hover-expand Editor Button - Bottom Right */}
-        <div className="absolute bottom-2 right-2 pointer-events-auto">
-          <button className="flex items-center gap-2 border border-transparent group-hover:border-border rounded-full h-max pl-3 group-hover:bg-primary duration-300">
-            <span className="text-xs font-semibold leading-none text-primary group-hover:text-white group-hover:opacity-100 opacity-0 duration-300">
-              Go to editor
-            </span>
-            <div className="rounded-full border border-transparent p-1.5 bg-white group-hover:border-primary duration-300">
-              <MoveRight className="w-4 h-4 text-primary group-hover:hidden" />
-              <Edit2 className="w-4 h-4 text-primary hidden group-hover:block" />
-            </div>
-          </button>
+        <div className="absolute right-2 bottom-2 group-hover:bg-primary/10 duration-300 pointer-events-auto flex items-center justify-center">
+          <Button
+            variant="default"
+            className="opacity-0 group-hover:opacity-100 transition-opacity rounded-lg duration-300 shadow-xl hover:bg-primary/95 px-6">
+            <Edit /> Open in Editor
+          </Button>
         </div>
+        <MoveRight className="absolute right-2 bottom-2 text-primary group-hover:opacity-0 transition-opacity mr-2" />
 
         {/* Card Content */}
         <CardHeader>

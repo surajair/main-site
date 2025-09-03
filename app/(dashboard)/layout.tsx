@@ -1,8 +1,9 @@
-import { getUser } from "@/lib/getter/users";
 import "@/app/app.css";
 import TopNavigation from "@/components/top-navigation";
 import { Toaster } from "@/components/ui/sonner";
-import { FeatureFlagProvider } from "@/lib/openfeature/provider";
+import { getUser } from "@/lib/getter/users";
+import { FeatureFlagProvider } from "@/lib/openfeature/feature-flag-provider";
+import { fetchFeatureFlags } from "@/lib/openfeature/server";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import type React from "react";
@@ -20,11 +21,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const user = await getUser();
+  const featureFlags = await fetchFeatureFlags("admin", "free");
 
   return (
     <html dir="ltr" className="smooth-scroll">
       <body className={`${geist.className} flex h-screen flex-col`}>
-        <FeatureFlagProvider>
+        <FeatureFlagProvider featureFlags={featureFlags}>
           <Toaster richColors theme="light" />
           <TopNavigation user={user} />
           <main className="flex-1 container h-[calc(100vh-4rem)] pb-2 overflow-hidden">{children}</main>
