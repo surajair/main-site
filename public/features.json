@@ -1,13 +1,24 @@
 {
   "features": {
-    "create_site": true,
+    "create_site": false,
     "create_subdomain": true,
     "create_page": true,
     "create_partial": true,
     "style_page": true,
     "multi_user": false,
     "multilingual": true,
-    "publish": true
+    "publish_page": true,
+    "edit_seo": true,
+    "custom_domain": true,
+    "website_settings": true,
+    "blogs": false,
+    "ecommerce": false,
+    "llm_txt": false,
+    "multiple_libraries": false,
+    "site_library": false,
+    "multipage_publish_menu": false,
+    "revision_restore": false,
+    "ai": false
   },
   "plans": {
     "free": {
@@ -25,7 +36,7 @@
     }
   },
   "roles": {
-    "admin": {},
+    "admin": { "*": true },
     "editor": {},
     "designer": {
       "create_site": false,

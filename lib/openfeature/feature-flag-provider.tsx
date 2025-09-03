@@ -3,25 +3,17 @@
 import { InMemoryProvider, OpenFeature, OpenFeatureProvider } from "@openfeature/react-sdk";
 import { Loader } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getAllFeatures } from "./helper";
 
-export function FeatureFlagProvider({ children }: { children: React.ReactNode }) {
+export function FeatureFlagProvider({ children, featureFlags }: { children: React.ReactNode; featureFlags?: any }) {
   const [providerReady, setProviderReady] = useState(false);
 
   useEffect(() => {
-    async function loadFlags() {
-      try {
-        const res = await fetch("/features.json");
-        const flags = await res.json();
-        const updateFlags: any = getAllFeatures(flags);
-        const provider = new InMemoryProvider(updateFlags);
-        OpenFeature.setProvider(provider);
-        setProviderReady(true);
-      } catch {}
-    }
-
-    loadFlags();
-  }, []);
+    try {
+      const provider = new InMemoryProvider(featureFlags);
+      OpenFeature.setProvider(provider);
+      setProviderReady(true);
+    } catch {}
+  }, [featureFlags]);
 
   if (!providerReady) {
     return (
