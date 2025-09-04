@@ -31,7 +31,6 @@ import FormSubmissions from "./form-submissions";
 interface SettingsContextType {
   hasUnsavedChanges: boolean;
   setHasUnsavedChanges: (value: boolean) => void;
-  onSaveSuccess: () => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
@@ -97,12 +96,7 @@ export default function WebsiteSettingModal({ websiteId }: { websiteId: string |
           <DialogContent
             className="max-w-5xl overflow-y-auto"
             style={{ height: "80vh", maxHeight: "860px" }}
-            onInteractOutside={(e) => {
-              if (hasUnsavedChanges) {
-                e.preventDefault();
-                setShowConfirmDialog(true);
-              }
-            }}>
+            onInteractOutside={(e) => e.preventDefault()}>
             {open && <WebsiteSettingsContentWrapper websiteId={websiteId} onUnsavedChanges={setHasUnsavedChanges} />}
           </DialogContent>
         </Dialog>
@@ -157,12 +151,6 @@ function WebsiteSettingsContentWrapper({
     onUnsavedChanges(value);
   };
 
-  const onSaveSuccess = () => {
-    // Invalidate the website-settings query to refetch data
-    queryClient.invalidateQueries({ queryKey: ["website-settings", websiteId] });
-    setHasUnsavedChanges(false);
-  };
-
   const handleTabChange = (newTab: string) => {
     if (hasUnsavedChanges && newTab !== activeTab) {
       // If there are unsaved changes, show confirmation dialog
@@ -191,7 +179,6 @@ function WebsiteSettingsContentWrapper({
   const settingsContextValue = {
     hasUnsavedChanges,
     setHasUnsavedChanges,
-    onSaveSuccess,
   };
 
   const activeItem = sidebarItems.find((item) => item.id === activeTab);
@@ -203,6 +190,7 @@ function WebsiteSettingsContentWrapper({
       <div className="flex overflow-hidden">
         <div className="w-52 h-full bg-sidebar border-r border-sidebar-border pr-2">
           <h2 className="font-semibold text-sidebar-foreground px-2">Website Settings</h2>
+          <div className="text-xs font-medium px-2 text-primary">{data?.siteData?.name}</div>
 
           <nav className="pt-6">
             {sidebarItems.map((item) => {

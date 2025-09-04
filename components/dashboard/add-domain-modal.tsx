@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Site } from "@/lib/getter/sites";
+import { useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, CheckCircle, ExternalLink, Loader, Pencil, RefreshCw } from "lucide-react";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -18,6 +19,7 @@ interface AddDomainModalProps {
 }
 
 function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
+  const queryClient = useQueryClient();
   const [customDomain, setCustomDomain] = useState("");
   const [verifyingDomains, setVerifyingDomains] = useState<Set<string>>(new Set());
   const [domainConfig, setDomainConfig] = useState<any>(null);
@@ -56,7 +58,7 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
     const res = await updateSubdomain(siteData.id, sanitized);
     if (res.success) {
       toast.success("Subdomain updated");
-      window.location.reload();
+      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
     } else {
       toast.error(res.error || "Failed to update subdomain");
     }
@@ -84,6 +86,7 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
         setCustomDomain("");
         // Store the domain configuration data
         setDomainConfig(result.data);
+        queryClient.invalidateQueries({ queryKey: ["website-settings"] });
 
         if (result.configured) {
           toast.success("Domain added and configured successfully!");
@@ -110,8 +113,6 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
         if (showToast) {
           if (result.configured) {
             toast.success("Domain is now configured!");
-            // Trigger a page refresh to update the domain status
-            window.location.reload();
           } else {
             toast.info("Domain is still not configured.");
           }
@@ -156,9 +157,11 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
       </a>
 
       {!siteData.domain && (
-        <form action={addDomainAction} className="space-y-2">
+        <form action={addDomainAction} className="space-y-1">
           <input type="hidden" name="websiteId" value={websiteId} />
-          <Label htmlFor="custom-domain">Domain Name</Label>
+          <Label htmlFor="custom-domain" className="text-xs">
+            Domain Name
+          </Label>
           <div className="flex gap-2">
             <Input
               id="custom-domain"
@@ -197,7 +200,7 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
             <div className="flex items-center w-full justify-between gap-2">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-green-500" />
-                <span>{siteData.subdomain}</span>
+                <span className="text-sm">{siteData.subdomain}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline">Subdomain</Badge>
@@ -215,7 +218,7 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
             </div>
           ) : (
             <form action={saveSubdomain} className="flex justify-between w-full items-center gap-2">
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 border rounded-md px-2">
                 <Input
                   value={subdomainInput}
                   onChange={(e) => {
@@ -231,10 +234,10 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
                     const sanitized = withoutSuffix.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
                     setSubdomainInput(sanitized);
                   }}
-                  placeholder="your-name"
-                  className="w-64 shrink-0 border-0 border-gray-900 rounded-none border-b"
+                  placeholder="subdomain"
+                  className="w-64 shrink-0 border-0 shadow-none rounded-none px-0"
                 />
-                {subdomainSuffix ? <span className="font-light text-gray-500">.{subdomainSuffix}</span> : null}
+                {subdomainSuffix ? <span className="font-light text-gray-500 text-sm">.{subdomainSuffix}</span> : null}
               </div>
               <div className="flex items-center gap-2">
                 <Button type="submit" size="sm" disabled={!!savingSubdomain || subdomainInput === subdomainBase}>

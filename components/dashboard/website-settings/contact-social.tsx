@@ -4,6 +4,7 @@ import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -29,7 +30,8 @@ interface ContactSocialProps {
 }
 
 export default function ContactSocial({ websiteId, initial }: ContactSocialProps) {
-  const { setHasUnsavedChanges, onSaveSuccess } = useSettingsContext();
+  const { setHasUnsavedChanges } = useSettingsContext();
+  const queryClient = useQueryClient();
 
   const [contactEmail, setContactEmail] = useState(initial?.contactEmail ?? "");
   const [contactPhone, setContactPhone] = useState(initial?.contactPhone ?? "");
@@ -88,7 +90,7 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
         contactAddress,
         socialLinks: { ...socialLinks },
       });
-      onSaveSuccess(); // Notify context that save was successful
+      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save Contact & Social");
@@ -99,8 +101,10 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
   return (
     <section id="contact-social">
       <form action={saveAll} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="contactEmail">Contact email</Label>
+        <div className="space-y-1">
+          <Label htmlFor="contactEmail" className="text-xs">
+            Contact email
+          </Label>
           <Input
             id="contactEmail"
             placeholder="eg: user@example.com"
@@ -109,8 +113,10 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="contactPhone">Phone</Label>
+        <div className="space-y-1">
+          <Label htmlFor="contactPhone" className="text-xs">
+            Phone
+          </Label>
           <Input
             id="contactPhone"
             placeholder="eg: XXXXXX"
@@ -119,8 +125,10 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="contactAddress">Address</Label>
+        <div className="space-y-1">
+          <Label htmlFor="contactAddress" className="text-xs">
+            Address
+          </Label>
           <Input
             id="contactAddress"
             placeholder="eg: 123 Main St, City, Country"
@@ -129,8 +137,8 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
           />
         </div>
 
-        <div className="space-y-2">
-          <Label>Social links</Label>
+        <div className="space-y-1">
+          <Label className="text-xs">Social links</Label>
           <div className="space-y-2">
             {Object.entries(socialLinks).map(([key, val]) => (
               <div key={key} className="flex items-center gap-2">
@@ -164,6 +172,7 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
               <Button
                 type="button"
                 variant="ghost"
+                size="sm"
                 onClick={addSocial}
                 className="mt-1 px-0 hover:bg-transparent hover:underline hover:text-primary">
                 + Add social link

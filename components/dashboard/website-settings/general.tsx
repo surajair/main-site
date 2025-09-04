@@ -4,6 +4,7 @@ import { updateWebsiteName } from "@/actions/update-site-action";
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSettingsContext } from "../website-setting-modal";
 import SaveButton from "../website-setting-modal/save-button";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -28,7 +29,8 @@ const CURRENT_LANGUAGE = {
 // const timeZones = Intl.supportedValuesOf("timeZone");
 
 export default function General({ websiteId, initial }: GeneralProps) {
-  const { setHasUnsavedChanges, onSaveSuccess } = useSettingsContext();
+  const { setHasUnsavedChanges } = useSettingsContext();
+  const queryClient = useQueryClient();
 
   const [siteName, setSiteName] = useState(initial?.siteName ?? "");
   const [siteTagline, setSiteTagline] = useState(initial?.siteTagline ?? "");
@@ -70,7 +72,7 @@ export default function General({ websiteId, initial }: GeneralProps) {
 
       toast.success("General settings saved");
       setBaseline({ siteName, siteTagline, language, timezone });
-      onSaveSuccess(); // Notify context that save was successful
+      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save general settings");
@@ -81,8 +83,10 @@ export default function General({ websiteId, initial }: GeneralProps) {
   return (
     <section id="general">
       <form action={saveAll} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="siteName">Website name</Label>
+        <div className="space-y-1">
+          <Label htmlFor="siteName" className="text-xs">
+            Website name
+          </Label>
           <Input
             placeholder="eg: My Website"
             id="siteName"
@@ -91,8 +95,10 @@ export default function General({ websiteId, initial }: GeneralProps) {
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="siteTagline">Tagline</Label>
+        <div className="space-y-1">
+          <Label htmlFor="siteTagline" className="text-xs">
+            Tagline
+          </Label>
           <Input
             placeholder="eg: The best website ever"
             id="siteTagline"
@@ -101,10 +107,10 @@ export default function General({ websiteId, initial }: GeneralProps) {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {/* Disable This Language Select and Show Only the Language which is not Editable */}
-          <div className="space-y-2">
-            <Label>
+          <div className="space-y-1">
+            <Label className="text-xs">
               Language <small className="text-muted-foreground">(Cannot be changed)</small>
             </Label>
             <Input
@@ -112,7 +118,6 @@ export default function General({ websiteId, initial }: GeneralProps) {
               id={language}
               value={CURRENT_LANGUAGE[language as keyof typeof CURRENT_LANGUAGE]}
               readOnly
-              disabled
             />
           </div>
           {/* TODO: Need to handle this later for Now we  are Hiding this */}

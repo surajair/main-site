@@ -4,6 +4,7 @@ import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useQueryClient } from "@tanstack/react-query";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useSettingsContext } from "../website-setting-modal";
@@ -21,7 +22,8 @@ interface LegalComplianceProps {
 }
 
 export default function LegalCompliance({ websiteId, initial }: LegalComplianceProps) {
-  const { setHasUnsavedChanges, onSaveSuccess } = useSettingsContext();
+  const { setHasUnsavedChanges } = useSettingsContext();
+  const queryClient = useQueryClient();
 
   const [cookieConsentEnabled, setCookieConsentEnabled] = useState<boolean>(initial?.cookieConsentEnabled ?? false);
   const [privacyPolicyURL, setPrivacyPolicyURL] = useState(initial?.privacyPolicyURL ?? "");
@@ -55,7 +57,7 @@ export default function LegalCompliance({ websiteId, initial }: LegalComplianceP
         privacyPolicyURL,
         termsURL,
       });
-      onSaveSuccess(); // Notify context that save was successful
+      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save Legal & Compliance");
@@ -69,14 +71,16 @@ export default function LegalCompliance({ websiteId, initial }: LegalComplianceP
         <div className="flex items-center  gap-4">
           <Switch id="cookieConsentEnabled" checked={cookieConsentEnabled} onCheckedChange={setCookieConsentEnabled} />
           <div>
-            <Label htmlFor="cookieConsentEnabled" className="cursor-pointer">
+            <Label htmlFor="cookieConsentEnabled" className="cursor-pointer text-xs">
               Enable cookie consent panel
             </Label>
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="privacyPolicyURL">Privacy policy URL</Label>
+        <div className="space-y-1">
+          <Label htmlFor="privacyPolicyURL" className="text-xs">
+            Privacy policy URL
+          </Label>
           <Input
             id="privacyPolicyURL"
             value={privacyPolicyURL}
@@ -85,8 +89,10 @@ export default function LegalCompliance({ websiteId, initial }: LegalComplianceP
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="termsURL">Terms URL</Label>
+        <div className="space-y-1">
+          <Label htmlFor="termsURL" className="text-xs">
+            Terms URL
+          </Label>
           <Input
             placeholder="eg: https://example.com/terms"
             id="termsURL"

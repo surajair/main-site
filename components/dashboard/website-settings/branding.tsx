@@ -4,6 +4,7 @@ import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -19,7 +20,8 @@ interface BrandingProps {
 }
 
 export default function Branding({ websiteId, initial }: BrandingProps) {
-  const { setHasUnsavedChanges, onSaveSuccess } = useSettingsContext();
+  const { setHasUnsavedChanges } = useSettingsContext();
+  const queryClient = useQueryClient();
 
   const isValidImageUrl = (val?: string) => {
     if (!val) return false;
@@ -51,7 +53,7 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
       if (!res.success) throw new Error(res.error || "Failed to update branding");
       setBaseline({ logoURL, faviconURL });
       toast.success("Branding saved");
-      onSaveSuccess(); // Notify context that save was successful
+      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save branding");
@@ -62,8 +64,10 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
   return (
     <section id="branding">
       <form action={saveAll} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="logoURL">Logo URL</Label>
+        <div className="space-y-1">
+          <Label htmlFor="logoURL" className="text-xs">
+            Logo URL
+          </Label>
           <div className="flex items-center gap-2 relative">
             <Input
               id="logoURL"
@@ -91,8 +95,10 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
           ) : null}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="faviconURL">Favicon URL</Label>
+        <div className="space-y-1">
+          <Label htmlFor="faviconURL" className="text-xs">
+            Favicon URL
+          </Label>
           <div className="flex items-center gap-2 relative">
             <Input
               id="faviconURL"

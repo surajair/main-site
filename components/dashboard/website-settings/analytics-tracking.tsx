@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useQueryClient } from "@tanstack/react-query";
 import { Plus, Trash2 } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -22,7 +23,8 @@ interface AnalyticsTrackingProps {
 }
 
 export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrackingProps) {
-  const { setHasUnsavedChanges, onSaveSuccess } = useSettingsContext();
+  const { setHasUnsavedChanges } = useSettingsContext();
+  const queryClient = useQueryClient();
 
   const [googleAnalyticsId, setGoogleAnalyticsId] = useState(initial?.googleAnalyticsId ?? "");
   const [googleTagManagerId, setGoogleTagManagerId] = useState(initial?.googleTagManagerId ?? "");
@@ -69,7 +71,7 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
         metaPixelId,
         customTrackingScripts: [...customTrackingScripts],
       });
-      onSaveSuccess(); // Notify context that save was successful
+      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save Analytics & Tracking");
@@ -80,8 +82,10 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
   return (
     <section id="analytics-tracking">
       <form action={saveAll} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="googleAnalyticsId">Google Analytics ID</Label>
+        <div className="space-y-1">
+          <Label htmlFor="googleAnalyticsId" className="text-xs">
+            Google Analytics ID
+          </Label>
           <Input
             id="googleAnalyticsId"
             value={googleAnalyticsId}
@@ -90,8 +94,10 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="googleTagManagerId">Google Tag Manager ID</Label>
+        <div className="space-y-1">
+          <Label htmlFor="googleTagManagerId" className="text-xs">
+            Google Tag Manager ID
+          </Label>
           <Input
             id="googleTagManagerId"
             value={googleTagManagerId}
@@ -100,8 +106,10 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="metaPixelId">Meta Pixel ID</Label>
+        <div className="space-y-1">
+          <Label htmlFor="metaPixelId" className="text-xs">
+            Meta Pixel ID
+          </Label>
           <Input
             id="metaPixelId"
             value={metaPixelId}
@@ -110,8 +118,8 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
           />
         </div>
 
-        <div className="space-y-2">
-          <Label>Custom tracking scripts</Label>
+        <div className="space-y-1">
+          <Label className="text-xs">Custom tracking scripts</Label>
           <div className="flex items-start gap-2">
             <Textarea
               placeholder="<script>...</script> or a URL"

@@ -3,6 +3,7 @@
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useQueryClient } from "@tanstack/react-query";
 import { EyeClosedIcon, EyeIcon } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -18,7 +19,8 @@ interface SpamProtectionProps {
 }
 
 export default function SpamProtection({ websiteId, initial }: SpamProtectionProps) {
-  const { setHasUnsavedChanges, onSaveSuccess } = useSettingsContext();
+  const { setHasUnsavedChanges } = useSettingsContext();
+  const queryClient = useQueryClient();
 
   const [recaptchaSiteKey, setRecaptchaSiteKey] = useState(initial?.recaptchaSiteKey ?? "");
   const [recaptchaSecretKey, setRecaptchaSecretKey] = useState(initial?.recaptchaSecretKey ?? "");
@@ -46,7 +48,7 @@ export default function SpamProtection({ websiteId, initial }: SpamProtectionPro
       if (!res.success) throw new Error(res.error);
       toast.success("Spam Protection saved");
       setBaseline({ recaptchaSiteKey, recaptchaSecretKey });
-      onSaveSuccess(); // Notify context that save was successful
+      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       return { success: true } as const;
     } catch (e: any) {
       toast.error(e?.message || "Failed to save Spam Protection");
@@ -57,8 +59,10 @@ export default function SpamProtection({ websiteId, initial }: SpamProtectionPro
   return (
     <section id="spam-protection">
       <form action={saveAll} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="recaptchaSiteKey">ReCAPTCHA website key</Label>
+        <div className="space-y-1">
+          <Label htmlFor="recaptchaSiteKey" className="text-xs">
+            ReCAPTCHA website key
+          </Label>
           <Input
             id="recaptchaSiteKey"
             value={recaptchaSiteKey}
@@ -67,8 +71,10 @@ export default function SpamProtection({ websiteId, initial }: SpamProtectionPro
           />
         </div>
 
-        <div className="space-y-2 relative">
-          <Label htmlFor="recaptchaSecretKey">ReCAPTCHA secret key</Label>
+        <div className="space-y-1 relative">
+          <Label htmlFor="recaptchaSecretKey" className="text-xs">
+            ReCAPTCHA secret key
+          </Label>
           <Input
             id="recaptchaSecretKey"
             type={showRecaptchaSecretKey ? "text" : "password"}
