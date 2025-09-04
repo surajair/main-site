@@ -7,5 +7,5 @@ export default async function Page({ params }: { params: Promise<{ websiteId: st
   const supabaseServer = await getSupabaseAdmin();
   const { data } = await supabaseServer.from("app_domains").select("subdomain,domain").eq("app", websiteId).single();
 
-  return <Editor domain={data?.subdomain} />;
+  return <Editor domain={data?.subdomain} websiteId={websiteId} />;
 }

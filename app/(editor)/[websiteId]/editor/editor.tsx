@@ -1,13 +1,17 @@
 "use client";
 
+import WebsiteSettingModal from "@/components/dashboard/website-setting-modal";
 import { Button } from "@/components/ui/button";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ChaiBuilder from "chai-next";
 import { startsWith } from "lodash";
 import { useRouter } from "next/navigation";
 
 const LogoAndBack = () => {
   const router = useRouter();
+  console.log("##");
+
   return (
     <Button
       variant={"ghost"}
@@ -24,19 +28,23 @@ const LogoAndBack = () => {
   );
 };
 
-export default function Editor({ domain }: { domain?: string }) {
+const queryClient = new QueryClient();
+
+export default function Editor({ domain, websiteId }: { domain?: string; websiteId?: string }) {
   const { ready } = useSupabaseUser();
 
   return ready ? (
-    <ChaiBuilder
-      logo={LogoAndBack}
-      apiUrl="editor/api"
-      getPreviewUrl={(slug: string) =>
-        `//${domain}/api/preview?slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`
-      }
-      getLiveUrl={(slug: string) =>
-        `//${domain}/api/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`
-      }
-    />
+    <QueryClientProvider client={queryClient}>
+      <ChaiBuilder
+        logo={() => <WebsiteSettingModal websiteId={websiteId} />}
+        apiUrl="editor/api"
+        getPreviewUrl={(slug: string) =>
+          `//${domain}/api/preview?slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`
+        }
+        getLiveUrl={(slug: string) =>
+          `//${domain}/api/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`
+        }
+      />
+    </QueryClientProvider>
   ) : null;
 }
