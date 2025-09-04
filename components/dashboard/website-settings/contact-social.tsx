@@ -2,7 +2,6 @@
 
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Trash2 } from "lucide-react";
@@ -99,76 +98,82 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
 
   return (
     <section id="contact-social">
-      <Card className="shadow-none border-none">
-        <CardContent>
-          <form action={saveAll} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="contactEmail">Contact email</Label>
-              <Input
-                id="contactEmail"
-                placeholder="eg: user@example.com"
-                value={contactEmail}
-                onChange={(e) => setContactEmail(e.target.value)}
-              />
-            </div>
+      <form action={saveAll} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="contactEmail">Contact email</Label>
+          <Input
+            id="contactEmail"
+            placeholder="eg: user@example.com"
+            value={contactEmail}
+            onChange={(e) => setContactEmail(e.target.value)}
+          />
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="contactPhone">Phone</Label>
-              <Input
-                id="contactPhone"
-                placeholder="eg: XXXXXX"
-                value={contactPhone}
-                onChange={(e) => setContactPhone(e.target.value)}
-              />
-            </div>
+        <div className="space-y-2">
+          <Label htmlFor="contactPhone">Phone</Label>
+          <Input
+            id="contactPhone"
+            placeholder="eg: XXXXXX"
+            value={contactPhone}
+            onChange={(e) => setContactPhone(e.target.value)}
+          />
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="contactAddress">Address</Label>
-              <Input
-                id="contactAddress"
-                placeholder="eg: 123 Main St, City, Country"
-                value={contactAddress}
-                onChange={(e) => setContactAddress(e.target.value)}
-              />
-            </div>
+        <div className="space-y-2">
+          <Label htmlFor="contactAddress">Address</Label>
+          <Input
+            id="contactAddress"
+            placeholder="eg: 123 Main St, City, Country"
+            value={contactAddress}
+            onChange={(e) => setContactAddress(e.target.value)}
+          />
+        </div>
 
-            <div className="space-y-2">
-              <Label>Social links</Label>
-              <div className="space-y-2">
-                {Object.entries(socialLinks).map(([key, val]) => (
-                  <div key={key} className="flex items-center gap-2">
-                    <span className="w-56 shrink-0 text-sm text-muted-foreground capitalize">{key}</span>
-                    <Input value={val} onChange={(e) => setSocialLinks((s) => ({ ...s, [key]: e.target.value }))} />
-                    <Button type="button" variant="ghost" onClick={() => removeSocial(key)} className="shrink-0">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Platform name"
-                    value={newKey}
-                    onChange={(e) => setNewKey(e.target.value)}
-                    className="w-56 shrink-0"
-                  />
-                  <Input placeholder="https://..." value={newValue} onChange={(e) => setNewValue(e.target.value)} />
-                </div>
-                <div className="w-full flex items-center justify-start">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={addSocial}
-                    className="mt-1 px-0 hover:bg-transparent hover:underline hover:text-primary">
-                    + Add social link
-                  </Button>
-                </div>
+        <div className="space-y-2">
+          <Label>Social links</Label>
+          <div className="space-y-2">
+            {Object.entries(socialLinks).map(([key, val]) => (
+              <div key={key} className="flex items-center gap-2">
+                <Input
+                  placeholder="Platform name"
+                  value={key}
+                  className="w-56 shrink-0 bg-gray-100 cursor-default"
+                  readOnly
+                />
+                <Input value={val} onChange={(e) => setSocialLinks((s) => ({ ...s, [key]: e.target.value }))} />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="outline"
+                  onClick={() => removeSocial(key)}
+                  className="shrink-0">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
+            ))}
+            <div className="flex items-center gap-2">
+              <Input
+                placeholder="Platform name"
+                value={newKey}
+                onChange={(e) => setNewKey(e.target.value)}
+                className="w-56 shrink-0"
+              />
+              <Input placeholder="https://..." value={newValue} onChange={(e) => setNewValue(e.target.value)} />
             </div>
+            <div className="w-full flex items-center justify-start">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={addSocial}
+                className="mt-1 px-0 hover:bg-transparent hover:underline hover:text-primary">
+                + Add social link
+              </Button>
+            </div>
+          </div>
+        </div>
 
-            <SaveButton saving={saving} hasChanges={hasChanges} />
-          </form>
-        </CardContent>
-      </Card>
+        <SaveButton saving={saving} hasChanges={hasChanges} />
+      </form>
     </section>
   );
 }

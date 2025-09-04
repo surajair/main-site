@@ -1,6 +1,5 @@
 "use client";
 
-import SubmissionsPage from "@/app/(dashboard)/[websiteId]/form-submission/page";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +16,6 @@ import { Separator } from "@/components/ui/separator";
 import { getSite, getSiteData } from "@/lib/getter/sites";
 import { getUser } from "@/lib/getter/users";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ScrollArea } from "chai-next";
 import { Activity, BookOpenText, Globe, ImageIcon, Loader, Settings, Share2, Shield, ShieldCheck } from "lucide-react";
 import { createContext, useContext, useState } from "react";
 import AddDomainModal from "../add-domain-modal";
@@ -27,6 +25,7 @@ import ContactSocial from "../website-settings/contact-social";
 import General from "../website-settings/general";
 import LegalCompliance from "../website-settings/legal-compliance";
 import SpamProtection from "../website-settings/spam-protection";
+import FormSubmissions from "./form-submissions";
 
 // Context for managing unsaved changes across settings components
 interface SettingsContextType {
@@ -45,10 +44,6 @@ export function useSettingsContext() {
   return context;
 }
 
-interface WebsiteSettingsContentProps {
-  websiteId: string;
-}
-
 const sidebarItems = [
   { id: "general", label: "General", icon: Settings, component: General },
   { id: "domain", label: "Domain", icon: Globe, component: AddDomainModal },
@@ -61,7 +56,7 @@ const sidebarItems = [
     id: "form-submission",
     label: "Form submissions",
     icon: BookOpenText,
-    component: SubmissionsPage,
+    component: FormSubmissions,
   },
 ];
 
@@ -100,7 +95,8 @@ export default function WebsiteSettingModal({ websiteId }: { websiteId: string |
             </Button>
           </DialogTrigger>
           <DialogContent
-            className="max-w-7xl max-h-[80vh] overflow-y-auto h-[60vh]"
+            className="max-w-5xl overflow-y-auto"
+            style={{ height: "80vh", maxHeight: "860px" }}
             onInteractOutside={(e) => {
               if (hasUnsavedChanges) {
                 e.preventDefault();
@@ -198,23 +194,15 @@ function WebsiteSettingsContentWrapper({
     onSaveSuccess,
   };
 
-  if (isLoading || !data || !data.initialData.data || !data.siteData) {
-    return (
-      <div className="flex items-center justify-center py-8 min-h-[60vh]">
-        <Loader className="h-5 w-5 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   const activeItem = sidebarItems.find((item) => item.id === activeTab);
   const Icon = activeItem?.icon;
   const Component = activeItem?.component;
 
   return (
     <SettingsContext.Provider value={settingsContextValue}>
-      <div className="flex">
+      <div className="flex overflow-hidden">
         <div className="w-52 h-full bg-sidebar border-r border-sidebar-border pr-2">
-          <h2 className="text-lg font-playfair font-semibold text-sidebar-foreground px-2">Website Settings</h2>
+          <h2 className="font-semibold text-sidebar-foreground px-2">Website Settings</h2>
 
           <nav className="pt-6">
             {sidebarItems.map((item) => {
@@ -225,6 +213,8 @@ function WebsiteSettingsContentWrapper({
                   {item.id === "form-submission" && <Separator key={`${item.id}-separator`} className="my-2" />}
                   <Button
                     key={item.id}
+                    size="sm"
+                    disabled={isLoading}
                     className="w-full flex justify-start"
                     variant={activeTab === item.id ? "default" : "ghost"}
                     onClick={() => handleTabChange(item.id)}>
@@ -236,19 +226,25 @@ function WebsiteSettingsContentWrapper({
             })}
           </nav>
         </div>
-        <div className="flex-1">
-          <ScrollArea
-            className="h-[calc(100vh-10rem)] scroll-smooth overflow-y-auto px-6"
-            style={{ scrollBehavior: "smooth" }}>
-            <div className="flex items-center gap-x-2 pb-4">
+        {isLoading ? (
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <Loader className="animate-spin text-primary" />
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col">
+            <div className="flex items-center gap-x-2 pb-4 px-6">
               {Icon && <Icon className="h-5 w-5" />}
               <h2 className="font-semibold">{activeItem?.label}</h2>
             </div>
-            {Component && (
-              <Component websiteId={websiteId} initial={data.initialData.data} siteData={data.siteData as any} />
-            )}
-          </ScrollArea>
-        </div>
+            <div
+              className="h-full scroll-smooth overflow-y-auto px-6 no-scrollbar"
+              style={{ scrollBehavior: "smooth" }}>
+              {Component && (
+                <Component websiteId={websiteId} initial={data.initialData.data} siteData={data.siteData as any} />
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Tab Change Confirmation Dialog */}

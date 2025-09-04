@@ -1,7 +1,6 @@
 "use client";
 
 import { updateWebsiteData } from "@/actions/update-website-setting";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -66,46 +65,38 @@ export default function LegalCompliance({ websiteId, initial }: LegalComplianceP
 
   return (
     <section id="legal-compliance">
-      <Card className="shadow-none border-none">
-        <CardContent>
-          <form action={saveAll} className="space-y-4">
-            <div className="flex items-center  gap-4">
-              <Switch
-                id="cookieConsentEnabled"
-                checked={cookieConsentEnabled}
-                onCheckedChange={setCookieConsentEnabled}
-              />
-              <div>
-                <Label htmlFor="cookieConsentEnabled" className="cursor-pointer">
-                  Enable cookie consent panel
-                </Label>
-              </div>
-            </div>
+      <form action={saveAll} className="space-y-4">
+        <div className="flex items-center  gap-4">
+          <Switch id="cookieConsentEnabled" checked={cookieConsentEnabled} onCheckedChange={setCookieConsentEnabled} />
+          <div>
+            <Label htmlFor="cookieConsentEnabled" className="cursor-pointer">
+              Enable cookie consent panel
+            </Label>
+          </div>
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="privacyPolicyURL">Privacy policy URL</Label>
-              <Input
-                id="privacyPolicyURL"
-                value={privacyPolicyURL}
-                placeholder="eg: https://example.com/privacy"
-                onChange={(e) => setPrivacyPolicyURL(e.target.value)}
-              />
-            </div>
+        <div className="space-y-2">
+          <Label htmlFor="privacyPolicyURL">Privacy policy URL</Label>
+          <Input
+            id="privacyPolicyURL"
+            value={privacyPolicyURL}
+            placeholder="eg: https://example.com/privacy"
+            onChange={(e) => setPrivacyPolicyURL(e.target.value)}
+          />
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="termsURL">Terms URL</Label>
-              <Input
-                placeholder="eg: https://example.com/terms"
-                id="termsURL"
-                value={termsURL}
-                onChange={(e) => setTermsURL(e.target.value)}
-              />
-            </div>
+        <div className="space-y-2">
+          <Label htmlFor="termsURL">Terms URL</Label>
+          <Input
+            placeholder="eg: https://example.com/terms"
+            id="termsURL"
+            value={termsURL}
+            onChange={(e) => setTermsURL(e.target.value)}
+          />
+        </div>
 
-            <SaveButton saving={saving} hasChanges={hasChanges} />
-          </form>
-        </CardContent>
-      </Card>
+        <SaveButton saving={saving} hasChanges={hasChanges} />
+      </form>
     </section>
   );
 }

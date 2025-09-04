@@ -2,7 +2,6 @@
 
 import { updateWebsiteName } from "@/actions/update-site-action";
 import { updateWebsiteData } from "@/actions/update-website-setting";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSettingsContext } from "../website-setting-modal";
@@ -81,45 +80,43 @@ export default function General({ websiteId, initial }: GeneralProps) {
 
   return (
     <section id="general">
-      <Card className="shadow-none border-none">
-        <CardContent>
-          <form action={saveAll} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="siteName">Website name</Label>
-              <Input
-                placeholder="eg: My Website"
-                id="siteName"
-                value={siteName}
-                onChange={(e) => setSiteName(e.target.value)}
-              />
-            </div>
+      <form action={saveAll} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="siteName">Website name</Label>
+          <Input
+            placeholder="eg: My Website"
+            id="siteName"
+            value={siteName}
+            onChange={(e) => setSiteName(e.target.value)}
+          />
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="siteTagline">Tagline</Label>
-              <Input
-                placeholder="eg: The best website ever"
-                id="siteTagline"
-                value={siteTagline}
-                onChange={(e) => setSiteTagline(e.target.value)}
-              />
-            </div>
+        <div className="space-y-2">
+          <Label htmlFor="siteTagline">Tagline</Label>
+          <Input
+            placeholder="eg: The best website ever"
+            id="siteTagline"
+            value={siteTagline}
+            onChange={(e) => setSiteTagline(e.target.value)}
+          />
+        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Disable This Language Select and Show Only the Language which is not Editable */}
-              <div className="space-y-2">
-                <Label>
-                  Language <small className="text-muted-foreground">(Cannot be changed)</small>
-                </Label>
-                <Input
-                  className="bg-gray-100"
-                  id={language}
-                  value={CURRENT_LANGUAGE[language as keyof typeof CURRENT_LANGUAGE]}
-                  readOnly
-                  disabled
-                />
-              </div>
-              {/* TODO: Need to handle this later for Now we  are Hiding this */}
-              {/* <div className="space-y-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Disable This Language Select and Show Only the Language which is not Editable */}
+          <div className="space-y-2">
+            <Label>
+              Language <small className="text-muted-foreground">(Cannot be changed)</small>
+            </Label>
+            <Input
+              className="bg-gray-100"
+              id={language}
+              value={CURRENT_LANGUAGE[language as keyof typeof CURRENT_LANGUAGE]}
+              readOnly
+              disabled
+            />
+          </div>
+          {/* TODO: Need to handle this later for Now we  are Hiding this */}
+          {/* <div className="space-y-2">
                 <Label>Timezone</Label>
                 <Select value={timezone} onValueChange={(v) => setTimezone(v)}>
                   <SelectTrigger className="w-full">
@@ -134,12 +131,10 @@ export default function General({ websiteId, initial }: GeneralProps) {
                   </SelectContent>
                 </Select>
               </div> */}
-            </div>
+        </div>
 
-            <SaveButton saving={saving} hasChanges={hasChanges} />
-          </form>
-        </CardContent>
-      </Card>
+        <SaveButton saving={saving} hasChanges={hasChanges} />
+      </form>
     </section>
   );
 }
