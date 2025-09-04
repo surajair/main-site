@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader, Settings } from "lucide-react";
 import { useActionState, useState } from "react";
 import { toast } from "sonner";
@@ -26,7 +26,7 @@ const CURRENT_LANGUAGE = {
   es: "Spanish",
 };
 
-const timeZones = Intl.supportedValuesOf("timeZone");
+// const timeZones = Intl.supportedValuesOf("timeZone");
 
 export default function General({ websiteId, initial }: GeneralProps) {
   const [siteName, setSiteName] = useState(initial?.siteName ?? "");
@@ -118,8 +118,8 @@ export default function General({ websiteId, initial }: GeneralProps) {
                   disabled
                 />
               </div>
-
-              <div className="space-y-2">
+              {/* TODO: Need to handle this later for Now we  are Hiding this */}
+              {/* <div className="space-y-2">
                 <Label>Timezone</Label>
                 <Select value={timezone} onValueChange={(v) => setTimezone(v)}>
                   <SelectTrigger className="w-full">
@@ -133,7 +133,7 @@ export default function General({ websiteId, initial }: GeneralProps) {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex justify-end">

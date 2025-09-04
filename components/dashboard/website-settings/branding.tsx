@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Image as ImageIcon, Loader } from "lucide-react";
+import { Image as ImageIcon, Loader, X } from "lucide-react";
 import { useActionState, useState } from "react";
 import { toast } from "sonner";
 
@@ -65,12 +65,25 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
           <form action={saveAll} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="logoURL">Logo URL</Label>
-              <Input
-                id="logoURL"
-                placeholder="eg: https://example.com/logo.png"
-                value={logoURL}
-                onChange={(e) => setLogoURL(e.target.value)}
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  id="logoURL"
+                  placeholder="eg: https://example.com/logo.png"
+                  value={logoURL}
+                  onChange={(e) => setLogoURL(e.target.value)}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  className="h-9 bg-red-500 hover:bg-red-600 w-9 p-0 shrink-0"
+                  onClick={() => setLogoURL("")}
+                  disabled={logoURL === ""}
+                  title="Remove logo">
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
               {isValidImageUrl(logoURL) ? (
                 <div className="pt-1">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -81,12 +94,25 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
 
             <div className="space-y-2">
               <Label htmlFor="faviconURL">Favicon URL</Label>
-              <Input
-                id="faviconURL"
-                placeholder="eg: https://example.com/favicon.ico"
-                value={faviconURL}
-                onChange={(e) => setFaviconURL(e.target.value)}
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  id="faviconURL"
+                  placeholder="eg: https://example.com/favicon.ico"
+                  value={faviconURL}
+                  onChange={(e) => setFaviconURL(e.target.value)}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  className="h-9 bg-red-500 hover:bg-red-600 w-9 p-0 shrink-0"
+                  onClick={() => setFaviconURL("")}
+                  disabled={faviconURL === ""}
+                  title="Remove favicon">
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
               {isValidImageUrl(faviconURL) ? (
                 <div className="pt-1">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
