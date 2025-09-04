@@ -9,7 +9,7 @@ import { Loader, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
-import General from "./website-settings/general";
+import General from "./website-setting-modal/general";
 interface WebsiteInformationProps {
   websiteId: string;
   siteData: {

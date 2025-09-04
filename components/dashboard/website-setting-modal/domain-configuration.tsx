@@ -11,14 +11,14 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, CheckCircle, ExternalLink, Loader, Pencil, RefreshCw } from "lucide-react";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import DeleteDomainModal from "./delete-domain-modal";
+import DeleteDomainModal from "../delete-domain-modal";
 
-interface AddDomainModalProps {
+interface DomainConfigurationProps {
   websiteId: string;
   siteData: Site;
 }
 
-function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
+function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) {
   const queryClient = useQueryClient();
   const [customDomain, setCustomDomain] = useState("");
   const [verifyingDomains, setVerifyingDomains] = useState<Set<string>>(new Set());
@@ -404,6 +404,6 @@ function AddDomainModal({ websiteId, siteData }: AddDomainModalProps) {
   );
 }
 
-AddDomainModal.displayName = "AddDomainModal";
+DomainConfiguration.displayName = "DomainConfiguration";
 
-export default AddDomainModal;
+export default DomainConfiguration;

@@ -18,14 +18,14 @@ import { getUser } from "@/lib/getter/users";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Activity, BookOpenText, Globe, ImageIcon, Loader, Settings, Share2, Shield, ShieldCheck } from "lucide-react";
 import { createContext, useContext, useState } from "react";
-import AddDomainModal from "../add-domain-modal";
-import AnalyticsTracking from "../website-settings/analytics-tracking";
-import Branding from "../website-settings/branding";
-import ContactSocial from "../website-settings/contact-social";
-import General from "../website-settings/general";
-import LegalCompliance from "../website-settings/legal-compliance";
-import SpamProtection from "../website-settings/spam-protection";
+import AnalyticsTracking from "./analytics-tracking";
+import Branding from "./branding";
+import ContactSocial from "./contact-social";
+import DomainConfiguration from "./domain-configuration";
 import FormSubmissions from "./form-submissions";
+import General from "./general";
+import LegalCompliance from "./legal-compliance";
+import SpamProtection from "./spam-protection";
 
 // Context for managing unsaved changes across settings components
 interface SettingsContextType {
@@ -45,7 +45,7 @@ export function useSettingsContext() {
 
 const sidebarItems = [
   { id: "general", label: "General", icon: Settings, component: General },
-  { id: "domain", label: "Domain", icon: Globe, component: AddDomainModal },
+  { id: "domain", label: "Domain", icon: Globe, component: DomainConfiguration },
   { id: "branding", label: "Branding", icon: ImageIcon, component: Branding },
   { id: "contact-social", label: "Contact & Social", icon: Share2, component: ContactSocial },
   { id: "legal-compliance", label: "Legal Compliance", icon: ShieldCheck, component: LegalCompliance },

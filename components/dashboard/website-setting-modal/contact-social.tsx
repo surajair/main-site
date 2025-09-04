@@ -8,8 +8,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useSettingsContext } from "../website-setting-modal";
-import SaveButton from "../website-setting-modal/save-button";
+import { useSettingsContext } from ".";
+import SaveButton from "./save-button";
 
 type SocialLinks = Record<string, string> & {
   facebook?: string;
