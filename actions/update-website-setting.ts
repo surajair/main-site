@@ -1,7 +1,6 @@
 "use server";
 
 import { getSupabaseAdmin } from "chai-next/server";
-import { revalidatePath } from "next/cache";
 
 type AllowedField =
   | "siteName"

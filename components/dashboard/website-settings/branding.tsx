@@ -2,12 +2,14 @@
 
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Image as ImageIcon, Loader, X } from "lucide-react";
-import { useActionState, useState } from "react";
+import { X } from "lucide-react";
+import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useSettingsContext } from "../website-setting-modal";
+import SaveButton from "../website-setting-modal/save-button";
 
 interface BrandingProps {
   websiteId: string;
@@ -18,6 +20,8 @@ interface BrandingProps {
 }
 
 export default function Branding({ websiteId, initial }: BrandingProps) {
+  const { setHasUnsavedChanges, onSaveSuccess } = useSettingsContext();
+
   const isValidImageUrl = (val?: string) => {
     if (!val) return false;
     try {
@@ -37,12 +41,18 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
   });
   const hasChanges = logoURL !== baseline.logoURL || faviconURL !== baseline.faviconURL;
 
+  // Update unsaved changes in context whenever hasChanges changes
+  useEffect(() => {
+    setHasUnsavedChanges(hasChanges);
+  }, [hasChanges, setHasUnsavedChanges]);
+
   const [state, saveAll, saving] = useActionState(async () => {
     try {
       const res = await updateWebsiteData({ id: websiteId, updates: { logoURL, faviconURL } });
       if (!res.success) throw new Error(res.error || "Failed to update branding");
       setBaseline({ logoURL, faviconURL });
       toast.success("Branding saved");
+      onSaveSuccess(); // Notify context that save was successful
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save branding");
@@ -51,16 +61,8 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
   }, null);
 
   return (
-    <section id="branding" className="space-y-4">
-      <div className="flex items-center gap-2">
-        <ImageIcon className="h-5 w-5" />
-        <h2 className=" font-semibold">Branding</h2>
-      </div>
-      <Card className="shadow-none">
-        <CardHeader>
-          <CardTitle>Branding</CardTitle>
-          <CardDescription>Logo and favicon</CardDescription>
-        </CardHeader>
+    <section id="branding">
+      <Card className="shadow-none border-none">
         <CardContent>
           <form action={saveAll} className="space-y-4">
             <div className="space-y-2">
@@ -121,18 +123,7 @@ export default function Branding({ websiteId, initial }: BrandingProps) {
               ) : null}
             </div>
 
-            <div className="flex justify-end">
-              <Button type="submit" className="shrink-0" disabled={saving || !hasChanges}>
-                {saving ? (
-                  <>
-                    <Loader className="h-3 w-3 animate-spin" />
-                    Saving
-                  </>
-                ) : (
-                  "Save"
-                )}
-              </Button>
-            </div>
+            <SaveButton saving={saving} hasChanges={hasChanges} />
           </form>
         </CardContent>
       </Card>

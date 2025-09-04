@@ -1,13 +1,14 @@
 "use client";
 
 import { updateWebsiteData } from "@/actions/update-website-setting";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { EyeClosedIcon, EyeIcon, Loader, Shield } from "lucide-react";
-import { useActionState, useState } from "react";
+import { EyeClosedIcon, EyeIcon } from "lucide-react";
+import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useSettingsContext } from "../website-setting-modal";
+import SaveButton from "../website-setting-modal/save-button";
 
 interface SpamProtectionProps {
   websiteId: string;
@@ -18,6 +19,8 @@ interface SpamProtectionProps {
 }
 
 export default function SpamProtection({ websiteId, initial }: SpamProtectionProps) {
+  const { setHasUnsavedChanges, onSaveSuccess } = useSettingsContext();
+
   const [recaptchaSiteKey, setRecaptchaSiteKey] = useState(initial?.recaptchaSiteKey ?? "");
   const [recaptchaSecretKey, setRecaptchaSecretKey] = useState(initial?.recaptchaSecretKey ?? "");
   const [showRecaptchaSecretKey, setShowRecaptchaSecretKey] = useState(false);
@@ -30,6 +33,11 @@ export default function SpamProtection({ websiteId, initial }: SpamProtectionPro
   const hasChanges =
     recaptchaSiteKey !== baseline.recaptchaSiteKey || recaptchaSecretKey !== baseline.recaptchaSecretKey;
 
+  // Update unsaved changes in context whenever hasChanges changes
+  useEffect(() => {
+    setHasUnsavedChanges(hasChanges);
+  }, [hasChanges, setHasUnsavedChanges]);
+
   const [state, saveAll, saving] = useActionState(async () => {
     try {
       const res = await updateWebsiteData({
@@ -39,6 +47,7 @@ export default function SpamProtection({ websiteId, initial }: SpamProtectionPro
       if (!res.success) throw new Error(res.error);
       toast.success("Spam Protection saved");
       setBaseline({ recaptchaSiteKey, recaptchaSecretKey });
+      onSaveSuccess(); // Notify context that save was successful
       return { success: true } as const;
     } catch (e: any) {
       toast.error(e?.message || "Failed to save Spam Protection");
@@ -47,16 +56,8 @@ export default function SpamProtection({ websiteId, initial }: SpamProtectionPro
   }, null);
 
   return (
-    <section id="spam-protection" className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Shield className="h-5 w-5" />
-        <h2 className=" font-semibold">Spam Protection</h2>
-      </div>
-      <Card className="shadow-none">
-        <CardHeader>
-          <CardTitle>Spam Protection</CardTitle>
-          <CardDescription>Manage ReCAPTCHA keys</CardDescription>
-        </CardHeader>
+    <section id="spam-protection">
+      <Card className="shadow-none border-none">
         <CardContent>
           <form action={saveAll} className="space-y-4">
             <div className="space-y-2">
@@ -80,29 +81,18 @@ export default function SpamProtection({ websiteId, initial }: SpamProtectionPro
               />
               {showRecaptchaSecretKey ? (
                 <EyeIcon
-                  className="absolute right-3 top-[63%] -translate-y-1/2 w-4 h-4 cursor-pointer text-gray-500"
+                  className="absolute right-3 top-1/2  w-4 h-4 cursor-pointer text-gray-500"
                   onClick={() => setShowRecaptchaSecretKey(!showRecaptchaSecretKey)}
                 />
               ) : (
                 <EyeClosedIcon
-                  className="absolute right-3 top-[63%] -translate-y-1/2 w-4 h-4 cursor-pointer text-gray-500"
+                  className="absolute right-3 top-1/2  w-4 h-4 cursor-pointer text-gray-500"
                   onClick={() => setShowRecaptchaSecretKey(!showRecaptchaSecretKey)}
                 />
               )}
             </div>
 
-            <div className="flex justify-end">
-              <Button type="submit" disabled={saving || !hasChanges}>
-                {saving ? (
-                  <>
-                    <Loader className="h-3 w-3 animate-spin" />
-                    Saving
-                  </>
-                ) : (
-                  "Save"
-                )}
-              </Button>
-            </div>
+            <SaveButton saving={saving} hasChanges={hasChanges} />
           </form>
         </CardContent>
       </Card>

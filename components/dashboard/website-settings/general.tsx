@@ -2,13 +2,13 @@
 
 import { updateWebsiteName } from "@/actions/update-site-action";
 import { updateWebsiteData } from "@/actions/update-website-setting";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useSettingsContext } from "../website-setting-modal";
+import SaveButton from "../website-setting-modal/save-button";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader, Settings } from "lucide-react";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface GeneralProps {
@@ -29,6 +29,8 @@ const CURRENT_LANGUAGE = {
 // const timeZones = Intl.supportedValuesOf("timeZone");
 
 export default function General({ websiteId, initial }: GeneralProps) {
+  const { setHasUnsavedChanges, onSaveSuccess } = useSettingsContext();
+
   const [siteName, setSiteName] = useState(initial?.siteName ?? "");
   const [siteTagline, setSiteTagline] = useState(initial?.siteTagline ?? "");
   const [language, setLanguage] = useState(initial?.language ?? "en");
@@ -47,6 +49,11 @@ export default function General({ websiteId, initial }: GeneralProps) {
     language !== baseline.language ||
     timezone !== baseline.timezone;
 
+  // Update unsaved changes in context whenever hasChanges changes
+  useEffect(() => {
+    setHasUnsavedChanges(hasChanges);
+  }, [hasChanges, setHasUnsavedChanges]);
+
   const [state, saveAll, saving] = useActionState(async () => {
     try {
       // Update website name through the dedicated function
@@ -64,6 +71,7 @@ export default function General({ websiteId, initial }: GeneralProps) {
 
       toast.success("General settings saved");
       setBaseline({ siteName, siteTagline, language, timezone });
+      onSaveSuccess(); // Notify context that save was successful
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save general settings");
@@ -72,16 +80,8 @@ export default function General({ websiteId, initial }: GeneralProps) {
   }, null);
 
   return (
-    <section id="general" className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Settings className="h-5 w-5" />
-        <h2 className="font-semibold">General Settings</h2>
-      </div>
-      <Card className="shadow-none">
-        <CardHeader>
-          <CardTitle>General</CardTitle>
-          <CardDescription>Website name, tagline, language, and timezone</CardDescription>
-        </CardHeader>
+    <section id="general">
+      <Card className="shadow-none border-none">
         <CardContent>
           <form action={saveAll} className="space-y-4">
             <div className="space-y-2">
@@ -136,18 +136,7 @@ export default function General({ websiteId, initial }: GeneralProps) {
               </div> */}
             </div>
 
-            <div className="flex justify-end">
-              <Button type="submit" className="shrink-0" disabled={saving || !hasChanges}>
-                {saving ? (
-                  <>
-                    <Loader className="h-3 w-3 animate-spin" />
-                    Saving
-                  </>
-                ) : (
-                  "Save"
-                )}
-              </Button>
-            </div>
+            <SaveButton saving={saving} hasChanges={hasChanges} />
           </form>
         </CardContent>
       </Card>

@@ -2,7 +2,6 @@
 
 import { Vercel } from "@vercel/sdk";
 import { getSupabaseAdmin } from "chai-next/server";
-import { revalidatePath } from "next/cache";
 
 export async function updateSite(
   siteId: string,
@@ -23,7 +22,7 @@ export async function updateSite(
       const { data: currentApp } = await supabaseServer.from("apps").select("data").eq("id", siteId).single();
 
       updates.data = {
-        ...(currentApp?.data && typeof currentApp.data === 'object' ? currentApp.data : {}),
+        ...(currentApp?.data && typeof currentApp.data === "object" ? currentApp.data : {}),
         siteName: updates.name,
       };
     }
@@ -82,8 +81,6 @@ export async function updateSite(
 
     if (onlineError) throw onlineError;
 
-    revalidatePath(`/${siteId}/details`);
-    revalidatePath("/");
     return { success: true, data };
   } catch (error: any) {
     return { success: false, error: error?.message || "Failed to update site" };
@@ -100,7 +97,7 @@ export async function updateWebsiteName(siteId: string, websiteName: string) {
     const updates = {
       name: websiteName,
       data: {
-        ...(currentApp?.data && typeof currentApp.data === 'object' ? currentApp.data : {}),
+        ...(currentApp?.data && typeof currentApp.data === "object" ? currentApp.data : {}),
         siteName: websiteName,
       },
     };
@@ -113,8 +110,6 @@ export async function updateWebsiteName(siteId: string, websiteName: string) {
     const { error: onlineError } = await supabaseServer.from("apps_online").update(updates).eq("id", siteId);
     if (onlineError) throw onlineError;
 
-    revalidatePath(`/${siteId}/details`);
-    revalidatePath("/");
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error?.message || "Failed to update website name" };
@@ -166,8 +161,6 @@ export async function updateSubdomain(siteId: string, newSubdomainPrefix: string
 
     await supabaseServer.from("app_domains").update({ subdomain }).eq("app", siteId);
 
-    revalidatePath(`/${siteId}/details`);
-    revalidatePath("/");
     return { success: true, newSubdomain: subdomain };
   } catch (error: any) {
     return { success: false, error: error?.message || "Failed to update subdomain" };

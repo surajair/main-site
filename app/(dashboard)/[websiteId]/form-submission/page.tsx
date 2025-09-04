@@ -93,11 +93,6 @@ export default function SubmissionsPage() {
 
   return (
     <div className="flex- 1 space-y-4 h-full">
-      <div className="space-y-1">
-        <div className="font-semibold leading-none tracking-tight flex items-center gap-2">
-          <BookOpenText className="w-5 h-5" /> Form submissions
-        </div>
-      </div>
       {/* Search and Stats */}
       <div className="flex items-center justify-between gap-4">
         <div className="relative flex-1 max-w-sm">
@@ -106,7 +101,7 @@ export default function SubmissionsPage() {
             placeholder="Search submissions..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            style={{ paddingLeft: "35px" }}
           />
         </div>
         <div className="flex gap-4 text-sm text-muted-foreground">

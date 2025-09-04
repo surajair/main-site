@@ -2,12 +2,14 @@
 
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader, Share2, Trash2 } from "lucide-react";
-import { useActionState, useState } from "react";
+import { Trash2 } from "lucide-react";
+import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useSettingsContext } from "../website-setting-modal";
+import SaveButton from "../website-setting-modal/save-button";
 
 type SocialLinks = Record<string, string> & {
   facebook?: string;
@@ -28,6 +30,8 @@ interface ContactSocialProps {
 }
 
 export default function ContactSocial({ websiteId, initial }: ContactSocialProps) {
+  const { setHasUnsavedChanges, onSaveSuccess } = useSettingsContext();
+
   const [contactEmail, setContactEmail] = useState(initial?.contactEmail ?? "");
   const [contactPhone, setContactPhone] = useState(initial?.contactPhone ?? "");
   const [contactAddress, setContactAddress] = useState(initial?.contactAddress ?? "");
@@ -45,6 +49,12 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
     contactPhone !== baseline.contactPhone ||
     contactAddress !== baseline.contactAddress ||
     JSON.stringify(socialLinks) !== JSON.stringify(baseline.socialLinks);
+
+  // Update unsaved changes in context whenever hasChanges changes
+  useEffect(() => {
+    setHasUnsavedChanges(hasChanges);
+  }, [hasChanges, setHasUnsavedChanges]);
+
   const [newKey, setNewKey] = useState("");
   const [newValue, setNewValue] = useState("");
 
@@ -79,6 +89,7 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
         contactAddress,
         socialLinks: { ...socialLinks },
       });
+      onSaveSuccess(); // Notify context that save was successful
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save Contact & Social");
@@ -87,16 +98,8 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
   }, null);
 
   return (
-    <section id="contact-social" className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Share2 className="h-5 w-5" />
-        <h2 className=" font-semibold">Contact & Social</h2>
-      </div>
-      <Card className="shadow-none">
-        <CardHeader>
-          <CardTitle>Contact & Social</CardTitle>
-          <CardDescription>Ways to reach you and social profiles</CardDescription>
-        </CardHeader>
+    <section id="contact-social">
+      <Card className="shadow-none border-none">
         <CardContent>
           <form action={saveAll} className="space-y-4">
             <div className="space-y-2">
@@ -162,18 +165,7 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
               </div>
             </div>
 
-            <div className="flex justify-end">
-              <Button type="submit" disabled={saving || !hasChanges}>
-                {saving ? (
-                  <>
-                    <Loader className="h-3 w-3 animate-spin" />
-                    Saving
-                  </>
-                ) : (
-                  "Save"
-                )}
-              </Button>
-            </div>
+            <SaveButton saving={saving} hasChanges={hasChanges} />
           </form>
         </CardContent>
       </Card>

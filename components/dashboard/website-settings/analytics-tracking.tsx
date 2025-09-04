@@ -2,13 +2,15 @@
 
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Activity, Loader, Trash2 } from "lucide-react";
-import { useActionState, useState } from "react";
+import { Trash2 } from "lucide-react";
+import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useSettingsContext } from "../website-setting-modal";
+import SaveButton from "../website-setting-modal/save-button";
 
 interface AnalyticsTrackingProps {
   websiteId: string;
@@ -21,6 +23,8 @@ interface AnalyticsTrackingProps {
 }
 
 export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrackingProps) {
+  const { setHasUnsavedChanges, onSaveSuccess } = useSettingsContext();
+
   const [googleAnalyticsId, setGoogleAnalyticsId] = useState(initial?.googleAnalyticsId ?? "");
   const [googleTagManagerId, setGoogleTagManagerId] = useState(initial?.googleTagManagerId ?? "");
   const [metaPixelId, setMetaPixelId] = useState(initial?.metaPixelId ?? "");
@@ -38,6 +42,11 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
     googleTagManagerId !== baseline.googleTagManagerId ||
     metaPixelId !== baseline.metaPixelId ||
     JSON.stringify(customTrackingScripts) !== JSON.stringify(baseline.customTrackingScripts);
+
+  // Update unsaved changes in context whenever hasChanges changes
+  useEffect(() => {
+    setHasUnsavedChanges(hasChanges);
+  }, [hasChanges, setHasUnsavedChanges]);
 
   const addScript = () => {
     const v = scriptInput.trim();
@@ -61,6 +70,7 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
         metaPixelId,
         customTrackingScripts: [...customTrackingScripts],
       });
+      onSaveSuccess(); // Notify context that save was successful
       return { success: true };
     } catch (e: any) {
       toast.error(e?.message || "Failed to save Analytics & Tracking");
@@ -69,16 +79,8 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
   }, null);
 
   return (
-    <section id="analytics-tracking" className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Activity className="h-5 w-5" />
-        <h2 className=" font-semibold">Analytics & Tracking</h2>
-      </div>
-      <Card className="shadow-none">
-        <CardHeader>
-          <CardTitle>Analytics & Tracking</CardTitle>
-          <CardDescription>Analytics IDs and extra tracking</CardDescription>
-        </CardHeader>
+    <section id="analytics-tracking">
+      <Card className="shadow-none border-none">
         <CardContent>
           <form action={saveAll} className="space-y-4">
             <div className="space-y-2">
@@ -146,18 +148,7 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
               )}
             </div>
 
-            <div className="flex justify-end">
-              <Button type="submit" disabled={saving || !hasChanges}>
-                {saving ? (
-                  <>
-                    <Loader className="h-3 w-3 animate-spin" />
-                    Saving
-                  </>
-                ) : (
-                  "Save"
-                )}
-              </Button>
-            </div>
+            <SaveButton saving={saving} hasChanges={hasChanges} />
           </form>
         </CardContent>
       </Card>
