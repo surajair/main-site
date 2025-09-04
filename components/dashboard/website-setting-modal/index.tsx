@@ -59,7 +59,9 @@ function WebsiteSettingsContent({ websiteId }: WebsiteSettingsContentProps) {
     );
   }
 
-  const Component = sidebarItems.find((item) => item.id === activeTab)?.component;
+  const activeItem = sidebarItems.find((item) => item.id === activeTab);
+  const Icon = activeItem?.icon;
+  const Component = activeItem?.component;
 
   return (
     <div className="flex">
@@ -90,6 +92,10 @@ function WebsiteSettingsContent({ websiteId }: WebsiteSettingsContentProps) {
         <ScrollArea
           className="h-[calc(100vh-10rem)] scroll-smooth overflow-y-auto px-8"
           style={{ scrollBehavior: "smooth" }}>
+          <div className="flex items-center gap-x-2">
+            {Icon && <Icon className="h-5 w-5" />}
+            <h2 className="font-semibold">{activeItem?.label}</h2>
+          </div>
           {Component && <Component websiteId={websiteId} initial={data.initialData} siteData={data.siteData as any} />}
         </ScrollArea>
       </div>
