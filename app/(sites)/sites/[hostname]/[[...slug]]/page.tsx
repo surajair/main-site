@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 
 loadWebBlocks();
 
-export const dynamic = "force-static"; // Remove this if you want to use ssr mode
+export const dynamic = "force-static";
 
 export const generateMetadata = async (props: { params: Promise<{ hostname: string; slug: string[] }> }) => {
   const nextParams = await props.params;
