@@ -1,6 +1,6 @@
-import { getSession } from "@/lib/getter/users";
 import "@/app/app.css";
-import { BrandLogo, BrandName } from "@/components/dashboard/branding";
+import { BrandLogo, BrandName } from "@/components/branding";
+import { getSession } from "@/lib/getter/users";
 import { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";
