@@ -1,6 +1,6 @@
-import { ProfileForm } from "@/components/dashboard/websites-dashboard/profile-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ProfileForm } from "@/components/websites-dashboard/profile-form";
 import { getUser } from "@/lib/getter/users";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
