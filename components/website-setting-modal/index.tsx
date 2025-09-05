@@ -44,6 +44,12 @@ export function useSettingsContext() {
 }
 
 const sidebarItems = [
+  {
+    id: "form-submission",
+    label: "Form submissions",
+    icon: BookOpenText,
+    component: FormSubmissions,
+  },
   { id: "general", label: "General", icon: Settings, component: General },
   { id: "domain", label: "Domain", icon: Globe, component: DomainConfiguration },
   { id: "branding", label: "Branding", icon: ImageIcon, component: BrandingConfiguration },
@@ -51,12 +57,6 @@ const sidebarItems = [
   { id: "legal-compliance", label: "Legal Compliance", icon: ShieldCheck, component: LegalCompliance },
   { id: "spam-protection", label: "Spam Protection", icon: Shield, component: SpamProtection },
   { id: "analytics-tracking", label: "Analytics Tracking", icon: Activity, component: AnalyticsTracking },
-  {
-    id: "form-submission",
-    label: "Form submissions",
-    icon: BookOpenText,
-    component: FormSubmissions,
-  },
 ];
 
 export default function WebsiteSettingModal({ websiteId }: { websiteId: string | undefined }) {
@@ -205,7 +205,6 @@ function WebsiteSettingsContentWrapper({
 
               return (
                 <>
-                  {item.id === "form-submission" && <Separator key={`${item.id}-separator`} className="my-2" />}
                   <Button
                     key={item.id}
                     size="sm"
@@ -216,6 +215,7 @@ function WebsiteSettingsContentWrapper({
                     <Icon className="h-4 w-4" />
                     {item.label}
                   </Button>
+                  {item.id === "form-submission" && <Separator key={`${item.id}-separator`} className="my-2" />}
                 </>
               );
             })}
