@@ -15,11 +15,11 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { getSite, getSiteData } from "@/lib/getter/sites";
 import { getUser } from "@/lib/getter/users";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Activity, BookOpenText, Globe, ImageIcon, Loader, Settings, Share2, Shield, ShieldCheck } from "lucide-react";
 import { createContext, useContext, useState } from "react";
 import AnalyticsTracking from "./analytics-tracking";
-import Branding from "./branding";
+import BrandingConfiguration from "./branding-configuration";
 import ContactSocial from "./contact-social";
 import DomainConfiguration from "./domain-configuration";
 import FormSubmissions from "./form-submissions";
@@ -46,7 +46,7 @@ export function useSettingsContext() {
 const sidebarItems = [
   { id: "general", label: "General", icon: Settings, component: General },
   { id: "domain", label: "Domain", icon: Globe, component: DomainConfiguration },
-  { id: "branding", label: "Branding", icon: ImageIcon, component: Branding },
+  { id: "branding", label: "Branding", icon: ImageIcon, component: BrandingConfiguration },
   { id: "contact-social", label: "Contact & Social", icon: Share2, component: ContactSocial },
   { id: "legal-compliance", label: "Legal Compliance", icon: ShieldCheck, component: LegalCompliance },
   { id: "spam-protection", label: "Spam Protection", icon: Shield, component: SpamProtection },
@@ -132,7 +132,6 @@ function WebsiteSettingsContentWrapper({
   const [hasUnsavedChanges, setHasUnsavedChangesInternal] = useState(false);
   const [showTabChangeDialog, setShowTabChangeDialog] = useState(false);
   const [pendingTabChange, setPendingTabChange] = useState<string | null>(null);
-  const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
     queryKey: ["website-settings", websiteId],
@@ -143,7 +142,7 @@ function WebsiteSettingsContentWrapper({
       return { siteData, initialData };
     },
     enabled: !!websiteId,
-    initialData: { siteData: {} as any, initialData: {} as any },
+    initialData: null,
   });
 
   const setHasUnsavedChanges = (value: boolean) => {
@@ -184,6 +183,14 @@ function WebsiteSettingsContentWrapper({
   const activeItem = sidebarItems.find((item) => item.id === activeTab);
   const Icon = activeItem?.icon;
   const Component = activeItem?.component;
+
+  if (isLoading || !data) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <Loader className="animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <SettingsContext.Provider value={settingsContextValue}>
