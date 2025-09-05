@@ -1,4 +1,5 @@
 "use client";
+import "@/app/app.css";
 
 import Link from "next/link";
 
