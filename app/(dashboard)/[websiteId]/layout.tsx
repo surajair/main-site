@@ -1,7 +1,5 @@
 import { getSite } from "@/lib/getter/sites";
 import { getUser } from "@/lib/getter/users";
-import DetailsSidebar from "@/components/dashboard/details-sidebar";
-import { WebsiteHeader } from "@/components/dashboard/website-header";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
@@ -20,18 +18,7 @@ export default async function ProjectLayout({ children, params }: ProjectLayoutP
     const user = await getUser();
     const siteData = await getSite(user.id, websiteId);
 
-    return (
-      <div className="bg-background h-full flex flex-col">
-        <div className="h-12">
-          <WebsiteHeader projectName={siteData.name} siteData={siteData} />
-        </div>
-
-        <div className="flex-1 h-full flex">
-          <DetailsSidebar />
-          <div className="flex-1 py-6 pl-6">{children}</div>
-        </div>
-      </div>
-    );
+    return <div className="bg-background h-full flex flex-col">{children}</div>;
   } catch (error) {
     // Fallback UI in case of error
     return (

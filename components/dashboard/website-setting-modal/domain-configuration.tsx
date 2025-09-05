@@ -11,7 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, CheckCircle, ExternalLink, Loader, Pencil, RefreshCw } from "lucide-react";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import DeleteDomainModal from "../delete-domain-modal";
+import DeleteDomainModal from "./delete-domain-modal";
 
 interface DomainConfigurationProps {
   websiteId: string;

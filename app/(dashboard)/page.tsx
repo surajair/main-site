@@ -1,5 +1,5 @@
-import CreateNewWebsite from "@/components/dashboard/create-new-website";
-import GoToWebsite from "@/components/dashboard/go-to-website";
+import CreateNewWebsite from "@/components/dashboard/websites-dashboard/create-new-website";
+import GoToWebsite from "@/components/dashboard/websites-dashboard/go-to-website";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

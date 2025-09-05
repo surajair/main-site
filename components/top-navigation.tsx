@@ -12,7 +12,7 @@ import { User as UserType } from "@supabase/supabase-js";
 import { ChevronDown, CreditCard, User } from "lucide-react";
 import Link from "next/link";
 import { BrandLogo, BrandName } from "./dashboard/branding";
-import { LogoutButton } from "./dashboard/logout-button";
+import { LogoutButton } from "./dashboard/websites-dashboard/logout-button";
 
 async function TopNavigation({ user }: { user: UserType }) {
   const plan = user.user_metadata?.plan || "Free Plan";

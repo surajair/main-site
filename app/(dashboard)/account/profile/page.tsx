@@ -1,4 +1,4 @@
-import { ProfileForm } from "@/components/dashboard/profile-form";
+import { ProfileForm } from "@/components/dashboard/websites-dashboard/profile-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getUser } from "@/lib/getter/users";

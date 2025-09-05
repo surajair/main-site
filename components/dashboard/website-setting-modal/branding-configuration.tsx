@@ -8,7 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useSettingsContext } from ".";
+import { useSettingsContext } from "./index";
 import SaveButton from "./save-button";
 
 interface BrandingProps {
@@ -19,7 +19,7 @@ interface BrandingProps {
   };
 }
 
-export default function Branding({ websiteId, initial }: BrandingProps) {
+export default function BrandingConfiguration({ websiteId, initial }: BrandingProps) {
   const { setHasUnsavedChanges } = useSettingsContext();
   const queryClient = useQueryClient();
 
