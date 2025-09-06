@@ -269,12 +269,12 @@ const WebsitesPopoverContent = ({ websiteId }: { websiteId: string }) => {
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-2">
-        {websites?.map((site: any) => (
+      <div className="flex-1 min-h-0 overflow-y-auto px-2">
+        {websites?.map((site: any, index) => (
           <Link
             key={site.id}
             href={`/${site.id}/editor`}
-            className={`relative group cursor-pointer pl-2 py-1 flex items-center justify-between rounded-sm`}>
+            className={`relative group cursor-pointer p-2 flex items-center justify-between duration-300 ${index + 1 === websites?.length ? "" : "border-b"}`}>
             <div className={`w-full text-left text-sm`}>
               {site?.id === websiteId ? (
                 <span className="text-primary">{site.name}</span>
@@ -343,7 +343,7 @@ export default function WebsiteSettingModal({ websiteId }: { websiteId: string |
   return (
     websiteId && (
       <OpenFeatureProvider>
-        <div className="flex items-center border rounded-md p-0">
+        <div className="flex items-center border rounded-md p-0 h-9 px-px">
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="w-8 h-8">
