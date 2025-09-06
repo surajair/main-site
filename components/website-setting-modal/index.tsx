@@ -21,9 +21,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "chai-next";
 import {
   Activity,
   BookOpenText,
-  ChevronDown,
   Globe,
   ImageIcon,
+  ListChecks,
   Loader,
   MoreHorizontal,
   Plus,
@@ -255,14 +255,14 @@ const WebsitesPopoverContent = ({ websiteId }: { websiteId: string }) => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-4 h-80 w-80">
+      <div className="flex items-center justify-center p-4 h-80 w-96">
         <Loader className="h-4 w-4 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="w-80 max-h-[40vh] flex flex-col">
+    <div className="w-96 max-h-[40vh] flex flex-col">
       {/* Fixed Header */}
       <div className="flex-shrink-0 py-3 px-2 border-b bg-gray-50">
         <h3 className="font-bold text-xs px-2">Your Websites</h3>
@@ -308,7 +308,7 @@ const WebsitesPopoverContent = ({ websiteId }: { websiteId: string }) => {
         <CreateNewWebsite totalSites={websites?.length || 0}>
           <Button className="w-full" size="sm">
             <Plus className="h-4 w-4" />
-            Create New Website
+            Add New Website
           </Button>
         </CreateNewWebsite>
       </div>
@@ -347,11 +347,11 @@ export default function WebsiteSettingModal({ websiteId }: { websiteId: string |
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="w-8 h-8">
-                <ChevronDown />
+                <ListChecks />
                 <span className="sr-only">Website manager</span>
               </Button>
             </PopoverTrigger>
-            <PopoverContent side="bottom" className="ml-2 p-0 border border-primary/30 shadow-2xl overflow-hidden">
+            <PopoverContent side="bottom" className="ml-2 p-0 border border-primary/30 shadow-2xl overflow-hidden w-96">
               <WebsitesPopoverContent websiteId={websiteId} />
             </PopoverContent>
           </Popover>
