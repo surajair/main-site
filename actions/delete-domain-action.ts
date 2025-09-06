@@ -2,7 +2,6 @@
 
 import { Vercel } from "@vercel/sdk";
 import { getSupabaseAdmin } from "chai-next/server";
-import { revalidatePath } from "next/cache";
 
 export async function deleteDomain(domain: string, websiteId: string) {
   try {
@@ -26,8 +25,6 @@ export async function deleteDomain(domain: string, websiteId: string) {
       .eq("app", websiteId);
 
     if (updateError) throw updateError;
-
-    revalidatePath(`/${websiteId}/details`);
 
     return {
       success: true,

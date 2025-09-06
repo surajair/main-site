@@ -1,6 +1,6 @@
 import "@/app/app.css";
-import TopNavigation from "@/components/top-navigation";
 import { Toaster } from "@/components/ui/sonner";
+import TopNavigation from "@/components/websites-dashboard/top-navigation";
 import { getUser } from "@/lib/getter/users";
 import { FeatureFlagProvider } from "@/lib/openfeature/feature-flag-provider";
 import { fetchFeatureFlags } from "@/lib/openfeature/server";

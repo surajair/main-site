@@ -74,7 +74,7 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
               placeholder="eg: https://example.com/logo.png"
               value={logoURL}
               onChange={(e) => setLogoURL(e.target.value)}
-              className="flex-1"
+              className="flex-1 pr-8"
             />
             <Button
               type="button"
@@ -90,7 +90,7 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
           {isValidImageUrl(logoURL) ? (
             <div className="pt-1">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={logoURL} alt="logo" className="h-10 w-auto object-contain" />
+              <img src={logoURL} alt="logo" className="h-10 w-auto object-contain rounded" />
             </div>
           ) : null}
         </div>
@@ -105,7 +105,7 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
               placeholder="eg: https://example.com/favicon.ico"
               value={faviconURL}
               onChange={(e) => setFaviconURL(e.target.value)}
-              className="flex-1"
+              className="flex-1 pr-8"
             />
             <Button
               type="button"
@@ -121,7 +121,7 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
           {isValidImageUrl(faviconURL) ? (
             <div className="pt-1">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={faviconURL} alt="favicon" className="h-6 w-6 object-contain" />
+              <img src={faviconURL} alt="favicon" className="h-6 w-6 object-contain rounded" />
             </div>
           ) : null}
         </div>

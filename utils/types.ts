@@ -1,12 +1,13 @@
-export type Site = {
+export interface Site {
   id: string;
   name: string;
   createdAt: string;
-  fallbackLang: string;
-  languages: string[];
-  apiKey: string;
+  fallbackLang?: string;
+  languages?: string[];
+  apiKey?: string;
   domain?: string;
   subdomain?: string;
   hosting?: string;
-  domainConfigured?: boolean;
-};
+  domainConfigured: boolean;
+  data: any;
+}

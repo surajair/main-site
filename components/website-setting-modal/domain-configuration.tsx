@@ -65,12 +65,16 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
     return res as any;
   }, null as any);
 
-  const defaultDomain = useMemo(() => {
+  const defaultDomains = useMemo(() => {
+    const displayDomains = [];
     // Show domain if available and configured, otherwise show subdomain
     if (siteData.domain && siteData.domainConfigured) {
-      return siteData.domain;
+      displayDomains.push(siteData.domain);
     }
-    return siteData.subdomain;
+    if (siteData.subdomain) {
+      displayDomains.push(siteData.subdomain);
+    }
+    return displayDomains;
   }, [siteData]);
 
   const [addDomainState, addDomainAction, addDomainPending] = useActionState(
@@ -143,18 +147,21 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
     }
   }, [siteData.domain]);
 
-  if (!defaultDomain) return null;
+  if (!defaultDomains.length) return null;
 
   return (
     <section id="domain" className="space-y-4">
-      <a
-        className="flex items-center gap-x-2 text-blue-500 hover:text-primary"
-        href={`https://${defaultDomain}`}
-        target="_blank"
-        rel="noopener noreferrer">
-        {defaultDomain}
-        <ExternalLink className="h-4 w-4" />
-      </a>
+      {defaultDomains.map((domain) => (
+        <a
+          key={domain}
+          className="flex items-center gap-x-2 text-blue-500 hover:text-primary"
+          href={`https://${domain}`}
+          target="_blank"
+          rel="noopener noreferrer">
+          {domain}
+          <ExternalLink className="h-4 w-4" />
+        </a>
+      ))}
 
       {!siteData.domain && (
         <form action={addDomainAction} className="space-y-1">

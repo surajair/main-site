@@ -1,10 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import CreateNewWebsite from "@/components/websites-dashboard/create-new-website";
+import CreateNewWebsite from "@/components/website-setting-modal/create-new-website";
 import GoToWebsite from "@/components/websites-dashboard/go-to-website";
 import { getSites } from "@/lib/getter/sites";
-import { getUser } from "@/lib/getter/users";
 import { Site } from "@/utils/types";
 import { Edit, Globe, MoveRight, Plus, Star } from "lucide-react";
 import Link from "next/link";
@@ -25,16 +24,15 @@ interface ProcessedSite extends Site {
 }
 
 export default async function HomePage() {
-  const user = await getUser();
-  const data = await getSites(user.id, true);
+  const data = await getSites();
   const sites: Site[] = data as Site[];
 
   // Process sites data on server-side
-  const processedSites: ProcessedSite[] = sites?.map((site) => ({
+  const processedSites: ProcessedSite[] = sites?.map((site: any) => ({
     ...site,
     formattedDate: formatDate(site.createdAt),
-    displayUrl: site.subdomain || site.domain || "",
-    hasUrl: !!(site.subdomain || site.domain),
+    displayUrl: site.app_domains?.[0].subdomain || site.app_domains?.[0].domain || "",
+    hasUrl: !!(site.app_domains?.[0].subdomain || site.app_domains?.[0].domain),
   }));
 
   return (

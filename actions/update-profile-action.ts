@@ -1,7 +1,6 @@
 "use server";
 
 import { createClient } from "@/chai/supabase.auth.server";
-import { revalidatePath } from "next/cache";
 
 export async function updateUserProfile(fullName: string) {
   const supabase = await createClient();
@@ -16,6 +15,5 @@ export async function updateUserProfile(fullName: string) {
     throw new Error(error.message);
   }
 
-  revalidatePath("/account/profile");
   return data;
 }

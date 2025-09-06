@@ -240,7 +240,8 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
   const [contactPhone, setContactPhone] = useState(initial?.contactPhone ?? "");
   const [contactAddress, setContactAddress] = useState(initial?.contactAddress ?? "");
   const [socialLinks, setSocialLinks] = useState<SocialLinkItem[]>(objectToArray(initial?.socialLinks ?? {}));
-
+  const [selectedPlatform, setSelectedPlatform] = useState("");
+  const [newValue, setNewValue] = useState("");
   const [baseline, setBaseline] = useState({
     contactEmail: initial?.contactEmail ?? "",
     contactPhone: initial?.contactPhone ?? "",
@@ -273,7 +274,7 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
       const baselineComplete = arrayToObject(baseline.socialLinks);
 
       const condOne = JSON.stringify(currentComplete) !== JSON.stringify(baselineComplete);
-      const condTwo = !(selectedPlatform && newValue.trim());
+      const condTwo = selectedPlatform?.trim().length > 0 && newValue?.trim().length > 0;
       return condOne || condTwo;
     } catch (error) {
       return true;
@@ -290,9 +291,6 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
   useEffect(() => {
     setHasUnsavedChanges(hasChanges);
   }, [hasChanges, setHasUnsavedChanges]);
-
-  const [selectedPlatform, setSelectedPlatform] = useState("");
-  const [newValue, setNewValue] = useState("");
 
   // Check if all existing social links have both platform and URL filled
   const hasIncompleteLinks = socialLinks.some((item) => !item.key.trim() || !item.value.trim());

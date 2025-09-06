@@ -3,7 +3,6 @@
 import { Site } from "@/utils/types";
 import { Vercel } from "@vercel/sdk";
 import { getSupabaseAdmin } from "chai-next/server";
-import { revalidatePath } from "next/cache";
 
 export async function addDomain(site: Site, domain: string) {
   try {
@@ -38,7 +37,6 @@ export async function addDomain(site: Site, domain: string) {
 
     if (error) throw error;
 
-    revalidatePath(`/${site.id}/details`);
     return {
       success: true,
       data: checkConfiguration,

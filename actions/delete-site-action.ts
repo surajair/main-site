@@ -3,7 +3,6 @@
 import { getSession } from "@/lib/getter/users";
 import { Vercel } from "@vercel/sdk";
 import { getSupabaseAdmin } from "chai-next/server";
-import { revalidatePath } from "next/cache";
 
 const noIsNotFound = (error: any) => {
   return error && !error.message.includes("not found");
@@ -55,6 +54,5 @@ export async function deleteSite(siteId: string) {
     throw error;
   }
 
-  revalidatePath("/");
   return true;
 }

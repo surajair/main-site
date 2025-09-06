@@ -1,5 +1,3 @@
-import { getSite } from "@/lib/getter/sites";
-import { getUser } from "@/lib/getter/users";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
@@ -11,13 +9,8 @@ interface ProjectLayoutProps {
   }>;
 }
 
-export default async function ProjectLayout({ children, params }: ProjectLayoutProps) {
-  const { websiteId } = await params;
-
+export default async function ProjectLayout({ children }: ProjectLayoutProps) {
   try {
-    const user = await getUser();
-    const siteData = await getSite(user.id, websiteId);
-
     return <div className="bg-background h-full flex flex-col">{children}</div>;
   } catch (error) {
     // Fallback UI in case of error

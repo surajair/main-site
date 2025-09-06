@@ -1,11 +1,11 @@
 "use server";
 
+import { getUser } from "@/lib/getter/users";
 import { encodedApiKey } from "@/utils/api-key";
 import { Site } from "@/utils/types";
 import { Vercel } from "@vercel/sdk";
 import { getSupabaseAdmin } from "chai-next/server";
 import { revalidatePath } from "next/cache";
-import { getUser } from "@/lib/getter/users";
 import { HOME_PAGE_BLOCKS } from "./home-page";
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 
@@ -138,7 +138,6 @@ export async function createApiKey(appId: string) {
     const apiKey = encodedApiKey(appId, ENCRYPTION_KEY as string);
     const { data, error } = await supabaseServer.from("app_api_keys").insert({ apiKey, app: appId }).select().single();
     if (error) throw error;
-    revalidatePath(`/${appId}/details`);
     return { success: true, apiKey: data.apiKey };
   } catch (error: any) {
     return {
