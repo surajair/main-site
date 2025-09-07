@@ -44,11 +44,7 @@ export async function deleteSite(siteId: string) {
   await supabaseServer.from("app_domains").delete().eq("app", siteId);
 
   // Mark as deleted by setting deletedAt
-  const { error } = await supabaseServer
-    .from("apps")
-    .update({ deletedAt: new Date().toISOString() })
-    .eq("id", siteId)
-    .eq("user", session?.user?.id);
+  const { error } = await supabaseServer.from("apps").update({ deletedAt: new Date().toISOString() }).eq("id", siteId);
 
   if (noIsNotFound(error)) {
     throw error;

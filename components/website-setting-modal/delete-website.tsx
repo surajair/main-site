@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -30,7 +29,6 @@ function DeleteWebsite({ websiteId, websiteName, onDeleted }: DeleteWebsiteProps
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const router = useRouter();
 
   const deleteAction = async (e: React.MouseEvent) => {
     e.preventDefault();

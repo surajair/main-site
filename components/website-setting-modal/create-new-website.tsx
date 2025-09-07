@@ -50,9 +50,9 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
   const [isSubdomainModified, setIsSubdomainModified] = useState(false);
   const [defaultLanguage, setDefaultLanguage] = useState("en");
   const [isCreating, setIsCreating] = useState(false);
-  const { value: siteLimits } = useFlag("no_of_sites", 1);
+  // const { value: siteLimits } = useFlag("no_of_sites", 1);
   const { value: canCreateSite } = useFlag("create_site", true);
-
+  const siteLimits = 50;
   const handleWebsiteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setWebsiteName(value);
@@ -144,7 +144,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
               {/* Subdomain Input Field */}
               <div className="space-y-2">
                 <Label htmlFor="subdomain">Subdomain</Label>
-                <div className="flex items-center gap-2 border border-border rounded">
+                <div className="flex items-center gap-2 border border-border rounded pr-2">
                   <Input
                     id="subdomain"
                     value={subdomain}

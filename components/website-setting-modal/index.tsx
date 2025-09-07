@@ -12,10 +12,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { getSite, getSites } from "@/lib/getter";
-import { OpenFeatureProvider } from "@openfeature/react-sdk";
+import { getSite } from "@/lib/getter";
 import { useQuery } from "@tanstack/react-query";
 import { Popover, PopoverContent, PopoverTrigger } from "chai-next";
 import {
@@ -34,6 +32,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { createContext, useContext, useState } from "react";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import AnalyticsTracking from "./analytics-tracking";
 import BrandingConfiguration from "./branding-configuration";
 import ContactSocial from "./contact-social";
@@ -243,16 +243,17 @@ function WebsiteSettingsContent({
   );
 }
 
-const WebsitesPopoverContent = ({ websiteId }: { websiteId: string }) => {
-  const {
-    data: websites,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["websites-list"],
-    queryFn: getSites,
-  });
-
+const WebsitesPopoverContent = ({
+  websiteId,
+  websites,
+  isLoading,
+  refetch,
+}: {
+  websiteId: string;
+  websites: any;
+  isLoading: boolean;
+  refetch: () => void;
+}) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-4 h-80 w-96">
@@ -262,68 +263,70 @@ const WebsitesPopoverContent = ({ websiteId }: { websiteId: string }) => {
   }
 
   return (
-    <div className="w-96 max-h-[40vh] flex flex-col">
+    <Card className="w-96 max-h-[40vh] flex flex-col">
       {/* Fixed Header */}
-      <div className="flex-shrink-0 py-3 px-2 border-b bg-gray-50">
-        <h3 className="font-bold text-xs px-2">Your Websites</h3>
-      </div>
-
-      {/* Scrollable Content */}
-      <div className="flex-1 min-h-0 overflow-y-auto px-2">
-        {websites?.map((site: any, index) => (
-          <Link
-            key={site.id}
-            href={`/${site.id}/editor`}
-            className={`relative group cursor-pointer p-2 flex items-center justify-between duration-300 ${index + 1 === websites?.length ? "" : "border-b"}`}>
-            <div className={`w-full text-left text-sm`}>
-              {site?.id === websiteId ? (
-                <span className="text-primary">{site.name}</span>
-              ) : (
-                <>
-                  <span className="block group-hover:hidden duration-300">{site.name}</span>
-                  <span className="hidden group-hover:block text-primary/80 duration-300 transition-colors">
-                    {site.name}
-                  </span>
-                </>
-              )}
-            </div>
-            <div className="absolute right-0 top-1/2 -translate-y-1/2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 p-0 hover:border">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" side="right" className="w-32">
-                  <DeleteWebsite websiteId={site.id} websiteName={site.name} onDeleted={refetch} />
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </Link>
+      <CardHeader className="py-4 border-b">
+        <CardTitle className="text-sm flex items-center justify-between">
+          <span>Your Website</span>
+          <span className="text-muted-foreground">{websites?.length} websites</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex-1 min-h-0 max-h-96 overflow-y-auto space-y-2 rounded-lg p-4">
+        {websites?.map((site: any) => (
+          <div key={site.id} className="group relative overflow-hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-200">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" side="right" className="w-32">
+                <DeleteWebsite websiteId={site.id} websiteName={site.name} onDeleted={refetch} />
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Link href={`/${site?.id}/editor`} className="block p-3 rounded-md border hover:bg-muted transition-colors">
+              <div className="flex items-center justify-between">
+                <h3 className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>{site.name}</h3>
+              </div>
+            </Link>
+          </div>
         ))}
-      </div>
+      </CardContent>
 
       {/* Fixed Footer */}
-      <div className="flex-shrink-0 p-3 border-t bg-white">
+      <CardFooter className="flex-shrink-0 p-3 border-t bg-white">
         <CreateNewWebsite totalSites={websites?.length || 0}>
           <Button className="w-full" size="sm">
             <Plus className="h-4 w-4" />
             Add New Website
           </Button>
         </CreateNewWebsite>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 };
 
-export default function WebsiteSettingModal({ websiteId }: { websiteId: string | undefined }) {
+export default function WebsiteSettingModal({
+  websiteId,
+  websites,
+  isLoading,
+  refetch,
+}: {
+  websiteId: string | undefined;
+  websites: any;
+  isLoading: boolean;
+  refetch: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showWebsiteList, setShowWebsiteList] = useState(false);
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && hasUnsavedChanges) {
-      // If trying to close with unsaved changes, show confirmation dialog
       setShowConfirmDialog(true);
     } else {
       setOpen(newOpen);
@@ -340,21 +343,30 @@ export default function WebsiteSettingModal({ websiteId }: { websiteId: string |
     setShowConfirmDialog(false);
   };
 
+  const hasWebsites = !isLoading && websites && websites?.length > 0;
+
   return (
-    websiteId && (
-      <OpenFeatureProvider>
-        <div className="flex items-center border rounded-md p-0 h-9 px-px">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="w-8 h-8">
-                <ListChecks />
-                <span className="sr-only">Website manager</span>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent side="bottom" className="ml-2 p-0 border border-primary/30 shadow-2xl overflow-hidden w-96">
-              <WebsitesPopoverContent websiteId={websiteId} />
-            </PopoverContent>
-          </Popover>
+    <>
+      <div className="flex items-center border rounded-md p-0 h-9 px-px">
+        <Popover open={showWebsiteList || !websiteId || !hasWebsites} onOpenChange={setShowWebsiteList}>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon" className="w-8 h-8">
+              <ListChecks />
+              <span className="sr-only">Website manager</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            side="bottom"
+            className={`ml-2 p-0 border rounded-xl border-primary/30 shadow-2xl overflow-hidden w-96`}>
+            <WebsitesPopoverContent
+              websiteId={websiteId || ""}
+              websites={websites}
+              isLoading={isLoading}
+              refetch={refetch}
+            />
+          </PopoverContent>
+        </Popover>
+        {websiteId && (
           <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
               <Button variant="ghost" size="icon" className="p-0 w-8 h-8">
@@ -369,17 +381,17 @@ export default function WebsiteSettingModal({ websiteId }: { websiteId: string |
               {open && <WebsiteSettingsContent websiteId={websiteId} onUnsavedChanges={setHasUnsavedChanges} />}
             </DialogContent>
           </Dialog>
-        </div>
+        )}
+      </div>
 
-        <UnsavedChangesDialog
-          open={showConfirmDialog}
-          onOpenChange={setShowConfirmDialog}
-          onCancel={handleCancelClose}
-          onConfirm={handleConfirmClose}
-          description="You have unsaved changes. Are you sure you want to close without saving?"
-          confirmText="Close without saving"
-        />
-      </OpenFeatureProvider>
-    )
+      <UnsavedChangesDialog
+        open={showConfirmDialog}
+        onOpenChange={setShowConfirmDialog}
+        onCancel={handleCancelClose}
+        onConfirm={handleConfirmClose}
+        description="You have unsaved changes. Are you sure you want to close without saving?"
+        confirmText="Close without saving"
+      />
+    </>
   );
 }
