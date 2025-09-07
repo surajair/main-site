@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFlag } from "@openfeature/react-sdk";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -50,9 +51,10 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
   const [isSubdomainModified, setIsSubdomainModified] = useState(false);
   const [defaultLanguage, setDefaultLanguage] = useState("en");
   const [isCreating, setIsCreating] = useState(false);
-  // const { value: siteLimits } = useFlag("no_of_sites", 1);
+  const { value: siteLimits } = useFlag("no_of_sites", 1);
   const { value: canCreateSite } = useFlag("create_site", true);
-  const siteLimits = 50;
+  const queryClient = useQueryClient();
+
   const handleWebsiteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setWebsiteName(value);
@@ -90,6 +92,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
         // Reset form
         setWebsiteName("");
         setDefaultLanguage("en");
+        queryClient.invalidateQueries({ queryKey: ["websites-list"] });
         router.push(`/${result.data.id}/editor`);
       } else {
         toast.error(result.error || "Failed to create website");

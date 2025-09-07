@@ -15,39 +15,36 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { toast } from "sonner";
 
-interface DeleteWebsiteProps {
-  websiteId: string;
-  websiteName: string;
-  onDeleted?: () => void;
-}
-
-function DeleteWebsite({ websiteId, websiteName, onDeleted }: DeleteWebsiteProps) {
+function DeleteWebsite({ websiteId, websiteName }: { websiteId: string; websiteName: string }) {
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
-  const [deleting, setDeleting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const deleteAction = async (e: React.MouseEvent) => {
-    e.preventDefault();
+  const [, deleteAction, deleting] = useActionState(async () => {
     try {
-      setDeleting(true);
+      setIsDeleting(true);
       await deleteSite(websiteId);
-      toast.success("Website deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["websites-list"] });
       setIsDialogOpen(false);
-      onDeleted?.();
+      toast.success("Website deleted successfully");
       return { success: true };
     } catch (error: any) {
-      toast.error(error.message || "Failed to delete website");
+      toast.error(error?.message || "Failed to delete website");
+      setIsDeleting(false);
       return { success: false, error: error.message };
-    } finally {
-      setDeleting(false);
     }
-  };
+  }, null);
 
   const handleDialogClose = (open: boolean) => {
+    // Prevent closing dialog while deleting
+    if (deleting) return;
+
     setIsDialogOpen(open);
     if (!open) {
       setDeleteConfirmation("");
@@ -81,17 +78,20 @@ function DeleteWebsite({ websiteId, websiteName, onDeleted }: DeleteWebsiteProps
             value={deleteConfirmation}
             onChange={(e) => setDeleteConfirmation(e.target.value)}
             placeholder="DELETE"
-            disabled={deleting}
+            disabled={isDeleting}
           />
         </div>
         <AlertDialogFooter className="pt-4">
-          <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             type="submit"
-            disabled={deleteConfirmation.toLowerCase() !== "delete" || deleting}
-            onClick={deleteAction}
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteAction();
+            }}
+            disabled={deleteConfirmation.toLowerCase() !== "delete" || isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90 ">
-            {deleting ? (
+            {isDeleting ? (
               <>
                 <Loader className="h-3 w-3 animate-spin" />
                 Deleting

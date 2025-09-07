@@ -1,21 +1,12 @@
 "use client";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { getSite } from "@/lib/getter";
-import { useQuery } from "@tanstack/react-query";
-import { Popover, PopoverContent, PopoverTrigger } from "chai-next";
+import { getSite, getSites } from "@/lib/getter";
+import { useFlag } from "@openfeature/react-sdk";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { Popover, PopoverContent, PopoverTrigger, useSavePage } from "chai-next";
 import {
   Activity,
   BookOpenText,
@@ -31,7 +22,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
-import { createContext, useContext, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createContext, useContext, useEffect, useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import AnalyticsTracking from "./analytics-tracking";
@@ -44,46 +36,8 @@ import FormSubmissions from "./form-submissions";
 import General from "./general";
 import LegalCompliance from "./legal-compliance";
 import SpamProtection from "./spam-protection";
+import { UnsavedChangesDialog } from "./unsaved-changes-dialog";
 
-// Reusable Unsaved Changes Dialog Component
-interface UnsavedChangesDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onCancel: () => void;
-  onConfirm: () => void;
-  title?: string;
-  description?: string;
-  confirmText?: string;
-}
-
-function UnsavedChangesDialog({
-  open,
-  onOpenChange,
-  onCancel,
-  onConfirm,
-  title = "Unsaved Changes",
-  description = "You have unsaved changes. Are you sure you want to continue without saving?",
-  confirmText = "Continue without saving",
-}: UnsavedChangesDialogProps) {
-  return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
-          <AlertDialogAction className="bg-red-500 hover:bg-red-600 text-white" onClick={onConfirm}>
-            {confirmText}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
-
-// Context for managing unsaved changes across settings components
 interface SettingsContextType {
   hasUnsavedChanges: boolean;
   setHasUnsavedChanges: (value: boolean) => void;
@@ -115,7 +69,10 @@ const SIDEBAR_ITEMS = [
   { id: "analytics-tracking", label: "Analytics Tracking", icon: Activity, component: AnalyticsTracking },
 ];
 
-// Wrapper to pass unsaved changes state up to the modal
+/**
+ * Website settings content component
+ * @param params websiteId, onUnsavedChanges
+ */
 function WebsiteSettingsContent({
   websiteId,
   onUnsavedChanges,
@@ -243,17 +200,83 @@ function WebsiteSettingsContent({
   );
 }
 
+/**
+ * Website settings modal component
+ * @param params websiteId
+ */
+const WebsiteSettingsModal = ({ websiteId }: { websiteId: string | undefined }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const { value: showWebsiteSettings } = useFlag("website_settings", false);
+  const { savePageAsync } = useSavePage();
+
+  const handleOpenChange = async (newOpen: boolean) => {
+    if (newOpen) {
+      await savePageAsync();
+    }
+    if (!newOpen && hasUnsavedChanges) {
+      setShowConfirmDialog(true);
+    } else {
+      setShowModal(newOpen);
+    }
+  };
+
+  const handleConfirmClose = () => {
+    setShowConfirmDialog(false);
+    setShowModal(false);
+    setHasUnsavedChanges(false);
+  };
+
+  const handleCancelClose = () => {
+    setShowConfirmDialog(false);
+  };
+
+  if (!websiteId || !showWebsiteSettings) return null;
+  return (
+    <>
+      <Dialog open={showModal} onOpenChange={handleOpenChange}>
+        <DialogTrigger asChild>
+          <Button variant="ghost" size="icon" className="p-0 w-8 h-8">
+            <Settings />
+            <span className="sr-only">Settings</span>
+          </Button>
+        </DialogTrigger>
+        <DialogContent
+          className="max-w-5xl overflow-y-auto"
+          style={{ height: "80vh", maxHeight: "860px" }}
+          onInteractOutside={(e) => e.preventDefault()}>
+          {showModal && <WebsiteSettingsContent websiteId={websiteId} onUnsavedChanges={setHasUnsavedChanges} />}
+        </DialogContent>
+      </Dialog>
+
+      <UnsavedChangesDialog
+        open={showConfirmDialog}
+        onOpenChange={setShowConfirmDialog}
+        onCancel={handleCancelClose}
+        onConfirm={handleConfirmClose}
+        description="You have unsaved changes. Are you sure you want to close without saving?"
+        confirmText="Close without saving"
+      />
+    </>
+  );
+};
+
+/**
+ * Websites popover content component
+ * @param params websiteId, websites, isLoading, refetch
+ */
 const WebsitesPopoverContent = ({
   websiteId,
   websites,
   isLoading,
-  refetch,
 }: {
   websiteId: string;
   websites: any;
   isLoading: boolean;
-  refetch: () => void;
 }) => {
+  const { value: canCreateSite } = useFlag("create_site", false);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-4 h-80 w-96">
@@ -274,19 +297,21 @@ const WebsitesPopoverContent = ({
       <CardContent className="flex-1 min-h-0 max-h-96 overflow-y-auto space-y-2 rounded-lg p-4">
         {websites?.map((site: any) => (
           <div key={site.id} className="group relative overflow-hidden">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-200">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" side="right" className="w-32">
-                <DeleteWebsite websiteId={site.id} websiteName={site.name} onDeleted={refetch} />
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {canCreateSite && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-200">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" side="right" className="w-32">
+                  <DeleteWebsite websiteId={site.id} websiteName={site.name} />
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             <Link href={`/${site?.id}/editor`} className="block p-3 rounded-md border hover:bg-muted transition-colors">
               <div className="flex items-center justify-between">
                 <h3 className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>{site.name}</h3>
@@ -297,101 +322,90 @@ const WebsitesPopoverContent = ({
       </CardContent>
 
       {/* Fixed Footer */}
-      <CardFooter className="flex-shrink-0 p-3 border-t bg-white">
-        <CreateNewWebsite totalSites={websites?.length || 0}>
-          <Button className="w-full" size="sm">
-            <Plus className="h-4 w-4" />
-            Add New Website
-          </Button>
-        </CreateNewWebsite>
-      </CardFooter>
+      {canCreateSite && (
+        <CardFooter className="flex-shrink-0 p-3 border-t bg-white">
+          <CreateNewWebsite totalSites={websites?.length || 0}>
+            <Button className="w-full" size="sm">
+              <Plus className="h-4 w-4" />
+              Add New Website
+            </Button>
+          </CreateNewWebsite>
+        </CardFooter>
+      )}
     </Card>
   );
 };
 
-export default function WebsiteSettingModal({
-  websiteId,
+/**
+ * Websites list popover component
+ * @param params websites, websiteId, isLoading
+ */
+const WebsitesListPopover = ({
   websites,
+  websiteId,
   isLoading,
-  refetch,
 }: {
-  websiteId: string | undefined;
   websites: any;
   isLoading: boolean;
-  refetch: () => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  websiteId: string | undefined;
+}) => {
+  const { savePageAsync } = useSavePage();
   const [showWebsiteList, setShowWebsiteList] = useState(false);
+  const open = showWebsiteList || !websiteId || (isLoading ? false : websites?.length === 0);
 
-  const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen && hasUnsavedChanges) {
-      setShowConfirmDialog(true);
-    } else {
-      setOpen(newOpen);
+  const onOpenChange = async (open: boolean) => {
+    if (open) {
+      await savePageAsync();
     }
+    setShowWebsiteList(open);
   };
-
-  const handleConfirmClose = () => {
-    setShowConfirmDialog(false);
-    setOpen(false);
-    setHasUnsavedChanges(false);
-  };
-
-  const handleCancelClose = () => {
-    setShowConfirmDialog(false);
-  };
-
-  const hasWebsites = !isLoading && websites && websites?.length > 0;
 
   return (
-    <>
-      <div className="flex items-center border rounded-md p-0 h-9 px-px">
-        <Popover open={showWebsiteList || !websiteId || !hasWebsites} onOpenChange={setShowWebsiteList}>
-          <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon" className="w-8 h-8">
-              <ListChecks />
-              <span className="sr-only">Website manager</span>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent
-            side="bottom"
-            className={`ml-2 p-0 border rounded-xl border-primary/30 shadow-2xl overflow-hidden w-96`}>
-            <WebsitesPopoverContent
-              websiteId={websiteId || ""}
-              websites={websites}
-              isLoading={isLoading}
-              refetch={refetch}
-            />
-          </PopoverContent>
-        </Popover>
-        {websiteId && (
-          <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="p-0 w-8 h-8">
-                <Settings />
-                <span className="sr-only">Settings</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent
-              className="max-w-5xl overflow-y-auto"
-              style={{ height: "80vh", maxHeight: "860px" }}
-              onInteractOutside={(e) => e.preventDefault()}>
-              {open && <WebsiteSettingsContent websiteId={websiteId} onUnsavedChanges={setHasUnsavedChanges} />}
-            </DialogContent>
-          </Dialog>
-        )}
-      </div>
+    <Popover open={open} onOpenChange={onOpenChange}>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="icon" className="w-8 h-8">
+          <ListChecks />
+          <span className="sr-only">Website manager</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        side="bottom"
+        className={`ml-2 p-0 border rounded-xl border-primary/30 shadow-2xl overflow-hidden w-96`}>
+        <WebsitesPopoverContent websiteId={websiteId || ""} websites={websites} isLoading={isLoading} />
+      </PopoverContent>
+    </Popover>
+  );
+};
 
-      <UnsavedChangesDialog
-        open={showConfirmDialog}
-        onOpenChange={setShowConfirmDialog}
-        onCancel={handleCancelClose}
-        onConfirm={handleConfirmClose}
-        description="You have unsaved changes. Are you sure you want to close without saving?"
-        confirmText="Close without saving"
-      />
-    </>
+/**
+ *
+ * Website settings component
+ * @param params websiteId, websites, isLoading
+ */
+function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
+  const { data: websites, isLoading } = useQuery({ queryKey: ["websites-list"], queryFn: getSites });
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoading) return;
+    const isActiveWebsite = websites?.find((site) => site?.id === websiteId);
+    if (!isActiveWebsite) router.push(`/`);
+  }, [websiteId, websites, isLoading, router]);
+
+  if (isLoading) return null;
+  return (
+    <div className="flex items-center border rounded-md p-0 h-9 px-px">
+      <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
+      <WebsiteSettingsModal websiteId={websiteId} />
+    </div>
+  );
+}
+
+const queryClient = new QueryClient();
+export default function WebsiteSettingsWrapper({ websiteId }: { websiteId: string | undefined }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WebsiteSettings websiteId={websiteId} />
+    </QueryClientProvider>
   );
 }
