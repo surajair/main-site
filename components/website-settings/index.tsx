@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { BrandLogo } from "../branding";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import AnalyticsTracking from "./analytics-tracking";
@@ -392,6 +393,7 @@ function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
 
   return (
     <div className="flex items-center gap-x-2">
+      <BrandLogo height={36} width={36} shouldRedirect={false} />
       {/* {user && <ProfileForm user={user} />} */}
       <div className="flex items-center border rounded-md p-0 h-9 px-px">
         <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />

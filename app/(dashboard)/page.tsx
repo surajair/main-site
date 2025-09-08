@@ -1,5 +1,8 @@
 import { BrandLogo, BrandName } from "@/components/branding";
+import QueryClientProviderWrapper from "@/components/providers/query-client-provider";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import CreateNewWebsite from "@/components/website-settings/create-new-website";
 import { getSites, Sites } from "@/lib/getter/sites";
 import {
   ChevronsDownUp,
@@ -7,6 +10,7 @@ import {
   CircleArrowOutUpRight,
   Eye,
   Layers,
+  Plus,
   Settings2,
   Sparkle,
   User,
@@ -18,7 +22,7 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
   const { websiteId } = await params;
   const data = await getSites();
   const sites: Sites[] = data as Sites[];
-
+  const hasSites = sites?.length > 0;
   if (!websiteId) {
     return (
       <div className="w-screen h-screen fixed inset-0 bg-white">
@@ -27,23 +31,42 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
             <div className="text-center mb-6 flex flex-col items-center space-y-2">
               <BrandLogo />
               <BrandName />
-              <div className="text-center">
-                <span className="text-lg font-bold mb-2">Select Website to Start</span>
-                <p className="text-muted-foreground text-sm font-light">Choose a website to open in the builder</p>
+              <div className={`text-center ${!hasSites ? "pt-8" : ""}`}>
+                <span className="text-lg font-bold mb-2">
+                  {hasSites ? "Select Website to Start" : "Welcome to Your Website Builder"}
+                </span>
+                <p className="text-muted-foreground text-sm font-light">
+                  {hasSites
+                    ? "Choose a website to open in the builder"
+                    : "Create your first website and start building something amazing"}
+                </p>
               </div>
             </div>
             <div className="max-h-96 overflow-y-auto space-y-2 rounded-lg p-4">
-              {sites?.map((site) => (
-                <Link
-                  key={site.id}
-                  href={`/${site?.id}/editor`}
-                  className="block border px-3 py-1 hover:bg-muted rounded hover:text-primary">
-                  <div className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>
-                    {site.name}
-                  </div>
-                  <div className="text-xs text-muted-foreground">{site.subdomain}</div>
-                </Link>
-              ))}
+              {sites && sites.length > 0 ? (
+                sites.map((site) => (
+                  <Link
+                    key={site.id}
+                    href={`/${site?.id}/editor`}
+                    className="block border px-3 py-1 hover:bg-muted rounded hover:text-primary">
+                    <div className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>
+                      {site.name}
+                    </div>
+                    <div className="text-xs text-muted-foreground">{site.subdomain}</div>
+                  </Link>
+                ))
+              ) : (
+                <div className="text-center">
+                  <QueryClientProviderWrapper>
+                    <CreateNewWebsite totalSites={0}>
+                      <Button className="w-full">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create Your First Website
+                      </Button>
+                    </CreateNewWebsite>
+                  </QueryClientProviderWrapper>
+                </div>
+              )}
             </div>
           </Card>
         </div>
