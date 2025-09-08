@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { getSite, getSites } from "@/lib/getter";
+import { getSite, getSites, getUser } from "@/lib/getter";
 import { useFlag } from "@openfeature/react-sdk";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Popover, PopoverContent, PopoverTrigger, useSavePage } from "chai-next";
@@ -35,6 +35,7 @@ import DomainConfiguration from "./domain-configuration";
 import FormSubmissions from "./form-submissions";
 import General from "./general";
 import LegalCompliance from "./legal-compliance";
+import ProfileForm from "./profile-form";
 import SpamProtection from "./spam-protection";
 import { UnsavedChangesDialog } from "./unsaved-changes-dialog";
 
@@ -212,14 +213,9 @@ const WebsiteSettingsModal = ({ websiteId }: { websiteId: string | undefined }) 
   const { savePageAsync } = useSavePage();
 
   const handleOpenChange = async (newOpen: boolean) => {
-    if (newOpen) {
-      await savePageAsync();
-    }
-    if (!newOpen && hasUnsavedChanges) {
-      setShowConfirmDialog(true);
-    } else {
-      setShowModal(newOpen);
-    }
+    if (newOpen) savePageAsync();
+    if (!newOpen && hasUnsavedChanges) setShowConfirmDialog(true);
+    else setShowModal(newOpen);
   };
 
   const handleConfirmClose = () => {
@@ -354,9 +350,7 @@ const WebsitesListPopover = ({
   const open = showWebsiteList || !websiteId || (isLoading ? false : websites?.length === 0);
 
   const onOpenChange = async (open: boolean) => {
-    if (open) {
-      await savePageAsync();
-    }
+    if (open) savePageAsync();
     setShowWebsiteList(open);
   };
 
@@ -383,6 +377,7 @@ const WebsitesListPopover = ({
  * @param params websiteId, websites, isLoading
  */
 function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
+  const { data: user } = useQuery({ queryKey: ["user"], queryFn: getUser });
   const { data: websites, isLoading } = useQuery({ queryKey: ["websites-list"], queryFn: getSites });
   const router = useRouter();
 
@@ -394,9 +389,12 @@ function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
 
   if (isLoading) return null;
   return (
-    <div className="flex items-center border rounded-md p-0 h-9 px-px">
-      <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
-      <WebsiteSettingsModal websiteId={websiteId} />
+    <div className="flex items-center gap-x-2">
+      {user && <ProfileForm user={user} />}
+      <div className="flex items-center border rounded-md p-0 h-9 px-px">
+        <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
+        <WebsiteSettingsModal websiteId={websiteId} />
+      </div>
     </div>
   );
 }

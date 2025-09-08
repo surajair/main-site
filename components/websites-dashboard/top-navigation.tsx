@@ -12,7 +12,6 @@ import { User as UserType } from "@supabase/supabase-js";
 import { ChevronDown, CreditCard, User } from "lucide-react";
 import Link from "next/link";
 import { BrandLogo, BrandName } from "../branding";
-import { LogoutButton } from "../websites-dashboard/logout-button";
 
 async function TopNavigation({ user }: { user: UserType }) {
   const plan = user.user_metadata?.plan || "Free Plan";
@@ -73,7 +72,7 @@ async function TopNavigation({ user }: { user: UserType }) {
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
-              <LogoutButton />
+              {/* <LogoutButton /> */}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

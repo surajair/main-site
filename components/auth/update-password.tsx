@@ -5,31 +5,17 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Check, EyeClosed, EyeIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { EyeClosed, EyeIcon, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-interface UpdatePasswordProps {
-  type?: "set" | "reset" | "change";
-  redirectTo?: string;
-}
-
-export default function UpdatePassword({ type = "change", redirectTo = "/" }: UpdatePasswordProps) {
+export default function UpdatePassword({ close }: { close?: () => void }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
-
-  const buttonText = {
-    set: "Set Password",
-    reset: "Reset Password",
-    change: "Change Password",
-  }[type];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,15 +37,10 @@ export default function UpdatePassword({ type = "change", redirectTo = "/" }: Up
 
     try {
       await updatePassword(newPassword);
-      setIsSubmitted(true);
-      toast.success("Password updated successfully!", {
-        position: "top-center",
-      });
-      router.push(redirectTo);
+      toast.success("Password updated successfully!", { position: "top-right" });
+      close?.();
     } catch (error) {
-      setError(
-        error instanceof Error && error.message ? "Please enter new valid password " : "Failed to update password",
-      );
+      setError(error instanceof Error && error.message ? error.message : "Failed to update password");
     } finally {
       setIsLoading(false);
     }
@@ -69,17 +50,6 @@ export default function UpdatePassword({ type = "change", redirectTo = "/" }: Up
     if (error) setError("");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newPassword, confirmPassword]);
-
-  if (isSubmitted) {
-    return (
-      <div className="space-y-4 text-center">
-        <h2 className="text-normal font-semibold text-green-500 flex items-center gap-2 justify-center">
-          <Check className="w-4 h-4" /> Password Updated
-        </h2>
-        <p className="text-muted-foreground">Your password has been successfully updated.</p>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -140,7 +110,13 @@ export default function UpdatePassword({ type = "change", redirectTo = "/" }: Up
           </div>
         </div>
         <Button type="submit" className="w-full bg-primary/80 hover:bg-primary" disabled={isLoading}>
-          {isLoading ? "Updating..." : buttonText}
+          {isLoading ? (
+            <>
+              <Loader className="h-4 w-4 animate-spin" /> Updating
+            </>
+          ) : (
+            "Update Password"
+          )}
         </Button>
       </form>
     </>
