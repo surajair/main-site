@@ -163,7 +163,13 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
         </a>
       ))}
 
-      {!siteData.domain && (
+      <div className="rounded-lg border border-primary bg-primary/10 text-primary p-4 text-center">
+        <div className="flex items-center gap-2">
+          <AlertCircle className="h-5 w-5" />
+          <p className="text-sm">Custom domain support coming soon</p>
+        </div>
+      </div>
+      {!siteData.domain && false && (
         <form action={addDomainAction} className="space-y-1">
           <input type="hidden" name="websiteId" value={websiteId} />
           <Label htmlFor="custom-domain" className="text-xs">
