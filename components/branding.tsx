@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const BrandLogo = ({
-  width = 30,
-  height = 30,
+  width = 25,
+  height = 25,
   shouldRedirect = true,
 }: {
   width?: number;
@@ -28,5 +28,5 @@ export const BrandLogo = ({
 };
 
 export const BrandName = ({ className }: { className?: string }) => {
-  return <span className={className}>YOUR BRAND</span>;
+  return <span className={`text-sm font-medium ${className}`}>Your Brand</span>;
 };
