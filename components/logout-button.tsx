@@ -1,0 +1,51 @@
+"use client";
+
+import { supabase } from "@/chai/supabase";
+import { Button } from "@/components/ui/button";
+import { Loader, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+
+interface LogoutButtonProps {
+  size?: "default" | "sm" | "lg" | "icon";
+  showText?: boolean;
+  fullWidth?: boolean;
+}
+
+export default function LogoutButton({ size = "sm", showText = true, fullWidth = false }: LogoutButtonProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    setIsLoading(true);
+    try {
+      await supabase.auth.signOut();
+      localStorage.removeItem("__logged_in_user");
+      router.push("/login");
+    } catch (error) {
+      toast.error("Failed to sign out");
+      console.error("Sign out error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const finalClassName = `flex items-center gap-2 border-red-500 text-red-500 hover:bg-red-100 hover:text-red-600 ${fullWidth ? "w-full" : ""}`;
+
+  return (
+    <Button variant="outline" size={size} onClick={handleLogout} disabled={isLoading} className={finalClassName}>
+      {isLoading ? (
+        <>
+          <Loader className="h-4 w-4 animate-spin" />
+          {showText && "Signing out"}
+        </>
+      ) : (
+        <>
+          <LogOut className="h-4 w-4" />
+          {showText && "Sign Out"}
+        </>
+      )}
+    </Button>
+  );
+}

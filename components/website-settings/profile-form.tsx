@@ -1,8 +1,8 @@
 "use client";
 
 import { updateUserProfile } from "@/actions/update-profile-action";
-import { supabase } from "@/chai/supabase";
 import UpdatePassword from "@/components/auth/update-password";
+import LogoutButton from "@/components/logout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,8 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSavePage } from "chai-next";
-import { Loader, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -126,26 +125,9 @@ const ProfileAvatarTrigger = ({ user }: { user: any }) => {
 // Main profile dialog component
 const ProfileForm = ({ user }: { user: any }) => {
   const [open, setOpen] = useState(false);
-  const [isSigningOut, setIsSigningOut] = useState(false);
   const displayName = user.user_metadata?.full_name;
   const email = user.email;
   const { savePageAsync } = useSavePage();
-  const router = useRouter();
-
-  const handleSignOut = async () => {
-    setIsSigningOut(true);
-    try {
-      await supabase.auth.signOut();
-      localStorage.removeItem("__logged_in_user");
-      toast.success("Signed out successfully");
-      router.push("/login");
-    } catch (error) {
-      toast.error("Failed to sign out");
-      console.error("Sign out error:", error);
-    } finally {
-      setIsSigningOut(false);
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -198,23 +180,7 @@ const ProfileForm = ({ user }: { user: any }) => {
 
           {/* Sign Out Section */}
           <div className="pt-4 border-t border-gray-200">
-            <Button
-              onClick={handleSignOut}
-              disabled={isSigningOut}
-              variant="destructive"
-              className="w-full flex items-center justify-center gap-2">
-              {isSigningOut ? (
-                <>
-                  <Loader className="h-4 w-4 animate-spin" />
-                  Signing out...
-                </>
-              ) : (
-                <>
-                  <LogOut className="h-4 w-4" />
-                  Sign Out
-                </>
-              )}
-            </Button>
+            <LogoutButton fullWidth={true} />
           </div>
         </div>
       </DialogContent>

@@ -1,4 +1,5 @@
 import { BrandLogo, BrandName } from "@/components/branding";
+import LogoutButton from "@/components/logout-button";
 import QueryClientProviderWrapper from "@/components/providers/query-client-provider";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -67,6 +68,9 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
                   </QueryClientProviderWrapper>
                 </div>
               )}
+              <div className="w-full flex justify-end pt-3">
+                <LogoutButton />
+              </div>
             </div>
           </Card>
         </div>
