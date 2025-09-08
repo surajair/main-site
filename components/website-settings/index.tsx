@@ -287,7 +287,7 @@ const WebsitesPopoverContent = ({
       <CardHeader className="p-2 px-4 border-b">
         <CardTitle className="text-sm flex items-center justify-between">
           <span>Your Website</span>
-          <span className="text-muted-foreground">{websites?.length} websites</span>
+          <span className="text-muted-foreground font-light">{websites?.length} websites</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 max-h-96 overflow-y-auto space-y-2 rounded-lg p-2">
@@ -359,14 +359,16 @@ const WebsitesListPopover = ({
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="sm" className="h-8">
-          <span className="text-xs font-medium">{website?.name}</span>
+          <span className="text-xs">{website?.name}</span>
           <ChevronDown />
           <span className="sr-only">Website manager</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent
         side="bottom"
-        className={`ml-2 p-0 border rounded-xl border-primary/30 shadow-2xl overflow-hidden w-96`}>
+        align="start"
+        alignOffset={-12}
+        className={`ml-2 p-0 border rounded-xl border-border shadow-2xl overflow-hidden w-96`}>
         <WebsitesPopoverContent websiteId={websiteId || ""} websites={websites} isLoading={isLoading} />
       </PopoverContent>
     </Popover>
@@ -393,7 +395,7 @@ function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
 
   return (
     <div className="flex items-center gap-x-2">
-      <BrandLogo height={36} width={36} shouldRedirect={false} />
+      <BrandLogo height={34} width={34} shouldRedirect={false} />
       {/* {user && <ProfileForm user={user} />} */}
       <div className="flex items-center border rounded-md p-0 h-9 px-px">
         <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />

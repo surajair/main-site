@@ -8,12 +8,18 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 interface LogoutButtonProps {
+  variant?: "default" | "outline" | "destructive" | "secondary" | "ghost" | "link" | null | undefined;
   size?: "default" | "sm" | "lg" | "icon";
   showText?: boolean;
   fullWidth?: boolean;
 }
 
-export default function LogoutButton({ size = "sm", showText = true, fullWidth = false }: LogoutButtonProps) {
+export default function LogoutButton({
+  variant = "outline",
+  size = "sm",
+  showText = true,
+  fullWidth = false,
+}: LogoutButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -34,7 +40,7 @@ export default function LogoutButton({ size = "sm", showText = true, fullWidth =
   const finalClassName = `flex items-center gap-2 border-red-500 text-red-500 hover:bg-red-100 hover:text-red-600 ${fullWidth ? "w-full" : ""}`;
 
   return (
-    <Button variant="outline" size={size} onClick={handleLogout} disabled={isLoading} className={finalClassName}>
+    <Button variant={variant} size={size} onClick={handleLogout} disabled={isLoading} className={finalClassName}>
       {isLoading ? (
         <>
           <Loader className="h-4 w-4 animate-spin" />

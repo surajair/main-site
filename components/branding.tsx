@@ -3,10 +3,10 @@ import Link from "next/link";
 
 const getLogo = ({ width, height }: { width: number; height: number }) => {
   const brandConfig = getBrandConfig();
-  
+
   if (brandConfig.logo) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={brandConfig.logo} width={width} height={height} alt="brand-logo" />;
+    return <img src={brandConfig.logo} width={width} height={height} alt="brand-logo" className="rounded-md" />;
   }
 
   return (

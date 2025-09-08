@@ -1,15 +1,14 @@
 "use client";
 
 import { updateWebsiteData } from "@/actions/update-website-setting";
+import { removeBrandingAsset, uploadBrandingAsset } from "@/actions/upload-branding-asset";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
-import { X } from "lucide-react";
-import { useActionState, useEffect, useState } from "react";
+import { Loader, Upload, X } from "lucide-react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { useSettingsContext } from "./index";
-import SaveButton from "./save-button";
 
 interface BrandingProps {
   websiteId: string;
@@ -20,7 +19,6 @@ interface BrandingProps {
 }
 
 export default function BrandingConfiguration({ websiteId, initial }: BrandingProps) {
-  const { setHasUnsavedChanges } = useSettingsContext();
   const queryClient = useQueryClient();
 
   const isValidImageUrl = (val?: string) => {
@@ -35,99 +33,232 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
 
   const [logoURL, setLogoURL] = useState(initial?.logoURL ?? "");
   const [faviconURL, setFaviconURL] = useState(initial?.faviconURL ?? "");
+  const [logoUploading, setLogoUploading] = useState(false);
+  const [faviconUploading, setFaviconUploading] = useState(false);
+  const [logoRemoving, setLogoRemoving] = useState(false);
+  const [faviconRemoving, setFaviconRemoving] = useState(false);
 
-  const [baseline, setBaseline] = useState({
-    logoURL: initial?.logoURL ?? "",
-    faviconURL: initial?.faviconURL ?? "",
-  });
-  const hasChanges = logoURL !== baseline.logoURL || faviconURL !== baseline.faviconURL;
+  const logoFileRef = useRef<HTMLInputElement>(null);
+  const faviconFileRef = useRef<HTMLInputElement>(null);
 
-  // Update unsaved changes in context whenever hasChanges changes
-  useEffect(() => {
-    setHasUnsavedChanges(hasChanges);
-  }, [hasChanges, setHasUnsavedChanges]);
-
-  const [state, saveAll, saving] = useActionState(async () => {
+  const updateBrandingData = async (updates: { logoURL?: string; faviconURL?: string }) => {
     try {
-      const res = await updateWebsiteData({ id: websiteId, updates: { logoURL, faviconURL } });
+      const res = await updateWebsiteData({ id: websiteId, updates });
       if (!res.success) throw new Error(res.error || "Failed to update branding");
-      setBaseline({ logoURL, faviconURL });
-      toast.success("Branding saved");
       queryClient.invalidateQueries({ queryKey: ["website-settings"] });
-      return { success: true };
+      return true;
     } catch (e: any) {
-      toast.error(e?.message || "Failed to save branding");
-      return { success: false };
+      toast.error(e?.message || "Failed to update branding");
+      return false;
     }
-  }, null);
+  };
+
+  const handleFileUpload = async (file: File, type: "logo" | "favicon") => {
+    if (type === "logo") {
+      setLogoUploading(true);
+    } else {
+      setFaviconUploading(true);
+    }
+
+    try {
+      const result = await uploadBrandingAsset({
+        websiteId,
+        file,
+        type: type === "logo" ? "logo" : "favicon",
+      });
+
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+
+      const newUrl = result.url;
+      const updates = type === "logo" ? { logoURL: newUrl } : { faviconURL: newUrl };
+
+      const success = await updateBrandingData(updates);
+      if (success) {
+        if (type === "logo") {
+          setLogoURL(newUrl);
+        } else {
+          setFaviconURL(newUrl);
+        }
+        toast.success(`${type === "logo" ? "Logo" : "Favicon"} uploaded successfully`);
+      }
+    } catch (error: any) {
+      toast.error(error?.message || `Failed to upload ${type}`);
+    } finally {
+      if (type === "logo") {
+        setLogoUploading(false);
+      } else {
+        setFaviconUploading(false);
+      }
+    }
+  };
+
+  const handleRemove = async (type: "logo" | "favicon") => {
+    if (type === "logo") {
+      setLogoRemoving(true);
+    } else {
+      setFaviconRemoving(true);
+    }
+
+    try {
+      const currentUrl = type === "logo" ? logoURL : faviconURL;
+
+      // Remove from Supabase storage
+      await removeBrandingAsset({
+        websiteId,
+        type,
+        currentUrl,
+      });
+
+      // Update database
+      const updates = type === "logo" ? { logoURL: "" } : { faviconURL: "" };
+      const success = await updateBrandingData(updates);
+
+      if (success) {
+        if (type === "logo") {
+          setLogoURL("");
+        } else {
+          setFaviconURL("");
+        }
+        toast.success(`${type === "logo" ? "Logo" : "Favicon"} removed successfully`);
+      }
+    } catch (error: any) {
+      toast.error(error?.message || `Failed to remove ${type}`);
+    } finally {
+      if (type === "logo") {
+        setLogoRemoving(false);
+      } else {
+        setFaviconRemoving(false);
+      }
+    }
+  };
+
+  const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileUpload(file, "logo");
+    }
+  };
+
+  const handleFaviconFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileUpload(file, "favicon");
+    }
+  };
 
   return (
     <section id="branding">
-      <form action={saveAll} className="space-y-4">
+      <div className="space-y-4">
         <div className="space-y-1">
-          <Label htmlFor="logoURL" className="text-xs">
-            Logo URL
-          </Label>
-          <div className="flex items-center gap-2 relative">
-            <Input
-              id="logoURL"
-              placeholder="eg: https://example.com/logo.png"
-              value={logoURL}
-              onChange={(e) => setLogoURL(e.target.value)}
-              className="flex-1 pr-8"
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 shrink-0 absolute right-2"
-              onClick={() => setLogoURL("")}
-              disabled={logoURL === ""}
-              title="Remove logo">
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+          <Label className="text-xs">Logo</Label>
           {isValidImageUrl(logoURL) ? (
-            <div className="pt-1">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={logoURL} alt="logo" className="h-10 w-auto object-contain rounded" />
+            <div className="flex items-center gap-x-4 border p-4 rounded-md">
+              <div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={logoURL} alt="logo" className="h-10 w-auto object-contain rounded" />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleRemove("logo")}
+                disabled={logoRemoving}
+                className="flex items-center gap-2 hover:border-red-500 hover:text-red-500">
+                {logoRemoving ? <Loader className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4" />}
+                {logoRemoving ? "Removing" : "Remove Logo"}
+              </Button>
             </div>
-          ) : null}
+          ) : (
+            <div className="flex items-center gap-2 w-full border rounded-md p-4">
+              <div className="flex items-center gap-2 w-1/3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => logoFileRef.current?.click()}
+                  disabled={logoUploading}
+                  className="flex items-center gap-2 w-full">
+                  {logoUploading ? <Loader className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  {logoUploading ? "Uploading" : "Upload Logo"}
+                </Button>
+                <input
+                  ref={logoFileRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoFileChange}
+                  className="hidden"
+                />
+              </div>
+              <span className="text-xs text-muted-foreground">or</span>
+              <div className="flex items-center gap-2 relative w-full">
+                <Input
+                  placeholder="eg: https://example.com/logo.png"
+                  value={logoURL}
+                  onChange={(e) => setLogoURL(e.target.value)}
+                  onBlur={() => logoURL && updateBrandingData({ logoURL })}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="space-y-1">
-          <Label htmlFor="faviconURL" className="text-xs">
-            Favicon URL
-          </Label>
-          <div className="flex items-center gap-2 relative">
-            <Input
-              id="faviconURL"
-              placeholder="eg: https://example.com/favicon.ico"
-              value={faviconURL}
-              onChange={(e) => setFaviconURL(e.target.value)}
-              className="flex-1 pr-8"
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 shrink-0 absolute right-2"
-              onClick={() => setFaviconURL("")}
-              disabled={faviconURL === ""}
-              title="Remove favicon">
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+          <Label className="text-xs">Favicon</Label>
           {isValidImageUrl(faviconURL) ? (
-            <div className="pt-1">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={faviconURL} alt="favicon" className="h-6 w-6 object-contain rounded" />
+            <div className=" flex items-center gap-x-4 border p-4 rounded-md">
+              <div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={faviconURL} alt="favicon" className="h-6 w-6 object-contain rounded" />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleRemove("favicon")}
+                disabled={faviconRemoving}
+                className="flex items-center gap-2 hover:border-red-500 hover:text-red-500">
+                {faviconRemoving ? <Loader className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4" />}
+                {faviconRemoving ? "Removing" : "Remove Favicon"}
+              </Button>
             </div>
-          ) : null}
+          ) : (
+            <div className="flex items-center gap-2 w-full border rounded-md p-4">
+              <div className="flex items-center gap-2 w-1/3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => faviconFileRef.current?.click()}
+                  disabled={faviconUploading}
+                  className="flex items-center gap-2 w-full">
+                  {faviconUploading ? <Loader className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  {faviconUploading ? "Uploading" : "Upload Favicon"}
+                </Button>
+                <input
+                  ref={faviconFileRef}
+                  type="file"
+                  accept="image/*,.ico"
+                  onChange={handleFaviconFileChange}
+                  className="hidden"
+                />
+              </div>
+              <span className="text-xs text-muted-foreground">or</span>
+              <div className="flex items-center gap-2 relative w-full">
+                <Input
+                  placeholder="eg: https://example.com/favicon.ico"
+                  value={faviconURL}
+                  onChange={(e) => setFaviconURL(e.target.value)}
+                  onBlur={() => faviconURL && updateBrandingData({ faviconURL })}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+          )}
         </div>
-
-        <SaveButton saving={saving} hasChanges={hasChanges} />
-      </form>
+      </div>
     </section>
   );
 }

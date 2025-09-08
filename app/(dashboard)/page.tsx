@@ -68,9 +68,10 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
                   </QueryClientProviderWrapper>
                 </div>
               )}
-              <div className="w-full flex justify-end pt-3">
-                <LogoutButton />
-              </div>
+            </div>
+
+            <div className="w-full flex justify-center pt-2 border-t">
+              <LogoutButton variant="ghost" />
             </div>
           </Card>
         </div>
