@@ -155,7 +155,7 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
           <Label className="text-xs">Logo</Label>
           {isValidImageUrl(logoURL) ? (
             <div className="flex items-center gap-x-4 border p-4 rounded-md">
-              <div>
+              <div className="h-10 min-w-10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={logoURL} alt="logo" className="h-10 w-auto object-contain rounded" />
               </div>
@@ -209,7 +209,7 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
           <Label className="text-xs">Favicon</Label>
           {isValidImageUrl(faviconURL) ? (
             <div className=" flex items-center gap-x-4 border p-4 rounded-md">
-              <div>
+              <div className="min-w-10 h-6 flex justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={faviconURL} alt="favicon" className="h-6 w-6 object-contain rounded" />
               </div>

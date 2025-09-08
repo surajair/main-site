@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { getSite, getSites, getUser } from "@/lib/getter";
+import { getSite, getSites } from "@/lib/getter";
 import { useFlag } from "@openfeature/react-sdk";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Popover, PopoverContent, PopoverTrigger, useSavePage } from "chai-next";
@@ -381,7 +381,6 @@ const WebsitesListPopover = ({
  * @param params websiteId, websites, isLoading
  */
 function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
-  const { data: user } = useQuery({ queryKey: ["user"], queryFn: getUser });
   const { data: websites, isLoading } = useQuery({ queryKey: ["websites-list"], queryFn: getSites });
   const router = useRouter();
 
@@ -396,7 +395,6 @@ function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
   return (
     <div className="flex items-center gap-x-2">
       <BrandLogo height={34} width={34} shouldRedirect={false} />
-      {/* {user && <ProfileForm user={user} />} */}
       <div className="flex items-center border rounded-md p-0 h-9 px-px">
         <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
         <WebsiteSettingsModal websiteId={websiteId} />

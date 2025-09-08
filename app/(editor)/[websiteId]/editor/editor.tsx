@@ -2,10 +2,10 @@
 
 import WebsiteSettings from "@/components/website-settings";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
+import { registerPanels } from "@/utils/register-panels";
 import ChaiBuilder from "chai-next";
 import { startsWith } from "lodash";
 import { useEffect } from "react";
-import { registerChaiPanels } from "./panels";
 
 const getPreviewUrl = (slug: string, domain?: string) => {
   return `//${domain}/api/preview?slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`;
@@ -20,7 +20,7 @@ export default function Editor({ domain, websiteId }: { domain?: string; website
 
   useEffect(() => {
     if (ready) {
-      registerChaiPanels();
+      setTimeout(() => registerPanels(), 400);
     }
   }, [ready]);
 

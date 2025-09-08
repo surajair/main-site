@@ -5,7 +5,6 @@ import ProfileForm from "@/components/website-settings/profile-form";
 import { User } from "@supabase/supabase-js";
 import { User as UserIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-export const profilePanelId = "user-info";
 
 const useUserData = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -40,16 +39,16 @@ const useUserData = () => {
 const LoadingAvatar = () => {
   return (
     <div className="flex items-center justify-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
-      <Avatar className="h-9 w-9 border-2 border-border">
+      <Avatar className="h-8 w-8 border-2 border-border">
         <AvatarFallback>
-          <UserIcon />
+          <UserIcon className="h-4 w-4 text-muted" />
         </AvatarFallback>
       </Avatar>
     </div>
   );
 };
 
-export const ProfilePanel = () => {
+const ProfilePanel = () => {
   const { user, loading } = useUserData();
 
   if (loading) {
@@ -59,7 +58,7 @@ export const ProfilePanel = () => {
   return <ProfileForm user={user} />;
 };
 
-export const ProfileButton = ({ isActive, show }: { isActive: boolean; show: () => void }) => {
+const ProfileButton = ({ isActive, show }: { isActive: boolean; show: () => void }) => {
   const { user, loading } = useUserData();
 
   if (loading) {
@@ -75,7 +74,7 @@ export const ProfileButton = ({ isActive, show }: { isActive: boolean; show: () 
 
 // Profile Panel Configuration
 export const profilePanel = {
-  id: profilePanelId,
+  id: "user-info",
   label: "Profile",
   panel: ProfilePanel,
   button: ProfileButton,

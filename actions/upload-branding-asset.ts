@@ -37,7 +37,7 @@ export async function removeBrandingAsset({ websiteId, type, currentUrl }: Remov
       const extensions = ["png", "jpg", "jpeg", "gif", "webp", "svg", "ico"];
       for (const ext of extensions) {
         const testPath = `${websiteId}/${type}.${ext}`;
-        const { data } = await supabase.storage.from("branding").list(websiteId);
+        const { data } = await supabase.storage.from("dam-assets").list(websiteId);
         if (data?.some(file => file.name === `${type}.${ext}`)) {
           filePath = testPath;
           break;
@@ -48,7 +48,7 @@ export async function removeBrandingAsset({ websiteId, type, currentUrl }: Remov
     // Try to remove from Supabase storage if we have a path
     if (filePath) {
       const { error: removeError } = await supabase.storage
-        .from("branding")
+        .from("dam-assets")
         .remove([filePath]);
       
       // Don't throw error if removal fails - we'll still clear the URL
@@ -107,7 +107,7 @@ export async function uploadBrandingAsset({ websiteId, file, type }: UploadBrand
 
     // Upload to Supabase Storage
     const { error: uploadError } = await supabase.storage
-      .from("branding") // You may need to create this bucket in Supabase
+      .from("dam-assets") // dam-assets bucket in Supabase
       .upload(filePath, uint8Array, {
         contentType: file.type,
         upsert: true, // Replace existing file
@@ -118,7 +118,7 @@ export async function uploadBrandingAsset({ websiteId, file, type }: UploadBrand
     }
 
     // Get public URL
-    const { data: urlData } = supabase.storage.from("branding").getPublicUrl(filePath);
+    const { data: urlData } = supabase.storage.from("dam-assets").getPublicUrl(filePath);
 
     if (!urlData?.publicUrl) {
       throw new Error("Failed to get public URL");

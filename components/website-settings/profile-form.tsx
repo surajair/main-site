@@ -189,4 +189,3 @@ const ProfileForm = ({ user }: { user: any }) => {
 };
 
 export default ProfileForm;
-export { ProfileAvatarTrigger };
