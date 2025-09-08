@@ -1,6 +1,7 @@
 import "@/app/app.css";
 import { BrandLogo, BrandName } from "@/components/branding";
 import { getSession } from "@/lib/getter/users";
+import { getBrandConfig } from "@/lib/utils";
 import { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";
@@ -9,9 +10,14 @@ import { Toaster } from "sonner";
 
 const geist = Geist({ subsets: ["latin"] });
 
+const brandConfig = getBrandConfig();
+
 export const metadata: Metadata = {
-  title: "Your Brand - Dashboard",
+  title: `${brandConfig.name || "Your Brand"} - Dashboard`,
   description: "Build and manage your websites with ease",
+  icons: {
+    icon: brandConfig.favicon || "/favicon.ico",
+  },
 };
 
 /**
