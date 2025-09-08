@@ -10,9 +10,9 @@ import { Popover, PopoverContent, PopoverTrigger, useSavePage } from "chai-next"
 import {
   Activity,
   BookOpenText,
+  ChevronDown,
   Globe,
   ImageIcon,
-  ListChecks,
   Loader,
   MoreHorizontal,
   Plus,
@@ -21,9 +21,8 @@ import {
   Shield,
   ShieldCheck,
 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import AnalyticsTracking from "./analytics-tracking";
@@ -35,7 +34,6 @@ import DomainConfiguration from "./domain-configuration";
 import FormSubmissions from "./form-submissions";
 import General from "./general";
 import LegalCompliance from "./legal-compliance";
-import ProfileForm from "./profile-form";
 import SpamProtection from "./spam-protection";
 import { UnsavedChangesDialog } from "./unsaved-changes-dialog";
 
@@ -271,6 +269,7 @@ const WebsitesPopoverContent = ({
   websites: any;
   isLoading: boolean;
 }) => {
+  const router = useRouter();
   const { value: canCreateSite } = useFlag("create_site", false);
 
   if (isLoading) {
@@ -282,17 +281,17 @@ const WebsitesPopoverContent = ({
   }
 
   return (
-    <Card className="w-96 max-h-[40vh] flex flex-col">
+    <Card className="w-96 flex flex-col">
       {/* Fixed Header */}
-      <CardHeader className="py-4 border-b">
+      <CardHeader className="p-2 px-4 border-b">
         <CardTitle className="text-sm flex items-center justify-between">
           <span>Your Website</span>
           <span className="text-muted-foreground">{websites?.length} websites</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 min-h-0 max-h-96 overflow-y-auto space-y-2 rounded-lg p-4">
+      <CardContent className="flex-1 max-h-96 overflow-y-auto space-y-2 rounded-lg p-2">
         {websites?.map((site: any) => (
-          <div key={site.id} className="group relative overflow-hidden">
+          <div key={site.id} className="group relative overflow-hidden cursor-pointer">
             {canCreateSite && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -303,16 +302,15 @@ const WebsitesPopoverContent = ({
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" side="right" className="w-32">
+                <DropdownMenuContent align="center" side="right">
                   <DeleteWebsite websiteId={site.id} websiteName={site.name} />
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-            <Link href={`/${site?.id}/editor`} className="block p-3 rounded-md border hover:bg-muted transition-colors">
-              <div className="flex items-center justify-between">
-                <h3 className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>{site.name}</h3>
-              </div>
-            </Link>
+            <div onClick={() => router.push(`/${site?.id}/editor`)} className="px-3 py-1 group-hover:bg-muted rounded">
+              <div className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>{site.name}</div>
+              <div className="text-xs text-muted-foreground">{site.subdomain}</div>
+            </div>
           </div>
         ))}
       </CardContent>
@@ -354,11 +352,14 @@ const WebsitesListPopover = ({
     setShowWebsiteList(open);
   };
 
+  const website = useMemo(() => websites?.find((site: any) => site?.id === websiteId), [websites, websiteId]);
+
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="w-8 h-8">
-          <ListChecks />
+        <Button variant="ghost" size="sm" className="h-8">
+          <span className="text-xs font-medium">{website?.name}</span>
+          <ChevronDown />
           <span className="sr-only">Website manager</span>
         </Button>
       </PopoverTrigger>
@@ -388,9 +389,10 @@ function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
   }, [websiteId, websites, isLoading, router]);
 
   if (isLoading) return null;
+
   return (
     <div className="flex items-center gap-x-2">
-      {user && <ProfileForm user={user} />}
+      {/* {user && <ProfileForm user={user} />} */}
       <div className="flex items-center border rounded-md p-0 h-9 px-px">
         <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
         <WebsiteSettingsModal websiteId={websiteId} />

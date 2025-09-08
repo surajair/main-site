@@ -1,14 +1,12 @@
 import { BrandLogo, BrandName } from "@/components/branding";
 import { Card } from "@/components/ui/card";
-import { getSites } from "@/lib/getter/sites";
-import { Site } from "@/utils/types";
+import { getSites, Sites } from "@/lib/getter/sites";
 import {
   ChevronsDownUp,
   ChevronsUpDown,
   CircleArrowOutUpRight,
   Eye,
   Layers,
-  MoveRight,
   Settings2,
   Sparkle,
   User,
@@ -19,7 +17,7 @@ import { redirect } from "next/navigation";
 export default async function HomePage({ params }: { params: Promise<{ websiteId: string }> }) {
   const { websiteId } = await params;
   const data = await getSites();
-  const sites: Site[] = data as Site[];
+  const sites: Sites[] = data as Sites[];
 
   if (!websiteId) {
     return (
@@ -29,19 +27,21 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
             <div className="text-center mb-6 flex flex-col items-center space-y-2">
               <BrandLogo />
               <BrandName />
-              <h2 className="text-2xl font-bold mb-2">Select Website to Start</h2>
-              <p className="text-muted-foreground">Choose a website to open in the builder</p>
+              <div className="text-center">
+                <span className="text-lg font-bold mb-2">Select Website to Start</span>
+                <p className="text-muted-foreground text-sm font-light">Choose a website to open in the builder</p>
+              </div>
             </div>
             <div className="max-h-96 overflow-y-auto space-y-2 rounded-lg p-4">
               {sites?.map((site) => (
                 <Link
                   key={site.id}
-                  href={`/${site.id}/editor`}
-                  className="block p-3 rounded-md border hover:bg-muted transition-colors">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-medium">{site.name}</h3>
-                    <MoveRight className="h-4 w-4 text-muted-foreground" />
+                  href={`/${site?.id}/editor`}
+                  className="block border px-3 py-1 hover:bg-muted rounded hover:text-primary">
+                  <div className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>
+                    {site.name}
                   </div>
+                  <div className="text-xs text-muted-foreground">{site.subdomain}</div>
                 </Link>
               ))}
             </div>

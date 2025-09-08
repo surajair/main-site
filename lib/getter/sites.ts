@@ -3,7 +3,16 @@
 import { getSupabaseAdmin } from "chai-next/server";
 import { getUser } from "./users";
 
-type Sites = { id: string; name: string; createdAt: string };
+export type Sites = {
+  id: string;
+  name: string;
+  createdAt: string;
+  domain: string;
+  subdomain: string;
+  hosting: string;
+  domainConfigured: boolean;
+  displayDomain: string;
+};
 export interface Site {
   id: string;
   name: string;
@@ -48,7 +57,23 @@ export async function getSites(): Promise<Sites[]> {
 
   if (error) throw error;
 
-  return data.filter((site) => site?.app_domains?.length > 0);
+  return data
+    .filter((site) => site?.app_domains?.length > 0)
+    ?.map((site) => {
+      return {
+        id: site.id,
+        name: site.name,
+        createdAt: site.createdAt,
+        domain: site.app_domains[0].domain,
+        subdomain: site.app_domains[0].subdomain,
+        hosting: site.app_domains[0].hosting,
+        domainConfigured: site.app_domains[0].domainConfigured,
+        displayDomain:
+          site.app_domains[0].domain && site.app_domains[0].domainConfigured
+            ? site.app_domains[0].domain
+            : site.app_domains[0].subdomain,
+      };
+    });
 }
 
 /**
