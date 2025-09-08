@@ -31,11 +31,16 @@ export default async function RootLayout({
 
   return (
     <html dir="ltr" className="smooth-scroll">
+      <head>
+        <link rel="icon" href={brandConfig.favicon} />
+        <title>{brandConfig.name}</title>
+        <link rel="stylesheet" href={`/${process.env.APP_DOMAIN}.css`} />
+      </head>
       <body className={`${geist.className} flex h-screen flex-col`}>
         <FeatureFlagProvider featureFlags={featureFlags}>
           <Toaster richColors theme="light" />
           <TopNavigation user={user} />
-          <main className="flex-1 container h-[calc(100vh-4rem)] pb-2 overflow-hidden">{children}</main>
+          <main className="flex-1 bg-primary container h-[calc(100vh-4rem)] pb-2 overflow-hidden">{children}</main>
         </FeatureFlagProvider>
       </body>
     </html>

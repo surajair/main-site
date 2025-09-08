@@ -130,6 +130,11 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
 
   return (
     <html dir="ltr" className="smooth-scroll">
+      <head>
+        <link rel="icon" href={brandConfig.favicon} />
+        <title>{brandConfig.name}</title>
+        <link rel="stylesheet" href={`/${process.env.APP_DOMAIN}.css`} />
+      </head>
       <body className={`${geist.className} antialiased`}>
         <Toaster richColors />
         <WithAuthLayout>{children}</WithAuthLayout>
