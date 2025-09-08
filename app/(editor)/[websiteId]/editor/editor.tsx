@@ -20,7 +20,7 @@ export default function Editor({ domain, websiteId }: { domain?: string; website
 
   useEffect(() => {
     if (ready) {
-      setTimeout(() => registerPanels(), 400);
+      setTimeout(() => registerPanels(), 500);
     }
   }, [ready]);
 

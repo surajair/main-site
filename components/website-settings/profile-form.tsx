@@ -16,9 +16,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSavePage } from "chai-next";
-import { Loader } from "lucide-react";
+import { Loader, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 function ProfileName({ initialName }: { initialName: string }) {
   const [fullName, setFullName] = useState(initialName || "");
@@ -108,16 +109,58 @@ const ChangePasswordModal = () => {
 // Avatar trigger component that opens the profile dialog
 const ProfileAvatarTrigger = ({ user }: { user: any }) => {
   const displayName = user.user_metadata?.full_name;
+  const [showBetaTooltip, setShowBetaTooltip] = useState(() => {
+    const hasSeenTooltip = localStorage.getItem("beta-tooltip-seen");
+    return !hasSeenTooltip;
+  });
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const handleCloseBetaTooltip = () => {
+    localStorage.setItem("beta-tooltip-seen", "true");
+    setShowBetaTooltip(false);
+    setTooltipOpen(false);
+  };
+
+  const handleBetaClick = () => {
+    if (!showBetaTooltip) {
+      setTooltipOpen(!tooltipOpen);
+    }
+  };
 
   return (
-    <div className="flex items-center justify-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
-      <Avatar className="h-9 w-9 border-2 border-border">
-        <AvatarImage
-          src={user.user_metadata?.avatar_url || "https://avatar.iran.liara.run/public/boy"}
-          alt={user.user_metadata?.full_name || ""}
-        />
-        <AvatarFallback>{displayName ? displayName.charAt(0) : "U"}</AvatarFallback>
-      </Avatar>
+    <div className="flex flex-col items-center justify-center">
+      <Tooltip open={showBetaTooltip || tooltipOpen} onOpenChange={setTooltipOpen}>
+        <TooltipTrigger asChild onClick={(e) => e.stopPropagation()}>
+          <span
+            className="text-xs text-primary font-black text-center cursor-pointer hover:text-primary/70"
+            onClick={handleBetaClick}>
+            BETA
+          </span>
+        </TooltipTrigger>
+        <TooltipContent align="center" side="right" onClick={(e) => e.stopPropagation()} className="p-0">
+          <div className="flex items-start gap-2 p-2 text-primary-foreground">
+            <span className="max-w-72">
+              You are currently using in beta mode. All premium features are available free for limited period.
+            </span>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={handleCloseBetaTooltip}
+              className="w-5 h-5 text-primary-foreground">
+              <X />
+            </Button>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+      <div className="pt-2 flex items-center justify-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
+        <Avatar className="h-9 w-9 border-2 border-border">
+          <AvatarImage
+            src={user.user_metadata?.avatar_url || "https://avatar.iran.liara.run/public/boy"}
+            alt={user.user_metadata?.full_name || ""}
+          />
+          <AvatarFallback>{displayName ? displayName.charAt(0) : "U"}</AvatarFallback>
+        </Avatar>
+      </div>
     </div>
   );
 };
