@@ -11,7 +11,7 @@ export default async function Page({ params }: { params: Promise<{ websiteId: st
   const featureFlags = await fetchFeatureFlags("admin", "free");
   return (
     <FeatureFlagProvider featureFlags={featureFlags}>
-      <Editor domain={data?.subdomain} websiteId={websiteId} />
+      <Editor domain={data?.domain || data?.subdomain} websiteId={websiteId} />
     </FeatureFlagProvider>
   );
 }
