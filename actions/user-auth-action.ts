@@ -81,3 +81,16 @@ export async function updatePassword(newPassword: string) {
 
   return data;
 }
+
+export async function signOut() {
+  const supabaseServer = await createClient();
+
+  const { error } = await supabaseServer.auth.signOut();
+
+  if (error) {
+    if (error instanceof AuthError) {
+      throw new Error(error.message);
+    }
+    throw new Error("An error occurred while signing out");
+  }
+}
