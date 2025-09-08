@@ -110,7 +110,7 @@ const ProfileAvatarTrigger = ({ user }: { user: any }) => {
   const displayName = user.user_metadata?.full_name;
 
   return (
-    <div className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
+    <div className="flex items-center justify-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
       <Avatar className="h-9 w-9 border-2 border-border">
         <AvatarImage
           src={user.user_metadata?.avatar_url || "https://avatar.iran.liara.run/public/boy"}
