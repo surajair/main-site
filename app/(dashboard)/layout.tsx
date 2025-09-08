@@ -34,7 +34,7 @@ export default async function RootLayout({
       <head>
         <link rel="icon" href={brandConfig.favicon} />
         <title>{brandConfig.name}</title>
-        <link rel="stylesheet" href={`/${process.env.APP_DOMAIN}.css`} />
+        <link rel="stylesheet" href={`/${process.env.APP_DOMAIN?.replace(":", ".")}.css`} />
       </head>
       <body className={`${geist.className} flex h-screen flex-col`}>
         <FeatureFlagProvider featureFlags={featureFlags}>
