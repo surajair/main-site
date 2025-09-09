@@ -8,7 +8,7 @@ export const getHomepageBlocks = () => {
       _type: "Box",
       tag: "main",
       _name: "Main",
-      styles: "#styles:,",
+      styles: "#styles:,bg-gradient-to-t from-transparent to-primary/10",
     },
     {
       _id: "tykldr",
@@ -16,7 +16,7 @@ export const getHomepageBlocks = () => {
       _type: "Box",
       tag: "main",
       _name: "Main",
-      styles: "#styles:,min-h-screen container mx-auto flex bg-gradient-to-t from-transparent to-primary/10",
+      styles: "#styles:,min-h-screen container mx-auto flex",
     },
     {
       _id: "bpoalb",
