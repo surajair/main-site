@@ -1,4 +1,7 @@
-import { builderApiHandler } from "chai-next/server";
+import { loadSiteGlobalData } from "@/data/global";
+import { builderApiHandler, registerChaiGlobalDataProvider } from "chai-next/server";
+
+registerChaiGlobalDataProvider(loadSiteGlobalData);
 
 const handler: any = builderApiHandler();
 

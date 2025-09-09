@@ -1,10 +1,12 @@
+import { loadSiteGlobalData } from "@/data/global";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
-import ChaiBuilder from "chai-next/server";
+import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
 loadWebBlocks();
+registerChaiGlobalDataProvider(loadSiteGlobalData);
 
 export const dynamic = "force-static";
 
@@ -15,6 +17,7 @@ export const generateMetadata = async (props: { params: Promise<{ hostname: stri
 
   const { isEnabled } = await draftMode();
   await ChaiBuilder.initByHostname(hostname, isEnabled);
+  //TODO: register global data providers here
 
   return await ChaiBuilder.getPageSeoData(slug);
 };
@@ -27,6 +30,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   const { isEnabled } = await draftMode();
   await ChaiBuilder.initByHostname(hostname, isEnabled);
 
+  //TODO: register global data providers here
   let page = null;
   try {
     page = await ChaiBuilder.getPage(slug);
