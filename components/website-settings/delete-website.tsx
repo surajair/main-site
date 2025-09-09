@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader, Trash2 } from "lucide-react";
-import { useActionState, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 function DeleteWebsite({ websiteId, websiteName }: { websiteId: string; websiteName: string }) {
@@ -26,24 +26,23 @@ function DeleteWebsite({ websiteId, websiteName }: { websiteId: string; websiteN
   const queryClient = useQueryClient();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const [, deleteAction, deleting] = useActionState(async () => {
+  const handleDeleteWebsite = async () => {
+    setIsDeleting(true);
     try {
-      setIsDeleting(true);
       await deleteSite(websiteId);
       queryClient.invalidateQueries({ queryKey: ["websites-list"] });
       setIsDialogOpen(false);
       toast.success("Website deleted successfully");
-      return { success: true };
     } catch (error: any) {
       toast.error(error?.message || "Failed to delete website");
+    } finally {
       setIsDeleting(false);
-      return { success: false, error: error.message };
     }
-  }, null);
+  };
 
   const handleDialogClose = (open: boolean) => {
     // Prevent closing dialog while deleting
-    if (deleting) return;
+    if (isDeleting) return;
 
     setIsDialogOpen(open);
     if (!open) {
@@ -84,16 +83,15 @@ function DeleteWebsite({ websiteId, websiteName }: { websiteId: string; websiteN
         <AlertDialogFooter className="pt-4">
           <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            type="submit"
             onClick={(e) => {
-              e.stopPropagation();
-              deleteAction();
+              e.preventDefault();
+              handleDeleteWebsite();
             }}
             disabled={deleteConfirmation.toLowerCase() !== "delete" || isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90 ">
             {isDeleting ? (
               <>
-                <Loader className="h-3 w-3 animate-spin" />
+                <Loader className="h-3 w-3 animate-spin mr-2" />
                 Deleting
               </>
             ) : (

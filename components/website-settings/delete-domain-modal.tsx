@@ -73,7 +73,7 @@ function DeleteDomainModal({ websiteId, domain }: DeleteDomainModalProps) {
             {isDeleting ? (
               <>
                 <Loader className="h-3 w-3 animate-spin mr-2" />
-                Deleting
+                Removing
               </>
             ) : (
               "Remove Domain"
