@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Site } from "@/lib/getter/sites";
 import { useQueryClient } from "@tanstack/react-query";
-import { AlertCircle, CheckCircle, ExternalLink, Loader, Pencil, RefreshCw } from "lucide-react";
+import { AlertCircle, Check, CheckCircle, Copy, ExternalLink, Loader, Pencil, RefreshCw } from "lucide-react";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import DeleteDomainModal from "./delete-domain-modal";
@@ -21,10 +21,13 @@ interface DomainConfigurationProps {
 function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) {
   const queryClient = useQueryClient();
   const [customDomain, setCustomDomain] = useState("");
-  const [verifyingDomains, setVerifyingDomains] = useState<Set<string>>(new Set());
-  const [domainConfig, setDomainConfig] = useState<any>(null);
+  const [isDomainVerified, setIsDomainVerified] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [domainConfig, setDomainConfig] = useState<any>({});
   const [editingSubdomain, setEditingSubdomain] = useState(false);
+  const [copiedValue, setCopiedValue] = useState<string | null>(null);
   const subdomainSuffix = process.env.NEXT_PUBLIC_SUBDOMAIN;
+
   const subdomainBase = useMemo(() => {
     if (!siteData.subdomain) return "";
     const suffix = subdomainSuffix ? `.${subdomainSuffix}` : "";
@@ -59,6 +62,7 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
     if (res.success) {
       toast.success("Subdomain updated");
       queryClient.invalidateQueries({ queryKey: ["website-settings"] });
+      setEditingSubdomain(false);
     } else {
       toast.error(res.error || "Failed to update subdomain");
     }
@@ -68,16 +72,16 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
   const defaultDomains = useMemo(() => {
     const displayDomains = [];
     // Show domain if available and configured, otherwise show subdomain
-    if (siteData.domain && siteData.domainConfigured) {
+    if (siteData.domain && isDomainVerified) {
       displayDomains.push(siteData.domain);
     }
     if (siteData.subdomain) {
       displayDomains.push(siteData.subdomain);
     }
     return displayDomains;
-  }, [siteData]);
+  }, [isDomainVerified, siteData.domain, siteData.subdomain]);
 
-  const [addDomainState, addDomainAction, addDomainPending] = useActionState(
+  const [, addDomainAction, addDomainPending] = useActionState(
     async (prevState: any, formData: FormData) => {
       const domain = formData.get("customDomain") as string;
       if (!domain) {
@@ -85,18 +89,11 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
         return { success: false, error: "Domain is required" };
       }
 
-      const result = await addDomain(siteData, domain);
+      const result = await addDomain(websiteId, domain);
       if (result.success) {
         setCustomDomain("");
-        // Store the domain configuration data
-        setDomainConfig(result.data);
         queryClient.invalidateQueries({ queryKey: ["website-settings"] });
-
-        if (result.configured) {
-          toast.success("Domain added and configured successfully!");
-        } else {
-          toast.success("Domain added! Please configure DNS settings to complete setup.");
-        }
+        toast.success("Domain added successfully!");
       } else {
         toast.error(result.error || "Failed to add domain");
       }
@@ -105,44 +102,43 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
     { success: false, error: "" },
   );
 
-  const handleVerifyDomain = async (domain: string, showToast: boolean = true) => {
-    setVerifyingDomains((prev) => new Set(prev).add(domain));
+  const handleCopyValue = async (value: string, type: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedValue(value);
+      // Reset the copied state after 5 seconds
+      setTimeout(() => {
+        setCopiedValue(null);
+      }, 5000);
+    } catch (error) {
+      toast.error("Failed to copy to clipboard");
+    }
+  };
 
+  const handleVerifyDomain = async (domain: string, showToast: boolean = true) => {
+    setIsVerifying(true);
     try {
       const result = await verifyDomain(domain);
-      if (result.success) {
-        // Store the domain configuration data
-        setDomainConfig(result.data);
-
-        if (showToast) {
-          if (result.configured) {
-            toast.success("Domain is now configured!");
-          } else {
-            toast.info("Domain is still not configured.");
-          }
-        }
-      } else {
-        if (showToast) {
-          toast.error(result.error || "Failed to verify domain");
+      setDomainConfig(result.data);
+      setIsDomainVerified(result.configured);
+      if (showToast) {
+        if (result.configured) {
+          toast.success("Domain is now configured!");
+        } else {
+          toast.info("Domain is still not configured.");
         }
       }
     } catch (error) {
       if (showToast) {
         toast.error("Failed to verify domain");
       }
-    } finally {
-      setVerifyingDomains((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(domain);
-        return newSet;
-      });
     }
+    setIsVerifying(false);
   };
 
   // Auto-verify domain when component mounts
   useEffect(() => {
     if (siteData.domain) {
-      // Verify domain silently on mount (no toast notifications)
       handleVerifyDomain(siteData.domain, false);
     }
   }, [siteData.domain]);
@@ -151,60 +147,20 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
 
   return (
     <section id="domain" className="space-y-4">
-      {defaultDomains.map((domain) => (
-        <a
-          key={domain}
-          className="flex items-center gap-x-2 text-blue-500 hover:text-primary"
-          href={`https://${domain}`}
-          target="_blank"
-          rel="noopener noreferrer">
-          {domain}
-          <ExternalLink className="h-4 w-4" />
-        </a>
-      ))}
-
-      <div className="rounded-lg border border-primary bg-primary/10 text-primary p-4 text-center">
-        <div className="flex items-center gap-2">
-          <AlertCircle className="h-5 w-5" />
-          <p className="text-sm">Custom domain support coming soon</p>
-        </div>
+      <div className="p-2 rounded-lg">
+        {defaultDomains.map((domain) => (
+          <a
+            key={domain}
+            className="flex items-center gap-x-2 text-blue-500 hover:text-primary text-sm"
+            href={`https://${domain}`}
+            target="_blank"
+            rel="noopener noreferrer">
+            <div className="w-2.5 h-2.5 bg-green-500 rounded-full" />
+            {domain}
+            <ExternalLink className="h-4 w-4" />
+          </a>
+        ))}
       </div>
-      {!siteData.domain && false && (
-        <form action={addDomainAction} className="space-y-1">
-          <input type="hidden" name="websiteId" value={websiteId} />
-          <Label htmlFor="custom-domain" className="text-xs">
-            Domain Name
-          </Label>
-          <div className="flex gap-2">
-            <Input
-              id="custom-domain"
-              name="customDomain"
-              value={customDomain}
-              onChange={(e) =>
-                setCustomDomain(
-                  e.target.value
-                    .toLowerCase()
-                    .replace(/\s+/g, "-")
-                    .replace(/[^a-z0-9.-]/g, ""),
-                )
-              }
-              placeholder="example.com"
-              className=" "
-              disabled={addDomainPending}
-            />
-            <Button type="submit" disabled={addDomainPending || customDomain.length < 3}>
-              {addDomainPending ? (
-                <>
-                  <Loader className="h-3 w-3 animate-spin" />
-                  Adding
-                </>
-              ) : (
-                "Add Domain"
-              )}
-            </Button>
-          </div>
-        </form>
-      )}
 
       <div className="space-y-3">
         {/* Default Subdomain */}
@@ -272,32 +228,35 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
         </div>
 
         {/* Custom Domain */}
-        {siteData.domain && (
+        {siteData.domain ? (
           <div className="space-y-3">
-            <div className="p-3 space-y-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+            <div className="p-3 space-y-3 border rounded-lg">
               <div className="w-full flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  {siteData.domainConfigured ? (
+                  {isDomainVerified ? (
                     <CheckCircle className="h-4 w-4 text-green-500" />
                   ) : (
                     <AlertCircle className="h-4 w-4 text-yellow-500" />
                   )}
-                  <span>{siteData.domain}</span>
+                  <span className="text-sm">{siteData.domain}</span>
                 </div>
+
                 <div className="flex items-center gap-2">
-                  <Badge variant={siteData.domainConfigured ? "outline" : "secondary"}>
-                    {siteData.domainConfigured ? "Configured" : "Not Configured"}
+                  <Badge variant={isDomainVerified ? "outline" : "secondary"}>
+                    {isDomainVerified ? "Configured" : "Not Configured"}
                   </Badge>
-                  {!siteData.domainConfigured && (
+                  {!isDomainVerified && (
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant={isVerifying ? "ghost" : "outline"}
                       onClick={(e) => {
                         e.stopPropagation();
+                        if (isVerifying) return;
                         handleVerifyDomain(siteData.domain!, true);
                       }}
-                      disabled={verifyingDomains.has(siteData.domain!)}>
-                      {verifyingDomains.has(siteData.domain!) ? (
+                      className={isVerifying ? "text-primary border-primary/30 pointer-events-none" : ""}
+                      disabled={isDomainVerified}>
+                      {isVerifying ? (
                         <>
                           <Loader className="h-3 w-3 animate-spin" />
                           Checking
@@ -310,10 +269,11 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
                       )}
                     </Button>
                   )}
-                  <DeleteDomainModal websiteId={websiteId} domain={siteData.domain!} />
+                  {!isVerifying && <DeleteDomainModal websiteId={websiteId} domain={siteData.domain!} />}
                 </div>
               </div>
-              {!siteData.domainConfigured && (
+
+              {!isDomainVerified && domainConfig?.txtValue && !isVerifying && (
                 <div className="space-y-4">
                   <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <div className="space-y-3">
@@ -342,63 +302,44 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                               {/* A Records - Show from API or fallback */}
-                              {domainConfig?.recommendedIPv4?.length > 0
-                                ? domainConfig.recommendedIPv4
-                                    .filter(
-                                      (record: any) =>
-                                        Object.keys(record).length > 0 && (record.value || record.ip || record.address),
-                                    )
-                                    .map((record: any, index: number) => (
-                                      <tr key={`a-${index}`}>
-                                        <td className="px-4 py-3   text-gray-900">A</td>
-                                        <td className="px-4 py-3   text-gray-900">
-                                          {record.name || record.host || "@"}
-                                        </td>
-                                        <td className="px-4 py-3   text-gray-900">
-                                          {record.value || record.ip || record.address}
-                                        </td>
-                                      </tr>
-                                    ))
-                                : null}
-
-                              {/* Fallback A record if no valid records from API */}
-                              {(!domainConfig?.recommendedIPv4?.length ||
-                                !domainConfig.recommendedIPv4.some(
-                                  (record: any) =>
-                                    Object.keys(record).length > 0 && (record.value || record.ip || record.address),
-                                )) && (
-                                <tr>
-                                  <td className="px-4 py-3   text-gray-900">A</td>
-                                  <td className="px-4 py-3   text-gray-900">@</td>
-                                  <td className="px-4 py-3   text-gray-900">216.198.79.1</td>
-                                </tr>
-                              )}
-
-                              {/* CNAME Records - Only show if available from API and not empty */}
-                              {domainConfig?.recommendedCNAME?.length > 0 &&
-                                domainConfig.recommendedCNAME
-                                  .filter(
-                                    (record: any) =>
-                                      Object.keys(record).length > 0 && (record.value || record.target || record.alias),
-                                  )
-                                  .map((record: any, index: number) => (
-                                    <tr key={`cname-${index}`}>
-                                      <td className="px-4 py-3   text-gray-900">CNAME</td>
-                                      <td className="px-4 py-3   text-gray-900">{record.name || record.host || "@"}</td>
-                                      <td className="px-4 py-3   text-gray-900">
-                                        {record.value || record.target || record.alias}
-                                      </td>
-                                    </tr>
-                                  ))}
+                              <tr>
+                                <td className="px-4 py-3   text-gray-900">A</td>
+                                <td className="px-4 py-3   text-gray-900">@</td>
+                                <td className="px-4 py-3   text-gray-900">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-mono text-sm">{domainConfig?.a}</span>
+                                    <button
+                                      onClick={() => handleCopyValue(domainConfig?.a, "A")}
+                                      className="p-1 hover:bg-gray-100 rounded transition-colors"
+                                      title="Copy A record value">
+                                      {copiedValue === domainConfig?.a ? (
+                                        <Check className="h-4 w-4 text-green-500" />
+                                      ) : (
+                                        <Copy className="h-4 w-4 text-gray-500" />
+                                      )}
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
 
                               {/* TXT Record for verification */}
                               <tr>
                                 <td className="px-4 py-3   text-gray-900">TXT</td>
                                 <td className="px-4 py-3   text-gray-900">_vercel</td>
                                 <td className="px-4 py-3   text-gray-900">
-                                  {domainConfig?.verification
-                                    ? `vc-domain-verify=${siteData.domain},${domainConfig.verification}`
-                                    : `vc-domain-verify=${siteData.domain},af451ef51bfde534abd2`}
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-mono text-sm break-all">{domainConfig?.txtValue}</span>
+                                    <button
+                                      onClick={() => handleCopyValue(domainConfig?.txtValue, "TXT")}
+                                      className="p-1 hover:bg-gray-100 rounded transition-colors flex-shrink-0"
+                                      title="Copy TXT record value">
+                                      {copiedValue === domainConfig?.txtValue ? (
+                                        <Check className="h-4 w-4 text-green-500" />
+                                      ) : (
+                                        <Copy className="h-4 w-4 text-gray-500" />
+                                      )}
+                                    </button>
+                                  </div>
                                 </td>
                               </tr>
                             </tbody>
@@ -411,6 +352,45 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
               )}
             </div>
           </div>
+        ) : (
+          <form action={addDomainAction} className="space-y-1 pt-2">
+            <input type="hidden" name="websiteId" value={websiteId} />
+            <Label htmlFor="custom-domain" className="text-xs">
+              Domain Name
+            </Label>
+            <div className="flex gap-2">
+              <Input
+                id="custom-domain"
+                name="customDomain"
+                value={customDomain}
+                onChange={(e) =>
+                  setCustomDomain(
+                    e.target.value
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")
+                      .replace(/[^a-z0-9.-]/g, ""),
+                  )
+                }
+                placeholder="example.com"
+                className=" "
+                disabled={addDomainPending}
+              />
+              <Button
+                variant={addDomainPending ? "ghost" : "default"}
+                type="submit"
+                className={addDomainPending ? "text-primary pointer-events-none" : ""}
+                disabled={addDomainPending || customDomain.length < 3}>
+                {addDomainPending ? (
+                  <>
+                    <Loader className="h-3 w-3 animate-spin" />
+                    Adding
+                  </>
+                ) : (
+                  "Add Domain"
+                )}
+              </Button>
+            </div>
+          </form>
         )}
       </div>
     </section>
