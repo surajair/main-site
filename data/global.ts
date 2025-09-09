@@ -1,30 +1,29 @@
 import ChaiBuilder, { getSupabaseAdmin } from "chai-next/server";
 import { get, pick } from "lodash";
 
-export const loadSiteGlobalData = async ({ lang }: { lang: string }) => {
+export const loadSiteGlobalData = async ({ inBuilder }: { inBuilder: boolean }) => {
   const siteId = ChaiBuilder.getSiteId();
   if (!siteId) {
     return {};
   }
+
   const supabase = await getSupabaseAdmin();
   const siteSettings = await supabase
-    .from("apps")
+    .from(inBuilder ? "apps" : "apps_online")
     .select("data")
     .eq("id", siteId)
     .single()
     .then((res) => res.data || {});
-  console.log("siteSettings in global data provider", siteSettings);
 
   // Load
   return {
     ...pick(get(siteSettings, `data`, {}), [
       "siteName",
       "siteTagline",
-      "logo",
-      "favicon",
-      "phone",
-      "email",
-      "address",
+      "logoURL",
+      "contactEmail",
+      "contactPhone",
+      "contactAddress",
       "socialLinks",
     ]),
   };

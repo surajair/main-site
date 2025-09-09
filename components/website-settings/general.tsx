@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSettingsContext } from ".";
 import SaveButton from "./save-button";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useReloadPage } from "chai-next";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -31,7 +32,7 @@ const CURRENT_LANGUAGE = {
 export default function General({ websiteId, initial }: GeneralProps) {
   const { setHasUnsavedChanges } = useSettingsContext();
   const queryClient = useQueryClient();
-
+  const reloadPage = useReloadPage();
   const [siteName, setSiteName] = useState(initial?.siteName ?? "");
   const [siteTagline, setSiteTagline] = useState(initial?.siteTagline ?? "");
   const [language, setLanguage] = useState(initial?.language ?? "en");
@@ -70,6 +71,7 @@ export default function General({ websiteId, initial }: GeneralProps) {
       });
       if (!res.success) throw new Error(res.error);
 
+      reloadPage();
       toast.success("General settings saved");
       setBaseline({ siteName, siteTagline, language, timezone });
       queryClient.invalidateQueries({ queryKey: ["website-settings"] });
