@@ -1,11 +1,31 @@
-import ChaiBuilder from "chai-next/server";
+import ChaiBuilder, { getSupabaseAdmin } from "chai-next/server";
+import { get, pick } from "lodash";
 
 export const loadSiteGlobalData = async ({ lang }: { lang: string }) => {
-  console.log("Site Id is:", ChaiBuilder.getSiteId());
+  const siteId = ChaiBuilder.getSiteId();
+  if (!siteId) {
+    return {};
+  }
+  const supabase = await getSupabaseAdmin();
+  const siteSettings = await supabase
+    .from("apps")
+    .select("data")
+    .eq("id", siteId)
+    .single()
+    .then((res) => res.data || {});
+  console.log("siteSettings in global data provider", siteSettings);
+
   // Load
   return {
-    siteName: "My Chai Site",
-    siteDescription: "This is my Chai site description",
-    id: ChaiBuilder.getSiteId(),
+    ...pick(get(siteSettings, `data`, {}), [
+      "siteName",
+      "siteTagline",
+      "logo",
+      "favicon",
+      "phone",
+      "email",
+      "address",
+      "socialLinks",
+    ]),
   };
 };

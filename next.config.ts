@@ -1,4 +1,5 @@
-import withChaiBuilder from 'chai-next/config';
+import withChaiBuilder from "chai-next/config";
+import { IMAGE_DOMAINS } from "./remote-pattern";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -13,8 +14,9 @@ const nextConfig = {
       { hostname: "fakeimg.pl" },
       { hostname: "via.placeholder.com" },
       { hostname: "fldwljgzcktqnysdkxnn.supabase.co" },
+      ...IMAGE_DOMAINS.map((domain) => ({ hostname: domain })),
     ],
   },
 };
 
-export default withChaiBuilder(nextConfig)  ;
+export default withChaiBuilder(nextConfig);
