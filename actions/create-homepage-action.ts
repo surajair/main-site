@@ -107,7 +107,7 @@ export const getHomepageBlocks = () => {
       _id: "atxwvw",
       _parent: "iseBko",
       _type: "Text",
-      content: " Heading goes here ",
+      content: " Build amazing Websites ",
     },
     {
       _id: "xfBocr",
