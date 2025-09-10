@@ -10,20 +10,20 @@ export const loadSiteGlobalData = async ({ inBuilder }: { inBuilder: boolean }) 
   const supabase = await getSupabaseAdmin();
   const siteSettings = await supabase
     .from(inBuilder ? "apps" : "apps_online")
-    .select("data")
+    .select("settings")
     .eq("id", siteId)
     .single()
     .then((res) => res.data || {});
 
   // Load
   return {
-    ...pick(get(siteSettings, `data`, {}), [
+    ...pick(get(siteSettings, `settings`, {}), [
       "siteName",
       "siteTagline",
       "logoURL",
-      "contactEmail",
-      "contactPhone",
-      "contactAddress",
+      "email",
+      "phone",
+      "address",
       "socialLinks",
     ]),
   };

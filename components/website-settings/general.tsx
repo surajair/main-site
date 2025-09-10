@@ -1,9 +1,10 @@
 "use client";
 
-import { updateWebsiteName } from "@/actions/update-site-action";
+import { updateSite, updateWebsiteName } from "@/actions/update-site-action";
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LANGUAGE_CODES } from "@/lib/language-config";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSettingsContext } from ".";
 import SaveButton from "./save-button";
@@ -11,6 +12,7 @@ import SaveButton from "./save-button";
 import { useReloadPage } from "chai-next";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
+import AdditionalLanguageSelector from "./additional-language-selector";
 
 interface GeneralProps {
   websiteId: string;
@@ -19,17 +21,16 @@ interface GeneralProps {
     siteTagline?: string;
     language?: string;
     timezone?: string;
+    additionalLanguages?: string[];
+  };
+  siteData?: {
+    languages?: string[];
   };
 }
-const CURRENT_LANGUAGE = {
-  en: "English",
-  hi: "Hindi",
-  es: "Spanish",
-};
 
 // const timeZones = Intl.supportedValuesOf("timeZone");
 
-export default function General({ websiteId, initial }: GeneralProps) {
+export default function General({ websiteId, initial, siteData }: GeneralProps) {
   const { setHasUnsavedChanges } = useSettingsContext();
   const queryClient = useQueryClient();
   const reloadPage = useReloadPage();
@@ -37,19 +38,22 @@ export default function General({ websiteId, initial }: GeneralProps) {
   const [siteTagline, setSiteTagline] = useState(initial?.siteTagline ?? "");
   const [language, setLanguage] = useState(initial?.language ?? "en");
   const [timezone, setTimezone] = useState(initial?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const [additionalLanguages, setAdditionalLanguages] = useState<string[]>(siteData?.languages ?? []);
 
   const [baseline, setBaseline] = useState({
     siteName: initial?.siteName ?? "",
     siteTagline: initial?.siteTagline ?? "",
     language: initial?.language ?? "en",
     timezone: initial?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
+    additionalLanguages: siteData?.languages ?? [],
   });
 
   const hasChanges =
     siteName !== baseline.siteName ||
     siteTagline !== baseline.siteTagline ||
     language !== baseline.language ||
-    timezone !== baseline.timezone;
+    timezone !== baseline.timezone ||
+    JSON.stringify(additionalLanguages.sort()) !== JSON.stringify(baseline.additionalLanguages.sort());
 
   // Update unsaved changes in context whenever hasChanges changes
   useEffect(() => {
@@ -71,9 +75,15 @@ export default function General({ websiteId, initial }: GeneralProps) {
       });
       if (!res.success) throw new Error(res.error);
 
+      // Update additional languages using updateSite
+      const languagesResult = await updateSite(websiteId, {
+        languages: additionalLanguages,
+      });
+      if (!languagesResult.success) throw new Error(languagesResult.error);
+
       reloadPage();
       toast.success("General settings saved");
-      setBaseline({ siteName, siteTagline, language, timezone });
+      setBaseline({ siteName, siteTagline, language, timezone, additionalLanguages });
       queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       return { success: true };
     } catch (e: any) {
@@ -113,15 +123,21 @@ export default function General({ websiteId, initial }: GeneralProps) {
           {/* Disable This Language Select and Show Only the Language which is not Editable */}
           <div className="space-y-1">
             <Label className="text-xs">
-              Language <small className="text-muted-foreground">(Cannot be changed)</small>
+              Default Language <small className="text-muted-foreground">(Cannot be changed)</small>
             </Label>
             <Input
               className="bg-gray-100"
               id={language}
-              value={CURRENT_LANGUAGE[language as keyof typeof CURRENT_LANGUAGE]}
+              value={LANGUAGE_CODES[language as keyof typeof LANGUAGE_CODES]}
               readOnly
             />
           </div>
+          <AdditionalLanguageSelector
+            availableLanguages={LANGUAGE_CODES}
+            defaultLanguage={language}
+            additionalLanguages={additionalLanguages}
+            setAdditionalLanguages={setAdditionalLanguages}
+          />
           {/* TODO: Need to handle this later for Now we  are Hiding this */}
           {/* <div className="space-y-2">
                 <Label>Timezone</Label>

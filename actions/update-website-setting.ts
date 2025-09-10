@@ -40,20 +40,20 @@ export async function updateWebsiteData({ id, updates }: UpdateWebsiteDataPayloa
     // fetch current data
     const { data: current, error: fetchError } = await supabase
       .from("apps")
-      .select("data")
+      .select("settings")
       .eq("id", id)
       .single();
 
     if (fetchError) throw fetchError;
 
-    // merge updates into the JSON data column
-    const currentData = (current?.data ?? {}) as Record<string, any>;
+    // merge updates into the JSON settings column
+    const currentData = (current?.settings ?? {}) as Record<string, any>;
     const nextData = { ...currentData, ...updates };
 
-    // update apps > data
+    // update apps > settings
     const { error: updateError } = await supabase
       .from("apps")
-      .update({ data: nextData })
+      .update({ settings: nextData })
       .eq("id", id);
 
     if (updateError) throw updateError;

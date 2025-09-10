@@ -9,5 +9,5 @@ export interface Site {
   subdomain?: string;
   hosting?: string;
   domainConfigured: boolean;
-  data: any;
+  settings: any;
 }

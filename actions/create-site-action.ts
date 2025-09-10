@@ -65,7 +65,7 @@ export async function createSite(formData: Partial<Site>) {
       languages: formData.languages,
       fallbackLang: formData.fallbackLang,
       theme: DEFAULT_THEME,
-      data: {
+      settings: {
         siteName: websiteName,
       },
     };
@@ -73,7 +73,7 @@ export async function createSite(formData: Partial<Site>) {
     const { data: appData, error: appError } = await supabaseServer
       .from("apps")
       .insert(newApp)
-      .select("id, user, name, theme, languages, fallbackLang, data")
+      .select("id, user, name, theme, languages, fallbackLang, settings")
       .single();
     if (appError) throw appError;
 
