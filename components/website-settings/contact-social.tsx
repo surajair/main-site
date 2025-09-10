@@ -210,9 +210,9 @@ function SocialLinks({ value, onChange }: SocialLinksProps) {
 interface ContactSocialProps {
   websiteId: string;
   initial?: {
-    contactEmail?: string;
-    contactPhone?: string;
-    contactAddress?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
     socialLinks?: SocialLinks;
   };
 }
@@ -236,31 +236,31 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
     }, {} as SocialLinks);
   };
 
-  const [contactEmail, setContactEmail] = useState(initial?.contactEmail ?? "");
-  const [contactPhone, setContactPhone] = useState(initial?.contactPhone ?? "");
-  const [contactAddress, setContactAddress] = useState(initial?.contactAddress ?? "");
+  const [email, setEmail] = useState(initial?.email ?? "");
+  const [phone, setPhone] = useState(initial?.phone ?? "");
+  const [address, setAddress] = useState(initial?.address ?? "");
   const [socialLinks, setSocialLinks] = useState<SocialLinkItem[]>(objectToArray(initial?.socialLinks ?? {}));
   const [selectedPlatform, setSelectedPlatform] = useState("");
   const [newValue, setNewValue] = useState("");
   const [baseline, setBaseline] = useState({
-    contactEmail: initial?.contactEmail ?? "",
-    contactPhone: initial?.contactPhone ?? "",
-    contactAddress: initial?.contactAddress ?? "",
+    email: initial?.email ?? "",
+    phone: initial?.phone ?? "",
+    address: initial?.address ?? "",
     socialLinks: objectToArray(initial?.socialLinks ?? {}),
   });
 
   // Update local state when initial data changes
   useEffect(() => {
     if (initial) {
-      setContactEmail(initial.contactEmail ?? "");
-      setContactPhone(initial.contactPhone ?? "");
-      setContactAddress(initial.contactAddress ?? "");
+      setEmail(initial.email ?? "");
+      setPhone(initial.phone ?? "");
+      setAddress(initial.address ?? "");
       setSocialLinks(objectToArray(initial.socialLinks ?? {}));
 
       setBaseline({
-        contactEmail: initial.contactEmail ?? "",
-        contactPhone: initial.contactPhone ?? "",
-        contactAddress: initial.contactAddress ?? "",
+        email: initial.email ?? "",
+        phone: initial.phone ?? "",
+        address: initial.address ?? "",
         socialLinks: objectToArray(initial.socialLinks ?? {}),
       });
     }
@@ -282,10 +282,7 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
   };
 
   const hasChanges =
-    contactEmail !== baseline.contactEmail ||
-    contactPhone !== baseline.contactPhone ||
-    contactAddress !== baseline.contactAddress ||
-    socialLinksChanged();
+    email !== baseline.email || phone !== baseline.phone || address !== baseline.address || socialLinksChanged();
 
   // Update unsaved changes in context whenever hasChanges changes
   useEffect(() => {
@@ -351,7 +348,7 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
 
       const res = await updateWebsiteData({
         id: websiteId,
-        updates: { contactEmail, contactPhone, contactAddress, socialLinks: socialLinksObject },
+        updates: { email, phone, address, socialLinks: socialLinksObject },
       });
       if (!res.success) throw new Error(res.error);
 
@@ -360,9 +357,9 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
       // Update baseline to reflect saved state (only complete entries)
       const savedArray = objectToArray(socialLinksObject);
       const newBaseline = {
-        contactEmail,
-        contactPhone,
-        contactAddress,
+        email,
+        phone,
+        address,
         socialLinks: JSON.parse(JSON.stringify(savedArray)), // Deep copy to avoid reference issues
       };
       setBaseline(newBaseline);
@@ -382,38 +379,33 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
     <section id="contact-social">
       <form action={saveAll} className="space-y-4">
         <div className="space-y-1">
-          <Label htmlFor="contactEmail" className="text-xs">
-            Contact email
+          <Label htmlFor="email" className="text-xs">
+            Email
           </Label>
           <Input
-            id="contactEmail"
+            id="email"
             placeholder="eg: user@example.com"
-            value={contactEmail}
-            onChange={(e) => setContactEmail(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
         <div className="space-y-1">
-          <Label htmlFor="contactPhone" className="text-xs">
+          <Label htmlFor="phone" className="text-xs">
             Phone
           </Label>
-          <Input
-            id="contactPhone"
-            placeholder="eg: XXXXXX"
-            value={contactPhone}
-            onChange={(e) => setContactPhone(e.target.value)}
-          />
+          <Input id="phone" placeholder="eg: XXXXXX" value={phone} onChange={(e) => setPhone(e.target.value)} />
         </div>
 
         <div className="space-y-1">
-          <Label htmlFor="contactAddress" className="text-xs">
+          <Label htmlFor="address" className="text-xs">
             Address
           </Label>
           <Input
-            id="contactAddress"
+            id="address"
             placeholder="eg: 123 Main St, City, Country"
-            value={contactAddress}
-            onChange={(e) => setContactAddress(e.target.value)}
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
           />
         </div>
 
