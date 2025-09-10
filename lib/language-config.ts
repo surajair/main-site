@@ -2,11 +2,10 @@
 const BASE_LANGUAGE_CODES = {
   en: "English",
 };
+const envLanguages = process.env.NEXT_PUBLIC_SUPPORTED_LANGUAGES;
 
-// Function to safely parse environment variable for additional languages
 function getAdditionalLanguageCodes(): Record<string, string> {
   try {
-    const envLanguages = process.env.SUPPORTED_LANGUAGES;
     if (!envLanguages) {
       return {};
     }
