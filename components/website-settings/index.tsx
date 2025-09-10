@@ -17,7 +17,6 @@ import {
   Plus,
   Settings,
   Share2,
-  Shield,
   ShieldCheck,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -196,7 +195,7 @@ function WebsiteSettingsContent({
  * Website settings modal component
  * @param params websiteId
  */
-const WebsiteSettingsModal = ({ websiteId }: { websiteId: string | undefined }) => {
+const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | undefined; isLoading: boolean }) => {
   const [showModal, setShowModal] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -220,6 +219,15 @@ const WebsiteSettingsModal = ({ websiteId }: { websiteId: string | undefined }) 
   };
 
   if (!websiteId || !showWebsiteSettings) return null;
+  if (isLoading) {
+    return (
+      <Button variant="ghost" size="icon" className="p-0 w-8 h-8" disabled={true}>
+        <Settings />
+        <span className="sr-only">Settings</span>
+      </Button>
+    );
+  }
+
   return (
     <>
       <Dialog open={showModal} onOpenChange={handleOpenChange}>
@@ -347,6 +355,16 @@ const WebsitesListPopover = ({
 
   const website = useMemo(() => websites?.find((site: any) => site?.id === websiteId), [websites, websiteId]);
 
+  if (isLoading) {
+    return (
+      <Button variant="ghost" size="sm" className="h-8" disabled={true}>
+        <span className="text-xs">Loading</span>
+        <ChevronDown />
+        <span className="sr-only">Website manager</span>
+      </Button>
+    );
+  }
+
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
@@ -382,14 +400,12 @@ function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
     if (!isActiveWebsite) router.push(`/`);
   }, [websiteId, websites, isLoading, router]);
 
-  if (isLoading) return null;
-
   return (
     <div className="flex items-center gap-x-2">
       <BrandLogo height={32} width={32} shouldRedirect={false} />
       <div className="flex items-center border rounded-md p-0 h-9 px-px">
         <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
-        <WebsiteSettingsModal websiteId={websiteId} />
+        <WebsiteSettingsModal websiteId={websiteId} isLoading={isLoading} />
       </div>
     </div>
   );
