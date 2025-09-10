@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { X } from "lucide-react";
 
+const MAX_ADDITIONAL_LANGUAGES = 2;
+
 interface AdditionalLanguageSelectorProps {
   availableLanguages: Record<string, string>;
   defaultLanguage: string;
@@ -23,7 +25,7 @@ export default function AdditionalLanguageSelector({
   );
 
   const handleLanguageAdd = (languageCode: string) => {
-    if (additionalLanguages.length < 2 && !additionalLanguages.includes(languageCode)) {
+    if (additionalLanguages.length < MAX_ADDITIONAL_LANGUAGES && !additionalLanguages.includes(languageCode)) {
       setAdditionalLanguages([...additionalLanguages, languageCode]);
     }
   };
@@ -36,10 +38,10 @@ export default function AdditionalLanguageSelector({
     <div className="space-y-3">
       <div className="space-y-1">
         <Label className="text-xs">
-          Additional Languages <small className="text-muted-foreground">(Maximum 2)</small>
+          Additional Languages <small className="text-muted-foreground">(Maximum {MAX_ADDITIONAL_LANGUAGES})</small>
         </Label>
 
-        {additionalLanguages.length < 2 && selectableLanguages.length > 0 ? (
+        {additionalLanguages.length < MAX_ADDITIONAL_LANGUAGES && selectableLanguages.length > 0 ? (
           <Select value="" onValueChange={handleLanguageAdd}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select additional language from here..." />
@@ -52,9 +54,9 @@ export default function AdditionalLanguageSelector({
               ))}
             </SelectContent>
           </Select>
-        ) : additionalLanguages.length >= 2 ? (
+        ) : additionalLanguages.length >= MAX_ADDITIONAL_LANGUAGES ? (
           <div className="text-sm text-muted-foreground bg-gray-50 p-3 rounded-md">
-            Maximum of 2 additional languages reached
+            Maximum of {MAX_ADDITIONAL_LANGUAGES} additional languages reached
           </div>
         ) : (
           <div className="text-sm text-muted-foreground bg-gray-50 p-3 rounded-md">No more languages available</div>
