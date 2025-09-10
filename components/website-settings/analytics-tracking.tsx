@@ -5,10 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useQueryClient } from "@tanstack/react-query";
 import { Plus, Trash2 } from "lucide-react";
-import { useActionState, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import { useSettingsContext } from ".";
 import SaveButton from "./save-button";
 
@@ -24,7 +22,6 @@ interface AnalyticsTrackingProps {
 
 export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrackingProps) {
   const { setHasUnsavedChanges } = useSettingsContext();
-  const queryClient = useQueryClient();
 
   const [googleAnalyticsId, setGoogleAnalyticsId] = useState(initial?.googleAnalyticsId ?? "");
   const [googleTagManagerId, setGoogleTagManagerId] = useState(initial?.googleTagManagerId ?? "");
@@ -57,105 +54,98 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
   };
   const removeScript = (i: number) => setCustomTrackingScripts((s) => s.filter((_, idx) => idx !== i));
 
-  const [state, saveAll, saving] = useActionState(async () => {
+  const saveAction = async () => {
     try {
       const res = await updateWebsiteData({
         id: websiteId,
         updates: { googleAnalyticsId, googleTagManagerId, metaPixelId, customTrackingScripts },
       });
       if (!res.success) throw new Error(res.error);
-      toast.success("Analytics & Tracking saved");
       setBaseline({
         googleAnalyticsId,
         googleTagManagerId,
         metaPixelId,
         customTrackingScripts: [...customTrackingScripts],
       });
-      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       return { success: true };
     } catch (e: any) {
-      toast.error(e?.message || "Failed to save Analytics & Tracking");
-      return { success: false };
+      return { success: false, error: e?.message || "Failed to save Analytics & Tracking" };
     }
-  }, null);
+  };
 
   return (
-    <section id="analytics-tracking">
-      <form action={saveAll} className="space-y-4">
-        <div className="space-y-1">
-          <Label htmlFor="googleAnalyticsId" className="text-xs">
-            Google Analytics ID
-          </Label>
-          <Input
-            id="googleAnalyticsId"
-            value={googleAnalyticsId}
-            placeholder="eg: UA-XXXXXX"
-            onChange={(e) => setGoogleAnalyticsId(e.target.value)}
-          />
-        </div>
+    <section id="analytics-tracking" className="space-y-4">
+      <div className="space-y-1">
+        <Label htmlFor="googleAnalyticsId" className="text-xs">
+          Google Analytics ID
+        </Label>
+        <Input
+          id="googleAnalyticsId"
+          value={googleAnalyticsId}
+          placeholder="eg: UA-XXXXXX"
+          onChange={(e) => setGoogleAnalyticsId(e.target.value)}
+        />
+      </div>
 
-        <div className="space-y-1">
-          <Label htmlFor="googleTagManagerId" className="text-xs">
-            Google Tag Manager ID
-          </Label>
-          <Input
-            id="googleTagManagerId"
-            value={googleTagManagerId}
-            placeholder="eg: GTM-XXXXXX"
-            onChange={(e) => setGoogleTagManagerId(e.target.value)}
-          />
-        </div>
+      <div className="space-y-1">
+        <Label htmlFor="googleTagManagerId" className="text-xs">
+          Google Tag Manager ID
+        </Label>
+        <Input
+          id="googleTagManagerId"
+          value={googleTagManagerId}
+          placeholder="eg: GTM-XXXXXX"
+          onChange={(e) => setGoogleTagManagerId(e.target.value)}
+        />
+      </div>
 
-        <div className="space-y-1">
-          <Label htmlFor="metaPixelId" className="text-xs">
-            Meta Pixel ID
-          </Label>
-          <Input
-            id="metaPixelId"
-            value={metaPixelId}
-            placeholder="eg: XXXXXX"
-            onChange={(e) => setMetaPixelId(e.target.value)}
-          />
-        </div>
+      <div className="space-y-1">
+        <Label htmlFor="metaPixelId" className="text-xs">
+          Meta Pixel ID
+        </Label>
+        <Input
+          id="metaPixelId"
+          value={metaPixelId}
+          placeholder="eg: XXXXXX"
+          onChange={(e) => setMetaPixelId(e.target.value)}
+        />
+      </div>
 
-        <div className="space-y-1">
-          <Label className="text-xs">Custom tracking scripts</Label>
-          <div className="flex items-start gap-2">
-            <Textarea
-              placeholder="<script>...</script> or a URL"
-              value={scriptInput}
-              onChange={(e) => setScriptInput(e.target.value)}
-            />
-            <Button
-              size="icon"
-              type="button"
-              onClick={addScript}
-              className="shrink-0"
-              disabled={scriptInput?.trim().length < 3}>
-              <Plus className="h-4 w-4" />
-            </Button>
+      <div className="space-y-1">
+        <Label className="text-xs">Custom tracking scripts</Label>
+        <div className="flex items-start gap-2">
+          <Textarea
+            placeholder="<script>...</script> or a URL"
+            value={scriptInput}
+            onChange={(e) => setScriptInput(e.target.value)}
+          />
+          <Button
+            size="icon"
+            type="button"
+            onClick={addScript}
+            className="shrink-0"
+            disabled={scriptInput?.trim().length < 3}>
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+        {customTrackingScripts.length > 0 && (
+          <div className="space-y-2 pt-1">
+            {customTrackingScripts.map((snip, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <Textarea
+                  value={snip}
+                  onChange={(e) => setCustomTrackingScripts((s) => s.map((v, idx) => (idx === i ? e.target.value : v)))}
+                />
+                <Button type="button" variant="ghost" onClick={() => removeScript(i)} className="shrink-0">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
           </div>
-          {customTrackingScripts.length > 0 && (
-            <div className="space-y-2 pt-1">
-              {customTrackingScripts.map((snip, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <Textarea
-                    value={snip}
-                    onChange={(e) =>
-                      setCustomTrackingScripts((s) => s.map((v, idx) => (idx === i ? e.target.value : v)))
-                    }
-                  />
-                  <Button type="button" variant="ghost" onClick={() => removeScript(i)} className="shrink-0">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        )}
+      </div>
 
-        <SaveButton saving={saving} hasChanges={hasChanges} />
-      </form>
+      <SaveButton hasChanges={hasChanges} saveAction={saveAction} />
     </section>
   );
 }

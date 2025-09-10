@@ -5,10 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
-import { useActionState, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import { useSettingsContext } from ".";
 import SaveButton from "./save-button";
 
@@ -219,7 +217,6 @@ interface ContactSocialProps {
 
 export default function ContactSocial({ websiteId, initial }: ContactSocialProps) {
   const { setHasUnsavedChanges } = useSettingsContext();
-  const queryClient = useQueryClient();
 
   // Helper functions to convert between formats
   const objectToArray = (obj: SocialLinks): SocialLinkItem[] => {
@@ -341,7 +338,7 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
     setSocialLinks((s) => s.map((item, i) => (i === index ? { ...item, value } : item)));
   };
 
-  const [state, saveAll, saving] = useActionState(async () => {
+  const saveAction = async () => {
     try {
       // Convert array to object and filter out empty entries
       const socialLinksObject = arrayToObject(socialLinks);
@@ -351,8 +348,6 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
         updates: { email, phone, address, socialLinks: socialLinksObject },
       });
       if (!res.success) throw new Error(res.error);
-
-      toast.success("Contact & Social saved");
 
       // Update baseline to reflect saved state (only complete entries)
       const savedArray = objectToArray(socialLinksObject);
@@ -367,141 +362,132 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
       // Keep current local state as is - don't overwrite with filtered data
       // This preserves any incomplete entries the user is working on
 
-      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       return { success: true };
     } catch (e: any) {
-      toast.error(e?.message || "Failed to save Contact & Social");
-      return { success: false };
+      return { success: false, error: e?.message || "Failed to save Contact & Social" };
     }
-  }, null);
+  };
 
   return (
-    <section id="contact-social">
-      <form action={saveAll} className="space-y-4">
-        <div className="space-y-1">
-          <Label htmlFor="email" className="text-xs">
-            Email
-          </Label>
-          <Input
-            id="email"
-            placeholder="eg: user@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+    <section id="contact-social" className="space-y-4">
+      <div className="space-y-1">
+        <Label htmlFor="email" className="text-xs">
+          Email
+        </Label>
+        <Input id="email" placeholder="eg: user@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+      </div>
 
-        <div className="space-y-1">
-          <Label htmlFor="phone" className="text-xs">
-            Phone
-          </Label>
-          <Input id="phone" placeholder="eg: XXXXXX" value={phone} onChange={(e) => setPhone(e.target.value)} />
-        </div>
+      <div className="space-y-1">
+        <Label htmlFor="phone" className="text-xs">
+          Phone
+        </Label>
+        <Input id="phone" placeholder="eg: XXXXXX" value={phone} onChange={(e) => setPhone(e.target.value)} />
+      </div>
 
-        <div className="space-y-1">
-          <Label htmlFor="address" className="text-xs">
-            Address
-          </Label>
-          <Input
-            id="address"
-            placeholder="eg: 123 Main St, City, Country"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-        </div>
+      <div className="space-y-1">
+        <Label htmlFor="address" className="text-xs">
+          Address
+        </Label>
+        <Input
+          id="address"
+          placeholder="eg: 123 Main St, City, Country"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+      </div>
 
-        <div className="space-y-1">
-          <Label className="text-xs">Social links</Label>
-          <div className="space-y-2">
-            {socialLinks.map((item, index) => {
-              const platformInfo = getPlatformInfo(item.key);
-              const availableForEdit = getAvailablePlatformsForEdit(item.key);
-              return (
-                <div key={index} className="flex items-center gap-2">
-                  <Select value={item.key} onValueChange={(newKey) => changePlatformType(index, newKey)}>
-                    <SelectTrigger className="w-56 shrink-0">
-                      <SelectValue placeholder="Select platform">{platformInfo?.label || item.key}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableForEdit.map((platform) => (
-                        <SelectItem key={platform.value} value={platform.value}>
-                          {platform.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    value={item.value}
-                    onChange={(e) => updateSocialValue(index, e.target.value)}
-                    placeholder={platformInfo?.placeholder || "Enter URL"}
-                  />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="outline"
-                    onClick={() => removeSocial(index)}
-                    className="shrink-0">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              );
-            })}
-
-            {availablePlatforms.length > 0 && !hasIncompleteLinks && (
-              <>
-                <div className="flex items-center gap-2">
-                  <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
-                    <SelectTrigger className="w-56 shrink-0">
-                      <SelectValue placeholder="Select platform" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availablePlatforms.map((platform) => (
-                        <SelectItem key={platform.value} value={platform.value}>
-                          {platform.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    placeholder={
-                      selectedPlatform
-                        ? getPlatformInfo(selectedPlatform)?.placeholder || "Enter URL"
-                        : "Select a platform first"
-                    }
-                    value={newValue}
-                    onChange={(e) => setNewValue(e.target.value)}
-                    disabled={!selectedPlatform}
-                  />
-                </div>
-                <div className="w-full flex items-center justify-start">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={addSocial}
-                    disabled={!selectedPlatform || !newValue.trim()}
-                    className="mt-1 px-0 hover:bg-transparent hover:underline hover:text-primary">
-                    + Add social link
-                  </Button>
-                </div>
-              </>
-            )}
-
-            {hasIncompleteLinks && (
-              <div className="text-sm text-muted-foreground bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                Please complete all existing social links before adding new ones.
+      <div className="space-y-1">
+        <Label className="text-xs">Social links</Label>
+        <div className="space-y-2">
+          {socialLinks.map((item, index) => {
+            const platformInfo = getPlatformInfo(item.key);
+            const availableForEdit = getAvailablePlatformsForEdit(item.key);
+            return (
+              <div key={index} className="flex items-center gap-2">
+                <Select value={item.key} onValueChange={(newKey) => changePlatformType(index, newKey)}>
+                  <SelectTrigger className="w-56 shrink-0">
+                    <SelectValue placeholder="Select platform">{platformInfo?.label || item.key}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableForEdit.map((platform) => (
+                      <SelectItem key={platform.value} value={platform.value}>
+                        {platform.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  value={item.value}
+                  onChange={(e) => updateSocialValue(index, e.target.value)}
+                  placeholder={platformInfo?.placeholder || "Enter URL"}
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="outline"
+                  onClick={() => removeSocial(index)}
+                  className="shrink-0">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
-            )}
+            );
+          })}
 
-            {availablePlatforms.length === 0 && !hasIncompleteLinks && (
-              <div className="text-sm text-muted-foreground bg-blue-50 border border-blue-200 rounded-lg p-3">
-                All available social platforms have been added.
+          {availablePlatforms.length > 0 && !hasIncompleteLinks && (
+            <>
+              <div className="flex items-center gap-2">
+                <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+                  <SelectTrigger className="w-56 shrink-0">
+                    <SelectValue placeholder="Select platform" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availablePlatforms.map((platform) => (
+                      <SelectItem key={platform.value} value={platform.value}>
+                        {platform.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  placeholder={
+                    selectedPlatform
+                      ? getPlatformInfo(selectedPlatform)?.placeholder || "Enter URL"
+                      : "Select a platform first"
+                  }
+                  value={newValue}
+                  onChange={(e) => setNewValue(e.target.value)}
+                  disabled={!selectedPlatform}
+                />
               </div>
-            )}
-          </div>
-        </div>
+              <div className="w-full flex items-center justify-start">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={addSocial}
+                  disabled={!selectedPlatform || !newValue.trim()}
+                  className="mt-1 px-0 hover:bg-transparent hover:underline hover:text-primary">
+                  + Add social link
+                </Button>
+              </div>
+            </>
+          )}
 
-        <SaveButton saving={saving} hasChanges={hasChanges} />
-      </form>
+          {hasIncompleteLinks && (
+            <div className="text-sm text-muted-foreground bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              Please complete all existing social links before adding new ones.
+            </div>
+          )}
+
+          {availablePlatforms.length === 0 && !hasIncompleteLinks && (
+            <div className="text-sm text-muted-foreground bg-blue-50 border border-blue-200 rounded-lg p-3">
+              All available social platforms have been added.
+            </div>
+          )}
+        </div>
+      </div>
+
+      <SaveButton hasChanges={hasChanges} saveAction={saveAction} />
     </section>
   );
 }

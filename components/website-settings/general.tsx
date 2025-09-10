@@ -5,13 +5,10 @@ import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LANGUAGE_CODES } from "@/lib/language-config";
-import { useQueryClient } from "@tanstack/react-query";
 import { useSettingsContext } from ".";
 import SaveButton from "./save-button";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useReloadPage } from "chai-next";
-import { useActionState, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import AdditionalLanguageSelector from "./additional-language-selector";
 
 interface GeneralProps {
@@ -32,8 +29,6 @@ interface GeneralProps {
 
 export default function General({ websiteId, initial, siteData }: GeneralProps) {
   const { setHasUnsavedChanges } = useSettingsContext();
-  const queryClient = useQueryClient();
-  const reloadPage = useReloadPage();
   const [siteName, setSiteName] = useState(initial?.siteName ?? "");
   const [siteTagline, setSiteTagline] = useState(initial?.siteTagline ?? "");
   const [language, setLanguage] = useState(initial?.language ?? "en");
@@ -60,7 +55,7 @@ export default function General({ websiteId, initial, siteData }: GeneralProps) 
     setHasUnsavedChanges(hasChanges);
   }, [hasChanges, setHasUnsavedChanges]);
 
-  const [state, saveAll, saving] = useActionState(async () => {
+  const saveAction = async () => {
     try {
       // Update website name through the dedicated function
       if (siteName !== baseline.siteName) {
@@ -81,65 +76,60 @@ export default function General({ websiteId, initial, siteData }: GeneralProps) 
       });
       if (!languagesResult.success) throw new Error(languagesResult.error);
 
-      reloadPage();
-      toast.success("General settings saved");
       setBaseline({ siteName, siteTagline, language, timezone, additionalLanguages });
-      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       return { success: true };
     } catch (e: any) {
-      toast.error(e?.message || "Failed to save general settings");
-      return { success: false };
+      return { success: false, error: e?.message || "Failed to save general settings" };
     }
-  }, null);
+  };
 
   return (
-    <section id="general">
-      <form action={saveAll} className="space-y-4">
+    <section id="general" className="space-y-4">
+      <div className="space-y-1">
+        <Label htmlFor="siteName" className="text-xs">
+          Website name
+        </Label>
+        <Input
+          placeholder="eg: My Website"
+          id="siteName"
+          value={siteName}
+          onChange={(e) => setSiteName(e.target.value)}
+        />
+      </div>
+
+      <div className="space-y-1">
+        <Label htmlFor="siteTagline" className="text-xs">
+          Tagline
+        </Label>
+        <Input
+          placeholder="eg: The best website ever"
+          id="siteTagline"
+          value={siteTagline}
+          onChange={(e) => setSiteTagline(e.target.value)}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4">
+        {/* Disable This Language Select and Show Only the Language which is not Editable */}
         <div className="space-y-1">
-          <Label htmlFor="siteName" className="text-xs">
-            Website name
+          <Label className="text-xs">
+            Default Language <small className="text-muted-foreground">(Cannot be changed)</small>
           </Label>
           <Input
-            placeholder="eg: My Website"
-            id="siteName"
-            value={siteName}
-            onChange={(e) => setSiteName(e.target.value)}
+            className="bg-gray-100"
+            id={language}
+            value={LANGUAGE_CODES[language as keyof typeof LANGUAGE_CODES]}
+            readOnly
           />
         </div>
-
-        <div className="space-y-1">
-          <Label htmlFor="siteTagline" className="text-xs">
-            Tagline
-          </Label>
-          <Input
-            placeholder="eg: The best website ever"
-            id="siteTagline"
-            value={siteTagline}
-            onChange={(e) => setSiteTagline(e.target.value)}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4">
-          {/* Disable This Language Select and Show Only the Language which is not Editable */}
-          <div className="space-y-1">
-            <Label className="text-xs">
-              Default Language <small className="text-muted-foreground">(Cannot be changed)</small>
-            </Label>
-            <Input
-              className="bg-gray-100"
-              id={language}
-              value={LANGUAGE_CODES[language as keyof typeof LANGUAGE_CODES]}
-              readOnly
-            />
-          </div>
-          <AdditionalLanguageSelector
-            availableLanguages={LANGUAGE_CODES}
-            defaultLanguage={language}
-            additionalLanguages={additionalLanguages}
-            setAdditionalLanguages={setAdditionalLanguages}
-          />
-          {/* TODO: Need to handle this later for Now we  are Hiding this */}
-          {/* <div className="space-y-2">
+        <AdditionalLanguageSelector
+          availableLanguages={LANGUAGE_CODES}
+          defaultLanguage={language}
+          additionalLanguages={additionalLanguages}
+          setAdditionalLanguages={setAdditionalLanguages}
+        />
+        {/* TODO: Need to handle this later for Now we  are Hiding this */}
+        {/* <div className="space-y-2">
                 <Label>Timezone</Label>
                 <Select value={timezone} onValueChange={(v) => setTimezone(v)}>
                   <SelectTrigger className="w-full">
@@ -154,10 +144,9 @@ export default function General({ websiteId, initial, siteData }: GeneralProps) 
                   </SelectContent>
                 </Select>
               </div> */}
-        </div>
+      </div>
 
-        <SaveButton saving={saving} hasChanges={hasChanges} />
-      </form>
+      <SaveButton hasChanges={hasChanges} saveAction={saveAction} />
     </section>
   );
 }
