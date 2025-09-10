@@ -1,10 +1,10 @@
 "use server";
 
-import { Site } from "@/utils/types";
 import { Vercel } from "@vercel/sdk";
+import { projectsVerifyProjectDomain } from "@vercel/sdk/funcs/projectsVerifyProjectDomain";
 import { getSupabaseAdmin } from "chai-next/server";
 
-export async function addDomain(site: Site, domain: string) {
+export async function addDomain(websiteId: string, domain: string) {
   try {
     const supabase = await getSupabaseAdmin();
     // Check if domain already exists
@@ -22,38 +22,14 @@ export async function addDomain(site: Site, domain: string) {
       requestBody: { name: domain },
     });
 
-    const checkConfiguration = await vercel.domains.getDomainConfig({
-      teamId: process.env.VERCEL_TEAM_ID!,
-      domain: domain,
-    });
+    await supabase.from("app_domains").update({ domain: domain, domainConfigured: false }).eq("app", websiteId);
 
-    const { error } = await supabase
-      .from("app_domains")
-      .update({
-        domain: domain,
-        domainConfigured: !!checkConfiguration.configuredBy && !checkConfiguration.misconfigured,
-      })
-      .eq("app", site.id);
-
-    if (error) throw error;
-
-    return {
-      success: true,
-      data: checkConfiguration,
-      configured: !!checkConfiguration.configuredBy,
-      needsConfiguration: !checkConfiguration.configuredBy,
-    };
+    return { success: true };
   } catch (error: any) {
     if (error?.message?.toLowerCase().includes("not found")) {
-      return {
-        success: false,
-        error: "Domain not found",
-      };
+      return { success: false, error: "Domain not found" };
     }
-    return {
-      success: false,
-      error: error?.message || "Failed to add domain",
-    };
+    return { success: false, error: error?.message || "Failed to add domain" };
   }
 }
 
@@ -61,31 +37,23 @@ export async function verifyDomain(domain: string) {
   try {
     const supabaseServer = await getSupabaseAdmin();
     const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
-
-    const checkConfiguration = await vercel.domains.getDomainConfig({
+    const result: any = await projectsVerifyProjectDomain(vercel, {
+      idOrName: process.env.VERCEL_PROJECT_ID!,
       teamId: process.env.VERCEL_TEAM_ID!,
-      domain: domain,
+      domain,
     });
-
-    const isConfigured = !!checkConfiguration.configuredBy && !checkConfiguration.misconfigured;
-
-    const { error } = await supabaseServer
-      .from("app_domains")
-      .update({ domainConfigured: isConfigured })
-      .eq("domain", domain);
-
-    if (error) throw error;
-
-    return {
-      success: true,
-      configured: !!checkConfiguration.configuredBy,
-      data: checkConfiguration,
-      needsConfiguration: !checkConfiguration.configuredBy,
-    };
+    const isVerified = result.ok && result.value;
+    await supabaseServer.from("app_domains").update({ domainConfigured: isVerified }).eq("domain", domain);
+    if (!isVerified) throw result.error?.message;
+    return { success: true, configured: true, data: null };
   } catch (error: any) {
-    return {
-      success: false,
-      error: error?.message || "Failed to verify domain configuration",
-    };
+    const isMissingTxtRecord = error?.includes("missing required TXT Record");
+    if (isMissingTxtRecord) {
+      const match = error.match(/TXT Record "([^"]+)"/);
+      const txtValue = match ? match[1] : null;
+      const a = "216.198.79.1";
+      return { success: false, configured: false, error: "Domain is not configured yet", data: { txtValue, a } };
+    }
+    return { success: false, configured: false, error: error?.message || "Failed to verify domain", data: {} };
   }
 }

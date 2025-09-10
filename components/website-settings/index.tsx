@@ -394,7 +394,7 @@ function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
 
   return (
     <div className="flex items-center gap-x-2">
-      <BrandLogo height={34} width={34} shouldRedirect={false} />
+      <BrandLogo height={32} width={32} shouldRedirect={false} />
       <div className="flex items-center border rounded-md p-0 h-9 px-px">
         <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
         <WebsiteSettingsModal websiteId={websiteId} />

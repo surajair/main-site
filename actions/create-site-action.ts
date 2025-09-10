@@ -6,7 +6,7 @@ import { Site } from "@/utils/types";
 import { Vercel } from "@vercel/sdk";
 import { getSupabaseAdmin } from "chai-next/server";
 import { revalidatePath } from "next/cache";
-import { HOME_PAGE_BLOCKS } from "./home-page";
+import { createHomePage } from "./create-homepage-action";
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 
 if (!ENCRYPTION_KEY) {
@@ -143,55 +143,6 @@ export async function createApiKey(appId: string) {
     return {
       success: false,
       error: error?.message || "Failed to create API key",
-    };
-  }
-}
-
-export async function createHomePage(appId: string, name: string, supabaseServer: any) {
-  try {
-    const { data, error } = await supabaseServer
-      .from("app_pages")
-      .insert({
-        name: "Homepage",
-        slug: "/",
-        app: appId,
-        pageType: "page",
-        seo: {
-          title: `Home - ${name}`,
-          jsonLD: "",
-          noIndex: false,
-          ogImage: "",
-          ogTitle: "",
-          noFollow: "",
-          description: `Build your ${name} website with Chai Builder`,
-          searchTitle: "",
-          cononicalUrl: "",
-          ogDescription: "",
-          searchDescription: "",
-        },
-        blocks: HOME_PAGE_BLOCKS,
-        online: true,
-      })
-      .select("*")
-      .single();
-
-    const { data: onlineData, error: onlineError } = await supabaseServer
-      .from("app_pages_online")
-      .insert({
-        ...data,
-        partialBlocks: null,
-        links: null,
-      })
-      .select("*")
-      .single();
-
-    if (onlineError) throw onlineError;
-
-    return { success: true, data };
-  } catch (error: any) {
-    return {
-      success: false,
-      error: error?.message || "Failed to create home page",
     };
   }
 }

@@ -93,7 +93,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
         setWebsiteName("");
         setDefaultLanguage("en");
         queryClient.invalidateQueries({ queryKey: ["websites-list"] });
-        router.push(`/${result.data.id}/editor`);
+        window.location.href = `/${result.data.id}/editor`;
       } else {
         toast.error(result.error || "Failed to create website");
         setIsCreating(false);
