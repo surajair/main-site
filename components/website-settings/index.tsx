@@ -32,7 +32,6 @@ import DeleteWebsite from "./delete-website";
 import DomainConfiguration from "./domain-configuration";
 import General from "./general";
 import LegalCompliance from "./legal-compliance";
-// import SpamProtection from "./spam-protection";
 import { UnsavedChangesDialog } from "./unsaved-changes-dialog";
 
 interface SettingsContextType {
@@ -55,7 +54,6 @@ const SIDEBAR_ITEMS = [
   { id: "branding", label: "Branding", icon: ImageIcon, component: BrandingConfiguration },
   { id: "contact-social", label: "Contact & Social", icon: Share2, component: ContactSocial },
   { id: "legal-compliance", label: "Legal Compliance", icon: ShieldCheck, component: LegalCompliance },
-  // { id: "spam-protection", label: "Spam Protection", icon: Shield, component: SpamProtection },
   { id: "analytics-tracking", label: "Analytics Tracking", icon: Activity, component: AnalyticsTracking },
   { id: "domain", label: "Domain", icon: Globe, component: DomainConfiguration },
 ];
