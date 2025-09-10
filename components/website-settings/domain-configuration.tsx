@@ -273,83 +273,90 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
                 </div>
               </div>
 
-              {!isDomainVerified && domainConfig?.txtValue && !isVerifying && (
-                <div className="space-y-4">
-                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <div className="space-y-3">
-                      <p className="text-sm text-yellow-900 font-medium">
-                        The DNS records at your provider must match the following records to verify and connect your
-                        domain to Vercel.
-                      </p>
-                      <a
-                        href="https://vercel.com/docs/domains/working-with-domains/add-a-domain"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800 hover:underline">
-                        Learn more
-                      </a>
+              {!isVerifying &&
+                !isDomainVerified &&
+                typeof domainConfig === "object" &&
+                Object.keys(domainConfig).length > 0 && (
+                  <div className="space-y-4">
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <div className="space-y-3">
+                        <p className="text-sm text-yellow-900 font-medium">
+                          The DNS records at your provider must match the following records to verify and connect your
+                          domain to Vercel.
+                        </p>
+                        <a
+                          href="https://vercel.com/docs/domains/working-with-domains/add-a-domain"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800 hover:underline">
+                          Learn more
+                        </a>
 
-                      {/* DNS Records Table */}
-                      <div className="mt-4">
-                        <div className="border border-gray-200 rounded-lg overflow-hidden">
-                          <table className="w-full text-sm">
-                            <thead className="bg-gray-50">
-                              <tr>
-                                <th className="px-4 py-3 text-left font-medium text-gray-900 border-b">Type</th>
-                                <th className="px-4 py-3 text-left font-medium text-gray-900 border-b">Name</th>
-                                <th className="px-4 py-3 text-left font-medium text-gray-900 border-b">Value</th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                              {/* A Records - Show from API or fallback */}
-                              <tr>
-                                <td className="px-4 py-3   text-gray-900">A</td>
-                                <td className="px-4 py-3   text-gray-900">@</td>
-                                <td className="px-4 py-3   text-gray-900">
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-mono text-sm">{domainConfig?.a}</span>
-                                    <button
-                                      onClick={() => handleCopyValue(domainConfig?.a, "A")}
-                                      className="p-1 hover:bg-gray-100 rounded transition-colors"
-                                      title="Copy A record value">
-                                      {copiedValue === domainConfig?.a ? (
-                                        <Check className="h-4 w-4 text-green-500" />
-                                      ) : (
-                                        <Copy className="h-4 w-4 text-gray-500" />
-                                      )}
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
+                        {/* DNS Records Table */}
+                        <div className="mt-4">
+                          <div className="border border-gray-200 rounded-lg overflow-hidden">
+                            <table className="w-full text-sm">
+                              <thead className="bg-gray-50">
+                                <tr>
+                                  <th className="px-4 py-3 text-left font-medium text-gray-900 border-b">Type</th>
+                                  <th className="px-4 py-3 text-left font-medium text-gray-900 border-b">Name</th>
+                                  <th className="px-4 py-3 text-left font-medium text-gray-900 border-b">Value</th>
+                                </tr>
+                              </thead>
+                              <tbody className="bg-white divide-y divide-gray-200">
+                                {/* A Records - Show from API or fallback */}
+                                {domainConfig?.a && (
+                                  <tr>
+                                    <td className="px-4 py-3   text-gray-900">A</td>
+                                    <td className="px-4 py-3   text-gray-900">@</td>
+                                    <td className="px-4 py-3   text-gray-900">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-mono text-sm">{domainConfig?.a}</span>
+                                        <button
+                                          onClick={() => handleCopyValue(domainConfig?.a, "A")}
+                                          className="p-1 hover:bg-gray-100 rounded transition-colors"
+                                          title="Copy A record value">
+                                          {copiedValue === domainConfig?.a ? (
+                                            <Check className="h-4 w-4 text-green-500" />
+                                          ) : (
+                                            <Copy className="h-4 w-4 text-gray-500" />
+                                          )}
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )}
 
-                              {/* TXT Record for verification */}
-                              <tr>
-                                <td className="px-4 py-3   text-gray-900">TXT</td>
-                                <td className="px-4 py-3   text-gray-900">_vercel</td>
-                                <td className="px-4 py-3   text-gray-900">
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-mono text-sm break-all">{domainConfig?.txtValue}</span>
-                                    <button
-                                      onClick={() => handleCopyValue(domainConfig?.txtValue, "TXT")}
-                                      className="p-1 hover:bg-gray-100 rounded transition-colors flex-shrink-0"
-                                      title="Copy TXT record value">
-                                      {copiedValue === domainConfig?.txtValue ? (
-                                        <Check className="h-4 w-4 text-green-500" />
-                                      ) : (
-                                        <Copy className="h-4 w-4 text-gray-500" />
-                                      )}
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
+                                {/* TXT Record for verification */}
+                                {domainConfig?.txtValue && (
+                                  <tr>
+                                    <td className="px-4 py-3   text-gray-900">TXT</td>
+                                    <td className="px-4 py-3   text-gray-900">_vercel</td>
+                                    <td className="px-4 py-3   text-gray-900">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-mono text-sm break-all">{domainConfig?.txtValue}</span>
+                                        <button
+                                          onClick={() => handleCopyValue(domainConfig?.txtValue, "TXT")}
+                                          className="p-1 hover:bg-gray-100 rounded transition-colors flex-shrink-0"
+                                          title="Copy TXT record value">
+                                          {copiedValue === domainConfig?.txtValue ? (
+                                            <Check className="h-4 w-4 text-green-500" />
+                                          ) : (
+                                            <Copy className="h-4 w-4 text-gray-500" />
+                                          )}
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </div>
         ) : (

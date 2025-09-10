@@ -1,6 +1,7 @@
 "use server";
 
 import { Vercel } from "@vercel/sdk";
+import { domainsGetDomainConfig } from "@vercel/sdk/funcs/domainsGetDomainConfig";
 import { projectsVerifyProjectDomain } from "@vercel/sdk/funcs/projectsVerifyProjectDomain";
 import { getSupabaseAdmin } from "chai-next/server";
 
@@ -37,21 +38,37 @@ export async function verifyDomain(domain: string) {
   try {
     const supabaseServer = await getSupabaseAdmin();
     const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
-    const result: any = await projectsVerifyProjectDomain(vercel, {
-      idOrName: process.env.VERCEL_PROJECT_ID!,
+    const config = await domainsGetDomainConfig(vercel, {
+      projectIdOrName: process.env.VERCEL_PROJECT_ID!,
       teamId: process.env.VERCEL_TEAM_ID!,
       domain,
     });
-    const isVerified = result.ok && result.value;
-    await supabaseServer.from("app_domains").update({ domainConfigured: isVerified }).eq("domain", domain);
-    if (!isVerified) throw result.error?.message;
+    if (config?.value?.misconfigured) {
+      const recommendedIPv4 = config?.value?.recommendedIPv4;
+      let a = "216.198.79.1";
+      const result: any = await projectsVerifyProjectDomain(vercel, {
+        idOrName: process.env.VERCEL_PROJECT_ID!,
+        teamId: process.env.VERCEL_TEAM_ID!,
+        domain,
+      });
+      if (recommendedIPv4?.length > 0) {
+        const records = recommendedIPv4[0]?.value;
+        if (records?.length > 0) {
+          a = records[0];
+        }
+      }
+      await supabaseServer.from("app_domains").update({ domainConfigured: false }).eq("domain", domain);
+      throw { message: result?.error?.message || "Domain is not configured yet.", a };
+    } else {
+      await supabaseServer.from("app_domains").update({ domainConfigured: true }).eq("domain", domain);
+    }
     return { success: true, configured: true, data: null };
   } catch (error: any) {
-    const isMissingTxtRecord = error?.includes("missing required TXT Record");
-    if (isMissingTxtRecord) {
-      const match = error.match(/TXT Record "([^"]+)"/);
+    const isMissingTxtRecord = error?.message?.includes("missing required TXT Record");
+    if (isMissingTxtRecord || error?.a) {
+      const a = error?.a || "216.198.79.1";
+      const match = error.message.match(/TXT Record "([^"]+)"/);
       const txtValue = match ? match[1] : null;
-      const a = "216.198.79.1";
       return { success: false, configured: false, error: "Domain is not configured yet", data: { txtValue, a } };
     }
     return { success: false, configured: false, error: error?.message || "Failed to verify domain", data: {} };
