@@ -49,7 +49,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
     pageLang: page.lang,
   };
   return (
-    <>
+    <html lang={page.lang} className={`smooth-scroll`}>
       <head>
         <FontsAndStyles page={page} />
       </head>
@@ -57,6 +57,6 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
         <PreviewBanner slug={slug} show={isEnabled} />
         <RenderChaiBlocks page={page} pageProps={pageProps} />
       </body>
-    </>
+    </html>
   );
 }

@@ -17,5 +17,5 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <html className={`smooth-scroll`}>{children}</html>;
+  return <>{children}</>;
 }
