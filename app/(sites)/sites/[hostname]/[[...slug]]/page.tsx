@@ -1,3 +1,4 @@
+import { PageScripts } from "@/components/page-scripts";
 import { loadSiteGlobalData } from "@/data/global";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
@@ -56,6 +57,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
       <body className={`font-body antialiased`}>
         <PreviewBanner slug={slug} show={isEnabled} />
         <RenderChaiBlocks page={page} pageProps={pageProps} />
+        <PageScripts />
       </body>
     </html>
   );
