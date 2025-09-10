@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader, Upload, X } from "lucide-react";
+import { Check, Loader, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+import SaveButton from "./save-button";
 
 interface BrandingProps {
   websiteId: string;
@@ -153,11 +154,11 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
       <div className="space-y-4">
         <div className="space-y-1">
           <Label className="text-xs">Logo</Label>
-          {isValidImageUrl(logoURL) ? (
+          {isValidImageUrl(initial?.logoURL) ? (
             <div className="flex items-center gap-x-4 border p-4 rounded-md">
               <div className="h-10 min-w-10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={logoURL} alt="logo" className="h-10 w-auto object-contain rounded" />
+                <img src={initial?.logoURL} alt="logo" className="h-10 w-auto object-contain rounded" />
               </div>
               <Button
                 type="button"
@@ -197,9 +198,17 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
                   placeholder="eg: https://example.com/logo.png"
                   value={logoURL}
                   onChange={(e) => setLogoURL(e.target.value)}
-                  onBlur={() => logoURL && updateBrandingData({ logoURL })}
                   className="flex-1"
                 />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => logoURL && updateBrandingData({ logoURL })}
+                  disabled={!logoURL.trim()}
+                  className="flex items-center gap-2">
+                  <Check className="h-4 w-4" />
+                  Update
+                </Button>
               </div>
             </div>
           )}
@@ -207,11 +216,11 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
 
         <div className="space-y-1">
           <Label className="text-xs">Favicon</Label>
-          {isValidImageUrl(faviconURL) ? (
+          {isValidImageUrl(initial?.faviconURL) ? (
             <div className=" flex items-center gap-x-4 border p-4 rounded-md">
               <div className="min-w-10 h-6 flex justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={faviconURL} alt="favicon" className="h-6 w-6 object-contain rounded" />
+                <img src={initial?.faviconURL} alt="favicon" className="h-6 w-6 object-contain rounded" />
               </div>
               <Button
                 type="button"
@@ -251,13 +260,23 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
                   placeholder="eg: https://example.com/favicon.ico"
                   value={faviconURL}
                   onChange={(e) => setFaviconURL(e.target.value)}
-                  onBlur={() => faviconURL && updateBrandingData({ faviconURL })}
                   className="flex-1"
                 />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => faviconURL && updateBrandingData({ faviconURL })}
+                  disabled={!faviconURL.trim()}
+                  className="flex items-center gap-2">
+                  <Check className="h-4 w-4" />
+                  Update
+                </Button>
               </div>
             </div>
           )}
         </div>
+
+        <SaveButton hideSave={true} hasChanges={false} saveAction={() => Promise.resolve()} />
       </div>
     </section>
   );

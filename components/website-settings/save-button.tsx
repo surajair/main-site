@@ -8,12 +8,13 @@ import { useActionState } from "react";
 import { toast } from "sonner";
 
 interface SaveButtonProps {
+  hideSave?: boolean;
   hasChanges: boolean;
   type?: "button" | "submit";
   saveAction: (formData?: FormData) => Promise<any>;
 }
 
-export default function SaveButton({ hasChanges, saveAction, type = "submit" }: SaveButtonProps) {
+export default function SaveButton({ hideSave = false, hasChanges, saveAction, type = "submit" }: SaveButtonProps) {
   const queryClient = useQueryClient();
   const reloadPage = useReloadPage();
 
@@ -64,26 +65,29 @@ export default function SaveButton({ hasChanges, saveAction, type = "submit" }: 
 
   return (
     <div className="flex justify-start gap-4">
-      <form action={handleSave}>
-        <Button type={type} variant="outline" className="w-36" disabled={isSaving || !hasChanges}>
-          {isSaving ? (
-            <>
-              <Loader className="h-3 w-3 animate-spin" />
-              Saving
-            </>
-          ) : (
-            <>
-              <Save className="h-3 w-3" />
-              Save Draft
-            </>
-          )}
-        </Button>
-      </form>
+      {!hideSave && (
+        <form action={handleSave}>
+          <Button size="sm" type={type} variant="outline" className="w-36" disabled={isSaving || !hasChanges}>
+            {isSaving ? (
+              <>
+                <Loader className="h-3 w-3 animate-spin" />
+                Saving
+              </>
+            ) : (
+              <>
+                <Save className="h-3 w-3" />
+                Save Draft
+              </>
+            )}
+          </Button>
+        </form>
+      )}
 
       <form action={handlePublish}>
         <Button
           type="button"
           variant="default"
+          size="sm"
           className="w-36 bg-green-500 text-white hover:bg-green-600"
           disabled={isSaving || isPublishing}>
           {isPublishing ? (
