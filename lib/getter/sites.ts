@@ -24,7 +24,7 @@ export interface Site {
   subdomain?: string;
   hosting?: string;
   domainConfigured: boolean;
-  data: any;
+  settings: any;
 }
 
 /**
@@ -90,7 +90,7 @@ export async function getSite(websiteId: string): Promise<Site> {
       id,
       name,
       createdAt,
-      data,
+      settings,
       languages,
       fallbackLang,
       app_domains (
@@ -111,7 +111,7 @@ export async function getSite(websiteId: string): Promise<Site> {
     id: data.id,
     name: data.name,
     createdAt: data.createdAt,
-    data: data.data,
+    settings: data.settings,
     languages: data.languages,
     fallbackLang: data.fallbackLang,
     domainConfigured: data.app_domains?.[0]?.domainConfigured,

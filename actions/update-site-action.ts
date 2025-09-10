@@ -10,19 +10,18 @@ export async function updateSite(
     description?: string;
     languages?: string[];
     settings?: Record<string, any>;
-    data?: Record<string, any>;
   },
 ) {
   try {
     const supabaseServer = await getSupabaseAdmin();
 
     // Handle website name update
-    if (updates?.name && !updates.data) {
-      // If only name is being updated, merge it with existing data and update siteName
-      const { data: currentApp } = await supabaseServer.from("apps").select("data").eq("id", siteId).single();
+    if (updates?.name && !updates.settings) {
+      // If only name is being updated, merge it with existing settings and update siteName
+      const { data: currentApp } = await supabaseServer.from("apps").select("settings").eq("id", siteId).single();
 
-      updates.data = {
-        ...(currentApp?.data && typeof currentApp.data === "object" ? currentApp.data : {}),
+      updates.settings = {
+        ...(currentApp?.settings && typeof currentApp.settings === "object" ? currentApp.settings : {}),
         siteName: updates.name,
       };
     }
@@ -92,12 +91,12 @@ export async function updateWebsiteName(siteId: string, websiteName: string) {
     const supabaseServer = await getSupabaseAdmin();
 
     // Get current app data
-    const { data: currentApp } = await supabaseServer.from("apps").select("data").eq("id", siteId).single();
+    const { data: currentApp } = await supabaseServer.from("apps").select("settings").eq("id", siteId).single();
 
     const updates = {
       name: websiteName,
-      data: {
-        ...(currentApp?.data && typeof currentApp.data === "object" ? currentApp.data : {}),
+      settings: {
+        ...(currentApp?.settings && typeof currentApp.settings === "object" ? currentApp.settings : {}),
         siteName: websiteName,
       },
     };
