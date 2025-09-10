@@ -46,7 +46,6 @@ export default function SaveButton({ hideSave = false, hasChanges, saveAction, t
           toast.error(saveResult.error || "Failed to save changes before publishing");
           return saveResult;
         }
-        toast.success("Changes saved successfully!");
       }
 
       // Then publish
@@ -85,7 +84,7 @@ export default function SaveButton({ hideSave = false, hasChanges, saveAction, t
 
       <form action={handlePublish}>
         <Button
-          type="button"
+          type="submit"
           variant="default"
           size="sm"
           className="w-36 bg-green-500 text-white hover:bg-green-600"
