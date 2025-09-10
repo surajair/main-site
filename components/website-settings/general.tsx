@@ -146,7 +146,7 @@ export default function General({ websiteId, initial, siteData }: GeneralProps) 
               </div> */}
       </div>
 
-      <SaveButton hasChanges={hasChanges} saveAction={saveAction} />
+      <SaveButton websiteId={websiteId} hasChanges={hasChanges} saveAction={saveAction} />
     </section>
   );
 }

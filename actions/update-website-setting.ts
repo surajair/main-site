@@ -38,11 +38,7 @@ export async function updateWebsiteData({ id, updates }: UpdateWebsiteDataPayloa
     const supabase = await getSupabaseAdmin();
 
     // fetch current data
-    const { data: current, error: fetchError } = await supabase
-      .from("apps")
-      .select("settings")
-      .eq("id", id)
-      .single();
+    const { data: current, error: fetchError } = await supabase.from("apps").select("settings").eq("id", id).single();
 
     if (fetchError) throw fetchError;
 
@@ -51,14 +47,11 @@ export async function updateWebsiteData({ id, updates }: UpdateWebsiteDataPayloa
     const nextData = { ...currentData, ...updates };
 
     // update apps > settings
-    const { error: updateError } = await supabase
-      .from("apps")
-      .update({ settings: nextData })
-      .eq("id", id);
+    const { error: updateError } = await supabase.from("apps").update({ settings: nextData }).eq("id", id);
 
     if (updateError) throw updateError;
 
-    return { success: true , data: nextData } as const;
+    return { success: true, data: nextData } as const;
   } catch (error: any) {
     return { success: false, error: error?.message || "Failed to update data" } as const;
   }

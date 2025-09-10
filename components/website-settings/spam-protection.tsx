@@ -3,10 +3,8 @@
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useQueryClient } from "@tanstack/react-query";
 import { EyeClosedIcon, EyeIcon } from "lucide-react";
-import { useActionState, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import { useSettingsContext } from ".";
 import SaveButton from "./save-button";
 
@@ -20,7 +18,6 @@ interface SpamProtectionProps {
 
 export default function SpamProtection({ websiteId, initial }: SpamProtectionProps) {
   const { setHasUnsavedChanges } = useSettingsContext();
-  const queryClient = useQueryClient();
 
   const [recaptchaSiteKey, setRecaptchaSiteKey] = useState(initial?.recaptchaSiteKey ?? "");
   const [recaptchaSecretKey, setRecaptchaSecretKey] = useState(initial?.recaptchaSecretKey ?? "");
@@ -39,26 +36,22 @@ export default function SpamProtection({ websiteId, initial }: SpamProtectionPro
     setHasUnsavedChanges(hasChanges);
   }, [hasChanges, setHasUnsavedChanges]);
 
-  const [state, saveAll, saving] = useActionState(async () => {
+  const saveAction = async () => {
     try {
       const res = await updateWebsiteData({
         id: websiteId,
         updates: { recaptchaSiteKey, recaptchaSecretKey },
       });
       if (!res.success) throw new Error(res.error);
-      toast.success("Spam Protection saved");
       setBaseline({ recaptchaSiteKey, recaptchaSecretKey });
-      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
-      return { success: true } as const;
+      return { success: true };
     } catch (e: any) {
-      toast.error(e?.message || "Failed to save Spam Protection");
-      return { success: false } as const;
+      return { success: false, error: e?.message || "Failed to save Spam Protection" };
     }
-  }, null);
+  };
 
   return (
-    <section id="spam-protection">
-      <form action={saveAll} className="space-y-4">
+    <section id="spam-protection" className="space-y-4">
         <div className="space-y-1">
           <Label htmlFor="recaptchaSiteKey" className="text-xs">
             ReCAPTCHA website key
@@ -95,8 +88,7 @@ export default function SpamProtection({ websiteId, initial }: SpamProtectionPro
           )}
         </div>
 
-        <SaveButton saving={saving} hasChanges={hasChanges} />
-      </form>
+        <SaveButton websiteId={websiteId} hasChanges={hasChanges} saveAction={saveAction} />
     </section>
   );
 }

@@ -94,7 +94,7 @@ export default function LegalCompliance({ websiteId, initial }: LegalComplianceP
         />
       </div>
 
-      <SaveButton hasChanges={hasChanges} saveAction={saveAction} />
+      <SaveButton websiteId={websiteId} hasChanges={hasChanges} saveAction={saveAction} />
     </section>
   );
 }

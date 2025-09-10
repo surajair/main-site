@@ -1,5 +1,6 @@
 "use client";
 
+import { publishWebsiteSettings } from "@/actions/publish-website-settings-action";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { useReloadPage } from "chai-next";
@@ -8,20 +9,27 @@ import { useActionState } from "react";
 import { toast } from "sonner";
 
 interface SaveButtonProps {
+  websiteId: string;
   hideSave?: boolean;
   hasChanges: boolean;
   type?: "button" | "submit";
-  saveAction: (formData?: FormData) => Promise<any>;
+  saveAction: () => Promise<any>;
 }
 
-export default function SaveButton({ hideSave = false, hasChanges, saveAction, type = "submit" }: SaveButtonProps) {
+export default function SaveButton({
+  websiteId,
+  hideSave = false,
+  hasChanges,
+  saveAction,
+  type = "submit",
+}: SaveButtonProps) {
   const queryClient = useQueryClient();
   const reloadPage = useReloadPage();
 
   // * Save action
-  const [, handleSave, isSaving] = useActionState(async (prevState: any, formData: FormData) => {
+  const [, handleSave, isSaving] = useActionState(async () => {
     try {
-      const result = await saveAction(formData);
+      const result = await saveAction();
       if (result.success) {
         toast.success("Website settings updated successfully!");
         queryClient.invalidateQueries({ queryKey: ["website-settings"] });
@@ -37,11 +45,11 @@ export default function SaveButton({ hideSave = false, hasChanges, saveAction, t
   }, null);
 
   // * Publish action
-  const [, handlePublish, isPublishing] = useActionState(async (prevState: any, formData: FormData) => {
+  const [, handlePublish, isPublishing] = useActionState(async () => {
     try {
       // If there are unsaved changes, save first
       if (hasChanges) {
-        const saveResult = await saveAction(formData);
+        const saveResult = await saveAction();
         if (!saveResult.success) {
           toast.error(saveResult.error || "Failed to save changes before publishing");
           return saveResult;
@@ -49,7 +57,7 @@ export default function SaveButton({ hideSave = false, hasChanges, saveAction, t
       }
 
       // Then publish
-      const result = await Promise.resolve({ success: true, error: null });
+      const result = await publishWebsiteSettings(websiteId);
       if (result.success) {
         toast.success("Website settings published successfully!");
       } else {

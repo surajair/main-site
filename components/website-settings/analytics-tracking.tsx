@@ -145,7 +145,7 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
         )}
       </div>
 
-      <SaveButton hasChanges={hasChanges} saveAction={saveAction} />
+      <SaveButton websiteId={websiteId} hasChanges={hasChanges} saveAction={saveAction} />
     </section>
   );
 }

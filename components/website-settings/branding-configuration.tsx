@@ -276,7 +276,7 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
           )}
         </div>
 
-        <SaveButton hideSave={true} hasChanges={false} saveAction={() => Promise.resolve()} />
+        <SaveButton websiteId={websiteId} hideSave={true} hasChanges={false} saveAction={() => Promise.resolve()} />
       </div>
     </section>
   );
