@@ -1,4 +1,7 @@
+"use server";
+
 import { getSupabaseAdmin } from "chai-next/server";
+import { revalidateTag } from "next/cache";
 
 export async function publishWebsiteSettings(id: string) {
   try {
@@ -16,6 +19,9 @@ export async function publishWebsiteSettings(id: string) {
       .eq("id", id);
 
     if (updateError) throw updateError;
+
+    // Revalidate the cache for this website's settings
+    revalidateTag(`website-settings-${id}`);
 
     return { success: true };
   } catch (error: any) {

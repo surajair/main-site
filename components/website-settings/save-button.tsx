@@ -60,6 +60,8 @@ export default function SaveButton({
       const result = await publishWebsiteSettings(websiteId);
       if (result.success) {
         toast.success("Website settings published successfully!");
+        queryClient.invalidateQueries({ queryKey: ["website-settings"] });
+        reloadPage();
       } else {
         toast.error(result.error || "Failed to publish website settings");
       }
