@@ -92,7 +92,7 @@ export default function FormSubmissions() {
   const startIndex = submissionsData ? (submissionsData.currentPage - 1) * itemsPerPage : 0;
 
   return (
-    <div className="flex-1 flex flex-col space-y-4  h-full">
+    <div className="flex-1 flex flex-col space-y-4  min-h-[70vh]">
       {/* Search and Stats */}
       <div className="flex items-center justify-between gap-4">
         <div className="relative flex-1 max-w-sm">
@@ -112,7 +112,7 @@ export default function FormSubmissions() {
       </div>
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center h-full">
+        <div className="flex flex-col items-center justify-center h-[65vh]">
           <Loader className="animate-spin text-primary" />
         </div>
       ) : (
@@ -180,7 +180,7 @@ export default function FormSubmissions() {
           </div>
 
           {!isLoading && filteredSubmissions.length === 0 && (
-            <div className="text-center h-full w-full flex flex-col justify-center items-center ">
+            <div className="text-center  w-full flex flex-col h-[65vh] justify-center items-center ">
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
                 {debouncedSearchTerm ? "No submissions found matching your search." : "No submissions yet."}

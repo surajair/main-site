@@ -9,7 +9,6 @@ import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-quer
 import { Popover, PopoverContent, PopoverTrigger, useSavePage } from "chai-next";
 import {
   Activity,
-  BookOpenText,
   ChevronDown,
   Globe,
   ImageIcon,
@@ -32,7 +31,6 @@ import ContactSocial from "./contact-social";
 import CreateNewWebsite from "./create-new-website";
 import DeleteWebsite from "./delete-website";
 import DomainConfiguration from "./domain-configuration";
-import FormSubmissions from "./form-submissions";
 import General from "./general";
 import LegalCompliance from "./legal-compliance";
 import SpamProtection from "./spam-protection";
@@ -54,19 +52,13 @@ export function useSettingsContext() {
 }
 
 const SIDEBAR_ITEMS = [
-  {
-    id: "form-submission",
-    label: "Form submissions",
-    icon: BookOpenText,
-    component: FormSubmissions,
-  },
   { id: "general", label: "General", icon: Settings, component: General },
-  { id: "domain", label: "Domain", icon: Globe, component: DomainConfiguration },
   { id: "branding", label: "Branding", icon: ImageIcon, component: BrandingConfiguration },
   { id: "contact-social", label: "Contact & Social", icon: Share2, component: ContactSocial },
   { id: "legal-compliance", label: "Legal Compliance", icon: ShieldCheck, component: LegalCompliance },
   { id: "spam-protection", label: "Spam Protection", icon: Shield, component: SpamProtection },
   { id: "analytics-tracking", label: "Analytics Tracking", icon: Activity, component: AnalyticsTracking },
+  { id: "domain", label: "Domain", icon: Globe, component: DomainConfiguration },
 ];
 
 /**
@@ -152,6 +144,7 @@ function WebsiteSettingsContent({
 
               return (
                 <>
+                  {item.id === "domain" && <Separator key={`${item.id}-separator`} className="my-2" />}
                   <Button
                     key={item.id}
                     size="sm"
@@ -162,7 +155,6 @@ function WebsiteSettingsContent({
                     <Icon className="h-4 w-4" />
                     {item.label}
                   </Button>
-                  {item.id === "form-submission" && <Separator key={`${item.id}-separator`} className="my-2" />}
                 </>
               );
             })}
