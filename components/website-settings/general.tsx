@@ -4,6 +4,7 @@ import { updateSite, updateWebsiteName } from "@/actions/update-site-action";
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LANGUAGE_CODES } from "@/lib/language-config";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSettingsContext } from ".";
 import SaveButton from "./save-button";
@@ -26,24 +27,10 @@ interface GeneralProps {
     languages?: string[];
   };
 }
-const CURRENT_LANGUAGE = {
-  en: "English",
-  hi: "Hindi",
-  es: "Spanish",
-  fr: "French",
-  de: "German",
-  it: "Italian",
-  pt: "Portuguese",
-  ru: "Russian",
-  ja: "Japanese",
-  ko: "Korean",
-  zh: "Chinese",
-  ar: "Arabic",
-};
 
 // const timeZones = Intl.supportedValuesOf("timeZone");
 
-export default function General({ websiteId, initial , siteData }: GeneralProps) {
+export default function General({ websiteId, initial, siteData }: GeneralProps) {
   const { setHasUnsavedChanges } = useSettingsContext();
   const queryClient = useQueryClient();
   const reloadPage = useReloadPage();
@@ -141,12 +128,12 @@ export default function General({ websiteId, initial , siteData }: GeneralProps)
             <Input
               className="bg-gray-100"
               id={language}
-              value={CURRENT_LANGUAGE[language as keyof typeof CURRENT_LANGUAGE]}
+              value={LANGUAGE_CODES[language as keyof typeof LANGUAGE_CODES]}
               readOnly
             />
           </div>
           <AdditionalLanguageSelector
-            availableLanguages={CURRENT_LANGUAGE}
+            availableLanguages={LANGUAGE_CODES}
             defaultLanguage={language}
             additionalLanguages={additionalLanguages}
             setAdditionalLanguages={setAdditionalLanguages}
