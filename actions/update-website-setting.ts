@@ -16,7 +16,8 @@ type AllowedField =
   | "googleAnalyticsId"
   | "googleTagManagerId"
   | "metaPixelId"
-  | "customTrackingScripts"
+  | "headHTML"
+  | "footerHTML"
   | "cookieConsentEnabled"
   | "recaptchaSiteKey"
   | "recaptchaSecretKey";

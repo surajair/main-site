@@ -2,7 +2,7 @@ import { PageScripts } from "@/components/page-scripts";
 import { loadSiteGlobalData } from "@/data/global";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
-import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
+import ChaiBuilder, { getSupabaseAdmin, registerChaiGlobalDataProvider } from "chai-next/server";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
@@ -27,9 +27,26 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   const nextParams = await params;
   const hostname = nextParams.hostname.replace("%3A", ":").replace("%2E", ".");
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
-
   const { isEnabled } = await draftMode();
   await ChaiBuilder.initByHostname(hostname, isEnabled);
+  const websiteId = ChaiBuilder.getSiteId();
+  let settings = null;
+  
+  if (websiteId) {
+    const supabaseServer = await getSupabaseAdmin();
+    const { data, error }: any = await supabaseServer
+      .from("apps")
+      .select(`settings`)
+      .is("deletedAt", null)
+      .eq("id", websiteId)
+      .single();
+    
+    if (error) {
+      console.log("Error while fetching settings:", error?.message);
+    } else {
+      settings = data?.settings;
+    }
+  }
 
   //TODO: register global data providers here
   let page = null;
@@ -53,6 +70,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
     <html lang={page.lang} className={`smooth-scroll`}>
       <head>
         <FontsAndStyles page={page} />
+        {settings?.headHTML && <div dangerouslySetInnerHTML={{ __html: settings.headHTML }} style={{ display: "contents" }} />}
       </head>
       <body className={`font-body antialiased`}>
         <PreviewBanner slug={slug} show={isEnabled} />

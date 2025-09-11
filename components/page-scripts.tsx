@@ -1,26 +1,6 @@
-import { generateScriptId } from "@/lib/constants/get-script-id";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import ChaiBuilder, { getSupabaseAdmin } from "chai-next/server";
 import Script from "next/script";
-
-const renderCustomScript = (script: string, index: number) => {
-  const trimmedScript = script.trim();
-  const scriptId = generateScriptId(trimmedScript, index);
-
-  // Handle URL scripts
-  if (/^https?:\/\//.test(trimmedScript)) {
-    return <Script key={index} id={scriptId} src={trimmedScript} strategy="afterInteractive" />;
-  }
-
-  // Handle scripts with HTML tags
-  const scriptContent = /<script[^>]*>/.test(trimmedScript)
-    ? trimmedScript.replace(/<script[^>]*>/gi, "").replace(/<\/script>/gi, "")
-    : trimmedScript;
-
-  return (
-    <Script key={index} id={scriptId} strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: scriptContent }} />
-  );
-};
 
 export const PageScripts = async () => {
   const websiteId = ChaiBuilder.getSiteId();
@@ -60,7 +40,7 @@ export const PageScripts = async () => {
       )}
       {settings.googleTagManagerId && <GoogleTagManager gtmId={settings.googleTagManagerId} />}
       {settings.googleAnalyticsId && <GoogleAnalytics gaId={settings.googleAnalyticsId} />}
-      {settings.customTrackingScripts?.map(renderCustomScript)}
+      {settings.footerHTML && <div dangerouslySetInnerHTML={{ __html: settings.footerHTML }} />}
     </>
   );
 };

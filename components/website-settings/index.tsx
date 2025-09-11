@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger, useSavePage } from "chai-next"
 import {
   Activity,
   ChevronDown,
+  Code,
   Globe,
   ImageIcon,
   Loader,
@@ -28,6 +29,7 @@ import AnalyticsTracking from "./analytics-tracking";
 import BrandingConfiguration from "./branding-configuration";
 import ContactSocial from "./contact-social";
 import CreateNewWebsite from "./create-new-website";
+import CustomHtml from "./custom-html-code";
 import DeleteWebsite from "./delete-website";
 import DomainConfiguration from "./domain-configuration";
 import General from "./general";
@@ -55,6 +57,7 @@ const SIDEBAR_ITEMS = [
   { id: "contact-social", label: "Contact & Social", icon: Share2, component: ContactSocial },
   { id: "legal-compliance", label: "Cookie Consent", icon: ShieldCheck, component: LegalCompliance },
   { id: "analytics-tracking", label: "Analytics Tracking", icon: Activity, component: AnalyticsTracking },
+  { id: "custom-html", label: "Custom HTML", icon: Code, component: CustomHtml },
   { id: "domain", label: "Domain", icon: Globe, component: DomainConfiguration },
 ];
 
