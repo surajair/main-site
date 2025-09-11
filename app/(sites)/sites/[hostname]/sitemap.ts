@@ -7,13 +7,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const host = headersList?.get("host");
 
   if (!host) return [];
-
+  const trimmedHost = host.replace("www.", "");
   const supabase = await getSupabaseAdmin();
 
   const { data: app, error: domainError } = await supabase
     .from("app_domains")
     .select("app")
-    .or(`domain.eq.${host},subdomain.eq.${host}`)
+    .or(`domain.eq.${trimmedHost},subdomain.eq.${trimmedHost}`)
     .single();
 
   if (!app || !app.app || domainError) return [];

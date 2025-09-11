@@ -10,6 +10,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/api/") ||
     pathname.startsWith("/api/preview") ||
     pathname.startsWith("/_next/") ||
+    pathname.startsWith("/robots.txt") ||
     pathname.startsWith("/favicon.ico") ||
     pathname.startsWith("/static/") // Prevent infinite loops
   ) {
