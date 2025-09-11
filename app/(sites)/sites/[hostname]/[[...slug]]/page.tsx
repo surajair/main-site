@@ -1,8 +1,9 @@
 import { PageScripts } from "@/components/page-scripts";
 import { loadSiteGlobalData } from "@/data/global";
+import { getBrandConfig } from "@/lib/utils";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
-import ChaiBuilder, { getSupabaseAdmin, registerChaiGlobalDataProvider } from "chai-next/server";
+import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
@@ -18,9 +19,10 @@ export const generateMetadata = async (props: { params: Promise<{ hostname: stri
 
   const { isEnabled } = await draftMode();
   await ChaiBuilder.initByHostname(hostname, isEnabled);
-  //TODO: register global data providers here
-
-  return await ChaiBuilder.getPageSeoData(slug);
+  const data = await ChaiBuilder.getSiteSettings();
+  const brandConfig = getBrandConfig();
+  const favicon = data?.settings?.faviconURL || brandConfig.favicon || "/favicon.ico";
+  return { ...((await ChaiBuilder.getPageSeoData(slug)), { icons: { icon: favicon } }) };
 };
 
 export default async function Page({ params }: { params: Promise<{ hostname: string; slug: string[] }> }) {
@@ -31,7 +33,6 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   await ChaiBuilder.initByHostname(hostname, isEnabled);
   const data = await ChaiBuilder.getSiteSettings();
   const settings = data?.settings || null;
-  //TODO: register global data providers here
   let page = null;
   try {
     page = await ChaiBuilder.getPage(slug);
