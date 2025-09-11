@@ -29,25 +29,8 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
   const { isEnabled } = await draftMode();
   await ChaiBuilder.initByHostname(hostname, isEnabled);
-  const websiteId = ChaiBuilder.getSiteId();
-  let settings = null;
-  
-  if (websiteId) {
-    const supabaseServer = await getSupabaseAdmin();
-    const { data, error }: any = await supabaseServer
-      .from("apps")
-      .select(`settings`)
-      .is("deletedAt", null)
-      .eq("id", websiteId)
-      .single();
-    
-    if (error) {
-      console.log("Error while fetching settings:", error?.message);
-    } else {
-      settings = data?.settings;
-    }
-  }
-
+  const data = await ChaiBuilder.getSiteSettings();
+  const settings = data?.settings || null;
   //TODO: register global data providers here
   let page = null;
   try {

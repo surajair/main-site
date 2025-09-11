@@ -4,16 +4,10 @@ import Script from "next/script";
 
 export const PageScripts = async () => {
   const websiteId = ChaiBuilder.getSiteId();
-  const supabaseServer = await getSupabaseAdmin();
-  const { data, error }: any = await supabaseServer
-    .from("apps")
-    .select(`settings`)
-    .is("deletedAt", null)
-    .eq("id", websiteId)
-    .single();
+  const data = await ChaiBuilder.getSiteSettings();
   const settings = data?.settings;
-  if (error || !settings) {
-    console.log("Error while fetching settings:", error?.message);
+  if (!settings) {
+    console.log("Error while fetching settings");
     return null;
   }
   return (
