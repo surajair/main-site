@@ -154,19 +154,25 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
               {/* Default Language */}
               <div className="space-y-1">
                 <Label className="text-xs">Default Language</Label>
-                <Select value={defaultLanguage} onValueChange={setDefaultLanguage}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {allLanguages.map((lang) => (
-                      <SelectItem key={lang.code} value={lang.code}>
-                        {lang.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="text-xs text-muted-foreground">Cannot be changed after creating website</div>
+                {allLanguages.length > 1 ? (
+                  <>
+                    <Select value={defaultLanguage} onValueChange={setDefaultLanguage}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {allLanguages.map((lang) => (
+                          <SelectItem key={lang.code} value={lang.code}>
+                            {lang.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <div className="text-xs text-muted-foreground">Cannot be changed after creating website</div>
+                  </>
+                ) : (
+                  <Input className="bg-gray-100" value={allLanguages[0]?.name} readOnly />
+                )}
               </div>
 
               {/* Create Button */}

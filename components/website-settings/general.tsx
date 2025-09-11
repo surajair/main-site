@@ -122,12 +122,14 @@ export default function General({ websiteId, initial, siteData }: GeneralProps) 
             readOnly
           />
         </div>
-        <AdditionalLanguageSelector
-          availableLanguages={LANGUAGE_CODES}
-          defaultLanguage={language}
-          additionalLanguages={additionalLanguages}
-          setAdditionalLanguages={setAdditionalLanguages}
-        />
+        {Object.keys(LANGUAGE_CODES).length > 1 && (
+          <AdditionalLanguageSelector
+            availableLanguages={LANGUAGE_CODES}
+            defaultLanguage={language}
+            additionalLanguages={additionalLanguages}
+            setAdditionalLanguages={setAdditionalLanguages}
+          />
+        )}
         {/* TODO: Need to handle this later for Now we  are Hiding this */}
         {/* <div className="space-y-2">
                 <Label>Timezone</Label>
