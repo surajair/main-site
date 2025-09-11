@@ -63,7 +63,6 @@ export default function SaveButton({
       if (result.success) {
         toast.success("Website settings published successfully!");
         queryClient.invalidateQueries({ queryKey: ["website-settings"] });
-        reloadPage();
       } else {
         toast.error(result.error || "Failed to publish website settings");
       }
@@ -102,8 +101,8 @@ export default function SaveButton({
                 <Button
                   type="submit"
                   variant="default"
-                  size="sm"
-                  className="w-36 bg-green-500 text-white hover:bg-green-600"
+                  size="lg"
+                  className="w-44 text-base bg-green-500 text-white hover:bg-green-600"
                   disabled={isSaving || isPublishing || hasUnsavedChanges}>
                   {isPublishing ? (
                     <>
