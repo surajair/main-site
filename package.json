@@ -1,6 +1,6 @@
 {
   "name": "chaibuilder-multi-tenant",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "private": true,
   "scripts": {
     "dev": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css --watch\" \"next dev --port 3000 --turbopack\"",
