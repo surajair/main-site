@@ -18,7 +18,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   if (!app || !app.app || domainError) return [];
 
-  const { data: pages } = await supabase.from("app_pages_online").select("slug,lang,lastSaved").eq("app", app.app);
+  const { data: pages } = await supabase
+    .from("app_pages_online")
+    .select("slug,lang,lastSaved")
+    .eq("app", app.app)
+    .neq("slug", "");
 
   return (
     pages?.map((page) => {
