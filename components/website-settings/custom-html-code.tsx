@@ -26,9 +26,7 @@ export default function CustomHtmlCode({ websiteId, initial }: CustomHtmlProps) 
     footerHTML: initial?.footerHTML ?? "",
   });
 
-  const hasChanges =
-    headHTML !== baseline.headHTML ||
-    footerHTML !== baseline.footerHTML;
+  const hasChanges = headHTML !== baseline.headHTML || footerHTML !== baseline.footerHTML;
 
   // Update unsaved changes in context whenever hasChanges changes
   useEffect(() => {
@@ -63,6 +61,7 @@ export default function CustomHtmlCode({ websiteId, initial }: CustomHtmlProps) 
         </p>
         <Textarea
           id="headHTML"
+          className="resize-none"
           value={headHTML}
           placeholder="<script>...</script> or <meta>...</meta> or <link>...</link>"
           onChange={(e) => setHeadHTML(e.target.value)}
@@ -79,6 +78,7 @@ export default function CustomHtmlCode({ websiteId, initial }: CustomHtmlProps) 
         </p>
         <Textarea
           id="footerHTML"
+          className="resize-none"
           value={footerHTML}
           placeholder="<script>...</script> or other HTML elements"
           onChange={(e) => setFooterHTML(e.target.value)}
