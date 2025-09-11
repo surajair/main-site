@@ -11,6 +11,7 @@ import {
   CircleArrowOutUpRight,
   Eye,
   Layers,
+  MoveRight,
   Plus,
   Settings2,
   Sparkle,
@@ -49,11 +50,16 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
                   <Link
                     key={site.id}
                     href={`/${site?.id}/editor`}
-                    className="block border px-3 py-1 hover:bg-muted rounded hover:text-primary">
-                    <div className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>
-                      {site.name}
+                    className="border group px-3 py-1 hover:bg-muted rounded hover:text-primary flex items-center justify-between">
+                    <div>
+                      <div className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>
+                        {site.name}
+                      </div>
+                      <div className="text-xs text-muted-foreground">{site.subdomain}</div>
                     </div>
-                    <div className="text-xs text-muted-foreground">{site.subdomain}</div>
+                    <div>
+                      <MoveRight className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+                    </div>
                   </Link>
                 ))
               ) : (

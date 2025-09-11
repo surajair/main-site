@@ -9,7 +9,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Check, Loader, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import SaveButton from "./save-button";
 
 interface BrandingProps {
   websiteId: string;
@@ -275,8 +274,6 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
             </div>
           )}
         </div>
-
-        <SaveButton websiteId={websiteId} hideSave={true} hasChanges={false} saveAction={() => Promise.resolve()} />
       </div>
     </section>
   );

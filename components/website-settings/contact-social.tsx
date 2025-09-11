@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useSettingsContext } from ".";
 import SaveButton from "./save-button";
 
 // List of 25 major social networking sites
@@ -216,8 +215,6 @@ interface ContactSocialProps {
 }
 
 export default function ContactSocial({ websiteId, initial }: ContactSocialProps) {
-  const { setHasUnsavedChanges } = useSettingsContext();
-
   // Helper functions to convert between formats
   const objectToArray = (obj: SocialLinks): SocialLinkItem[] => {
     return Object.entries(obj).map(([key, value]) => ({ key, value }));
@@ -280,11 +277,6 @@ export default function ContactSocial({ websiteId, initial }: ContactSocialProps
 
   const hasChanges =
     email !== baseline.email || phone !== baseline.phone || address !== baseline.address || socialLinksChanged();
-
-  // Update unsaved changes in context whenever hasChanges changes
-  useEffect(() => {
-    setHasUnsavedChanges(hasChanges);
-  }, [hasChanges, setHasUnsavedChanges]);
 
   // Check if all existing social links have both platform and URL filled
   const hasIncompleteLinks = socialLinks.some((item) => !item.key.trim() || !item.value.trim());

@@ -3,8 +3,7 @@
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useEffect, useState } from "react";
-import { useSettingsContext } from ".";
+import { useState } from "react";
 import SaveButton from "./save-button";
 
 interface AnalyticsTrackingProps {
@@ -17,8 +16,6 @@ interface AnalyticsTrackingProps {
 }
 
 export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrackingProps) {
-  const { setHasUnsavedChanges } = useSettingsContext();
-
   const [googleAnalyticsId, setGoogleAnalyticsId] = useState(initial?.googleAnalyticsId ?? "");
   const [googleTagManagerId, setGoogleTagManagerId] = useState(initial?.googleTagManagerId ?? "");
   const [metaPixelId, setMetaPixelId] = useState(initial?.metaPixelId ?? "");
@@ -32,11 +29,6 @@ export default function AnalyticsTracking({ websiteId, initial }: AnalyticsTrack
     googleAnalyticsId !== baseline.googleAnalyticsId ||
     googleTagManagerId !== baseline.googleTagManagerId ||
     metaPixelId !== baseline.metaPixelId;
-
-  // Update unsaved changes in context whenever hasChanges changes
-  useEffect(() => {
-    setHasUnsavedChanges(hasChanges);
-  }, [hasChanges, setHasUnsavedChanges]);
 
   const saveAction = async () => {
     try {

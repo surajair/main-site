@@ -3,8 +3,7 @@
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useEffect, useState } from "react";
-import { useSettingsContext } from ".";
+import { useState } from "react";
 import SaveButton from "./save-button";
 
 interface LegalComplianceProps {
@@ -17,7 +16,6 @@ interface LegalComplianceProps {
 }
 
 export default function LegalCompliance({ websiteId, initial }: LegalComplianceProps) {
-  const { setHasUnsavedChanges } = useSettingsContext();
 
   const [cookieConsentEnabled, setCookieConsentEnabled] = useState<boolean>(initial?.cookieConsentEnabled ?? false);
 
@@ -25,11 +23,6 @@ export default function LegalCompliance({ websiteId, initial }: LegalComplianceP
     cookieConsentEnabled: initial?.cookieConsentEnabled ?? false,
   });
   const hasChanges = cookieConsentEnabled !== baseline.cookieConsentEnabled;
-
-  // Update unsaved changes in context whenever hasChanges changes
-  useEffect(() => {
-    setHasUnsavedChanges(hasChanges);
-  }, [hasChanges, setHasUnsavedChanges]);
 
   const saveAction = async () => {
     try {

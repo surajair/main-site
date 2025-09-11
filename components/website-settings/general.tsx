@@ -5,10 +5,9 @@ import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LANGUAGE_CODES } from "@/lib/language-config";
-import { useSettingsContext } from ".";
 import SaveButton from "./save-button";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AdditionalLanguageSelector from "./additional-language-selector";
 
 interface GeneralProps {
@@ -28,7 +27,6 @@ interface GeneralProps {
 // const timeZones = Intl.supportedValuesOf("timeZone");
 
 export default function General({ websiteId, initial, siteData }: GeneralProps) {
-  const { setHasUnsavedChanges } = useSettingsContext();
   const [siteName, setSiteName] = useState(initial?.siteName ?? "");
   const [siteTagline, setSiteTagline] = useState(initial?.siteTagline ?? "");
   const [language, setLanguage] = useState(initial?.language ?? "en");
@@ -49,11 +47,6 @@ export default function General({ websiteId, initial, siteData }: GeneralProps) 
     language !== baseline.language ||
     timezone !== baseline.timezone ||
     JSON.stringify(additionalLanguages.sort()) !== JSON.stringify(baseline.additionalLanguages.sort());
-
-  // Update unsaved changes in context whenever hasChanges changes
-  useEffect(() => {
-    setHasUnsavedChanges(hasChanges);
-  }, [hasChanges, setHasUnsavedChanges]);
 
   const saveAction = async () => {
     try {

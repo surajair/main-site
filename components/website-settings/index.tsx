@@ -34,6 +34,7 @@ import DeleteWebsite from "./delete-website";
 import DomainConfiguration from "./domain-configuration";
 import General from "./general";
 import LegalCompliance from "./legal-compliance";
+import SaveButton from "./save-button";
 import { UnsavedChangesDialog } from "./unsaved-changes-dialog";
 
 interface SettingsContextType {
@@ -166,9 +167,19 @@ function WebsiteSettingsContent({
           </div>
         ) : (
           <div className="flex-1 flex flex-col">
-            <div className="flex items-center gap-x-2 pb-4 px-6">
-              {Icon && <Icon className="h-5 w-5" />}
-              <h2 className="font-semibold">{activeItem?.label}</h2>
+            <div className="flex items-center justify-between gap-x-2 pb-4 px-6">
+              <div className="flex items-center gap-x-2">
+                {Icon && <Icon className="h-5 w-5" />}
+                <h2 className="font-semibold">{activeItem?.label}</h2>
+              </div>
+              {activeItem && activeItem?.id !== "domain" && (
+                <SaveButton
+                  showPublish={true}
+                  websiteId={websiteId}
+                  hasChanges={hasUnsavedChanges}
+                  saveAction={() => Promise.resolve({ success: true })}
+                />
+              )}
             </div>
             <div
               className="h-full scroll-smooth overflow-y-auto px-6 no-scrollbar"
