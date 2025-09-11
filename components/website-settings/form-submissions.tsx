@@ -117,7 +117,7 @@ export default function FormSubmissions() {
         </div>
       ) : (
         <>
-          <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-310px)]">
+          <div className="space-y-3 overflow-y-auto max-h-[calc(60vh)]">
             {filteredSubmissions.map((submission: FormSubmission) => (
               <div
                 key={submission.id}

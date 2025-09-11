@@ -2,10 +2,12 @@ import "@/app/app.css";
 import { BrandLogo, BrandName } from "@/components/branding";
 import { getSession } from "@/lib/getter/users";
 import { getBrandConfig } from "@/lib/utils";
+import { isEmpty } from "lodash";
 import { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import Script from "next/script";
 import { Toaster } from "sonner";
 
 const geist = Geist({ subsets: ["latin"] });
@@ -138,6 +140,21 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
       <body className={`${geist.className} antialiased`}>
         <Toaster richColors />
         <WithAuthLayout>{children}</WithAuthLayout>
+        {!isEmpty(process.env.NEXT_PUBLIC_CLARITY_ID) ? (
+          <Script
+            id="chaibuilder-app-clarity"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+          (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window, document, "clarity", "script", "${process.env.NEXT_PUBLIC_CLARITY_ID}");
+        `,
+            }}
+          />
+        ) : null}
       </body>
     </html>
   );

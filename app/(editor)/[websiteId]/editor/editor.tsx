@@ -5,7 +5,6 @@ import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { registerPanels } from "@/utils/register-panels";
 import ChaiBuilder from "chai-next";
 import { startsWith } from "lodash";
-import { useEffect } from "react";
 
 const getPreviewUrl = (slug: string, domain?: string) => {
   return `//${domain}/api/preview?slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`;
@@ -14,16 +13,10 @@ const getPreviewUrl = (slug: string, domain?: string) => {
 const getLiveUrl = (slug: string, domain?: string) => {
   return `//${domain}/api/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`;
 };
+registerPanels();
 
 export default function Editor({ domain, websiteId }: { domain?: string; websiteId?: string }) {
   const { ready } = useSupabaseUser();
-
-  useEffect(() => {
-    if (ready) {
-      setTimeout(() => registerPanels(), 500);
-    }
-  }, [ready]);
-
   return ready ? (
     <ChaiBuilder
       apiUrl="editor/api"
