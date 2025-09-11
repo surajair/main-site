@@ -282,15 +282,8 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
                       <div className="space-y-3">
                         <p className="text-sm text-yellow-900 font-medium">
                           The DNS records at your provider must match the following records to verify and connect your
-                          domain to Vercel.
+                          domain.
                         </p>
-                        <a
-                          href="https://vercel.com/docs/domains/working-with-domains/add-a-domain"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 hover:underline">
-                          Learn more
-                        </a>
 
                         {/* DNS Records Table */}
                         <div className="mt-4">
