@@ -18,8 +18,6 @@ type AllowedField =
   | "metaPixelId"
   | "customTrackingScripts"
   | "cookieConsentEnabled"
-  | "privacyPolicyURL"
-  | "termsURL"
   | "recaptchaSiteKey"
   | "recaptchaSecretKey";
 

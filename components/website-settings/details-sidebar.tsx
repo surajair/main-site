@@ -23,7 +23,7 @@ const sidebarItems = [
   { id: "domain", label: "Domain", icon: Globe },
   { id: "branding", label: "Branding", icon: ImageIcon },
   { id: "contact-social", label: "Contact & Social", icon: Share2 },
-  { id: "legal-compliance", label: "Legal Compliance", icon: ShieldCheck },
+  { id: "legal-compliance", label: "Cookie Consent", icon: ShieldCheck },
   { id: "spam-protection", label: "Spam Protection", icon: Shield },
   { id: "seo-metadata", label: "SEO Metadata", icon: Search },
   { id: "analytics-tracking", label: "Analytics Tracking", icon: Activity },

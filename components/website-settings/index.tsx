@@ -53,7 +53,7 @@ const SIDEBAR_ITEMS = [
   { id: "general", label: "General", icon: Settings, component: General },
   { id: "branding", label: "Branding", icon: ImageIcon, component: BrandingConfiguration },
   { id: "contact-social", label: "Contact & Social", icon: Share2, component: ContactSocial },
-  { id: "legal-compliance", label: "Legal Compliance", icon: ShieldCheck, component: LegalCompliance },
+  { id: "legal-compliance", label: "Cookie Consent", icon: ShieldCheck, component: LegalCompliance },
   { id: "analytics-tracking", label: "Analytics Tracking", icon: Activity, component: AnalyticsTracking },
   { id: "domain", label: "Domain", icon: Globe, component: DomainConfiguration },
 ];
