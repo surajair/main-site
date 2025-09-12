@@ -35,7 +35,6 @@ export default function CustomHtmlCode({ data, onChange }: CustomHtmlProps) {
           onChange={(e) =>
             handleChange?.({
               ...(data || {}),
-              name: e.target.value,
               settings: { ...(data?.settings || {}), headHTML: e.target.value },
             })
           }
@@ -58,7 +57,6 @@ export default function CustomHtmlCode({ data, onChange }: CustomHtmlProps) {
           onChange={(e) =>
             handleChange?.({
               ...(data || {}),
-              name: e.target.value,
               settings: { ...(data?.settings || {}), footerHTML: e.target.value },
             })
           }

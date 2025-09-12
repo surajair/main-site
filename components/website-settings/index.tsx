@@ -220,7 +220,12 @@ function WebsiteSettingsContent({
 
             {Component && (
               <div className="px-6 border-t pt-4 flex items-center gap-x-4">
-                <SaveButton data={siteData} websiteId={websiteId} hasChanges={isDataChange} />
+                <SaveButton
+                  data={siteData}
+                  websiteId={websiteId}
+                  hasChanges={isDataChange}
+                  showSave={!["branding", "domain"].includes(activeItem?.id)}
+                />
               </div>
             )}
           </div>

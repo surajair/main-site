@@ -32,7 +32,6 @@ export default function AnalyticsTracking({ data, onChange }: AnalyticsTrackingP
           onChange={(e) =>
             handleChange?.({
               ...(data || {}),
-              name: e.target.value,
               settings: { ...(data?.settings || {}), googleAnalyticsId: e.target.value },
             })
           }
@@ -50,7 +49,6 @@ export default function AnalyticsTracking({ data, onChange }: AnalyticsTrackingP
           onChange={(e) =>
             handleChange?.({
               ...(data || {}),
-              name: e.target.value,
               settings: { ...(data?.settings || {}), googleTagManagerId: e.target.value },
             })
           }
@@ -68,7 +66,6 @@ export default function AnalyticsTracking({ data, onChange }: AnalyticsTrackingP
           onChange={(e) =>
             handleChange?.({
               ...(data || {}),
-              name: e.target.value,
               settings: { ...(data?.settings || {}), metaPixelId: e.target.value },
             })
           }

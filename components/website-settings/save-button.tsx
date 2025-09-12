@@ -12,14 +12,12 @@ import { toast } from "sonner";
 
 interface SaveButtonProps {
   websiteId: string;
-  hideSave?: boolean;
   hasChanges: boolean;
-  type?: "button" | "submit";
   data: SiteData;
-  showPublish?: boolean;
+  showSave: boolean;
 }
 
-export default function SaveButton({ websiteId, hasChanges, type = "submit", data }: SaveButtonProps) {
+export default function SaveButton({ websiteId, hasChanges, data, showSave = true }: SaveButtonProps) {
   const queryClient = useQueryClient();
   const reloadPage = useReloadPage();
 
@@ -43,8 +41,6 @@ export default function SaveButton({ websiteId, hasChanges, type = "submit", dat
         },
       };
 
-      console.log("##", updates);
-
       const result = await updateWebsiteData({ id: websiteId, updates: updates });
       if (result.success) {
         toast.success("Website settings updated successfully!");
@@ -63,6 +59,9 @@ export default function SaveButton({ websiteId, hasChanges, type = "submit", dat
   // * Publish action
   const [, handlePublish, isPublishing] = useActionState(async () => {
     try {
+      if (hasChanges) {
+        await handleSave();
+      }
       const result = await publishWebsiteSettings(websiteId);
       if (result.success) {
         toast.success("Website settings published successfully!");
@@ -79,22 +78,23 @@ export default function SaveButton({ websiteId, hasChanges, type = "submit", dat
 
   return (
     <div className="flex justify-start gap-4">
-      <form action={handleSave}>
-        <Button size="sm" type={type} className="w-40" disabled={isSaving || !hasChanges}>
-          {isSaving ? (
-            <>
-              <Loader className="h-3 w-3 animate-spin" />
-              Saving
-            </>
-          ) : (
-            <>
-              <Save className="h-3 w-3" />
-              Save Draft
-            </>
-          )}
-        </Button>
-      </form>
-
+      {showSave && (
+        <form action={handleSave}>
+          <Button size="sm" className="w-40" type="submit" variant="default" disabled={isSaving || !hasChanges}>
+            {isSaving ? (
+              <>
+                <Loader className="h-3 w-3 animate-spin" />
+                Saving
+              </>
+            ) : (
+              <>
+                <Save className="h-3 w-3" />
+                Save Draft
+              </>
+            )}
+          </Button>
+        </form>
+      )}
       <form action={handlePublish}>
         <Button
           type="submit"
