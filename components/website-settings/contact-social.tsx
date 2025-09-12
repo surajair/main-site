@@ -154,30 +154,25 @@ function SocialLinks({ data, onChange }: SocialLinksProps) {
 }
 
 interface ContactSocialProps {
-  websiteId: string;
   data: SiteData;
   onChange?: (updates: any) => void;
 }
 
-const convertToSocialLinksObject = (items: SocialLinkItem[]): SocialLinksObject => {
-  return items.reduce((acc, item) => {
-    if (item.key && item.value) {
-      acc[item.key] = item.value;
-    }
-    return acc;
-  }, {} as SocialLinksObject);
-};
-
 export default function ContactSocial({ data, onChange }: ContactSocialProps) {
+  const [baseline, setBaseline] = useState<SiteData>(data);
+
   const handleInputChange = (field: "email" | "phone" | "address", value: string) => {
     if (!onChange) return;
 
-    onChange({
+    const updates = {
+      ...(data || {}),
       settings: {
-        ...data.settings,
+        ...(data?.settings || {}),
         [field]: value,
       },
-    });
+    };
+    setBaseline(updates);
+    onChange(updates);
   };
 
   const handleSocialLinksChange = (socialLinks: any) => {
@@ -202,7 +197,7 @@ export default function ContactSocial({ data, onChange }: ContactSocialProps) {
             id="email"
             type="email"
             placeholder="contact@example.com"
-            value={data?.settings?.email || ""}
+            value={baseline?.settings?.email || ""}
             onChange={(e) => handleInputChange("email", e.target.value)}
           />
         </div>
@@ -215,7 +210,7 @@ export default function ContactSocial({ data, onChange }: ContactSocialProps) {
             id="phone"
             type="tel"
             placeholder="+1 (555) 123-4567"
-            value={data?.settings?.phone || ""}
+            value={baseline?.settings?.phone || ""}
             onChange={(e) => handleInputChange("phone", e.target.value)}
           />
         </div>
@@ -227,7 +222,7 @@ export default function ContactSocial({ data, onChange }: ContactSocialProps) {
           <Input
             id="address"
             placeholder="123 Main St, City, Country"
-            value={data?.settings?.address || ""}
+            value={baseline?.settings?.address || ""}
             onChange={(e) => handleInputChange("address", e.target.value)}
           />
         </div>

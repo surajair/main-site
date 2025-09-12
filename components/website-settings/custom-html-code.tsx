@@ -3,14 +3,21 @@
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SiteData } from "@/utils/types";
+import { useState } from "react";
 
 interface CustomHtmlProps {
-  websiteId: string;
   data: SiteData;
-  onChange?: (updates: any) => void;
+  onChange: (updates: any) => void;
 }
 
-export default function CustomHtmlCode({ websiteId, data, onChange }: CustomHtmlProps) {
+export default function CustomHtmlCode({ data, onChange }: CustomHtmlProps) {
+  const [baseline, setBaseline] = useState(data);
+
+  const handleChange = (updates: any) => {
+    setBaseline(updates);
+    onChange(updates);
+  };
+
   return (
     <section id="custom-html" className="space-y-4">
       <div className="space-y-1">
@@ -23,13 +30,13 @@ export default function CustomHtmlCode({ websiteId, data, onChange }: CustomHtml
         <Textarea
           id="headHTML"
           className="resize-none"
-          value={data?.settings?.headHTML || ""}
+          value={baseline?.settings?.headHTML || ""}
           placeholder="<script>...</script> or <meta>...</meta> or <link>...</link>"
-          onChange={(e) => 
-            onChange?.({
-              settings: {
-                headHTML: e.target.value
-              }
+          onChange={(e) =>
+            handleChange?.({
+              ...(data || {}),
+              name: e.target.value,
+              settings: { ...(data?.settings || {}), headHTML: e.target.value },
             })
           }
           rows={8}
@@ -46,13 +53,13 @@ export default function CustomHtmlCode({ websiteId, data, onChange }: CustomHtml
         <Textarea
           id="footerHTML"
           className="resize-none"
-          value={data?.settings?.footerHTML || ""}
+          value={baseline?.settings?.footerHTML || ""}
           placeholder="<script>...</script> or other HTML elements"
-          onChange={(e) => 
-            onChange?.({
-              settings: {
-                footerHTML: e.target.value
-              }
+          onChange={(e) =>
+            handleChange?.({
+              ...(data || {}),
+              name: e.target.value,
+              settings: { ...(data?.settings || {}), footerHTML: e.target.value },
             })
           }
           rows={8}

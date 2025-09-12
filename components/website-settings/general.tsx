@@ -44,7 +44,13 @@ export default function General({ data, onChange }: GeneralProps) {
           placeholder="eg: My Website"
           id="siteName"
           value={baseline?.settings?.siteName}
-          onChange={(e) => handleChange?.({ name: e.target.value, settings: { siteName: e.target.value } })}
+          onChange={(e) =>
+            handleChange?.({
+              ...(data || {}),
+              name: e.target.value,
+              settings: { ...(data?.settings || {}), siteName: e.target.value },
+            })
+          }
         />
       </div>
 
@@ -56,7 +62,12 @@ export default function General({ data, onChange }: GeneralProps) {
           placeholder="eg: The best website ever"
           id="siteTagline"
           value={baseline?.settings?.siteTagline}
-          onChange={(e) => handleChange?.({ settings: { siteTagline: e.target.value } })}
+          onChange={(e) =>
+            handleChange?.({
+              ...(data || {}),
+              settings: { ...(data?.settings || {}), siteTagline: e.target.value },
+            })
+          }
         />
       </div>
 

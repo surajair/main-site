@@ -3,14 +3,22 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SiteData } from "@/utils/types";
+import { useState } from "react";
 
 interface AnalyticsTrackingProps {
   websiteId: string;
   data: SiteData;
-  onChange?: (updates: any) => void;
+  onChange: (updates: any) => void;
 }
 
-export default function AnalyticsTracking({ websiteId, data, onChange }: AnalyticsTrackingProps) {
+export default function AnalyticsTracking({ data, onChange }: AnalyticsTrackingProps) {
+  const [baseline, setBaseline] = useState(data);
+
+  const handleChange = (updates: any) => {
+    setBaseline(updates);
+    onChange(updates);
+  };
+
   return (
     <section id="analytics-tracking" className="space-y-4 pb-4">
       <div className="space-y-1">
@@ -19,13 +27,13 @@ export default function AnalyticsTracking({ websiteId, data, onChange }: Analyti
         </Label>
         <Input
           id="googleAnalyticsId"
-          value={data?.settings?.googleAnalyticsId || ""}
+          value={baseline?.settings?.googleAnalyticsId || ""}
           placeholder="eg: UA-XXXXXX"
           onChange={(e) =>
-            onChange?.({
-              settings: {
-                googleAnalyticsId: e.target.value,
-              },
+            handleChange?.({
+              ...(data || {}),
+              name: e.target.value,
+              settings: { ...(data?.settings || {}), googleAnalyticsId: e.target.value },
             })
           }
         />
@@ -37,13 +45,13 @@ export default function AnalyticsTracking({ websiteId, data, onChange }: Analyti
         </Label>
         <Input
           id="googleTagManagerId"
-          value={data?.settings?.googleTagManagerId || ""}
+          value={baseline?.settings?.googleTagManagerId || ""}
           placeholder="eg: GTM-XXXXXX"
           onChange={(e) =>
-            onChange?.({
-              settings: {
-                googleTagManagerId: e.target.value,
-              },
+            handleChange?.({
+              ...(data || {}),
+              name: e.target.value,
+              settings: { ...(data?.settings || {}), googleTagManagerId: e.target.value },
             })
           }
         />
@@ -55,13 +63,13 @@ export default function AnalyticsTracking({ websiteId, data, onChange }: Analyti
         </Label>
         <Input
           id="metaPixelId"
-          value={data?.settings?.metaPixelId || ""}
+          value={baseline?.settings?.metaPixelId || ""}
           placeholder="eg: XXXXXX"
           onChange={(e) =>
-            onChange?.({
-              settings: {
-                metaPixelId: e.target.value,
-              },
+            handleChange?.({
+              ...(data || {}),
+              name: e.target.value,
+              settings: { ...(data?.settings || {}), metaPixelId: e.target.value },
             })
           }
         />
