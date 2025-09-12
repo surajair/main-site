@@ -16,4 +16,8 @@
   .h-\[inherit\] {
     height: inherit;
   }
+
+  .prose {
+    @apply max-w-full;
+  }
 }
