@@ -22,7 +22,7 @@ export const generateMetadata = async (props: { params: Promise<{ hostname: stri
   const data = await ChaiBuilder.getSiteSettings();
   const brandConfig = getBrandConfig();
   const favicon = data?.settings?.faviconURL || brandConfig.favicon || "/favicon.ico";
-  return { ...((await ChaiBuilder.getPageSeoData(slug)), { icons: { icon: favicon } }) };
+  return { ...((await ChaiBuilder.getPageSeoData(slug)) as any), icons: { icon: favicon } };
 };
 
 export default async function Page({ params }: { params: Promise<{ hostname: string; slug: string[] }> }) {
@@ -54,7 +54,9 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
     <html lang={page.lang} className={`smooth-scroll`}>
       <head>
         <FontsAndStyles page={page} />
-        {settings?.headHTML && <div dangerouslySetInnerHTML={{ __html: settings.headHTML }} style={{ display: "contents" }} />}
+        {settings?.headHTML && (
+          <div dangerouslySetInnerHTML={{ __html: settings.headHTML }} style={{ display: "contents" }} />
+        )}
       </head>
       <body className={`font-body antialiased`}>
         <PreviewBanner slug={slug} show={isEnabled} />
