@@ -1,8 +1,7 @@
-import { getChaiBuilderTheme } from "chai-next/utils";
 import aspectRatio from "@tailwindcss/aspect-ratio";
 import containerQueries from "@tailwindcss/container-queries";
 import forms from "@tailwindcss/forms";
-import typography from "@tailwindcss/typography";
+import { getChaiBuilderTheme } from "chai-next/utils";
 import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
 import plugin from "tailwindcss/plugin";
@@ -13,9 +12,9 @@ const config: Config = {
   content: [
     "./blocks/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/chai-next/dist/blocks/**/*.{js,cjs}"
+    "./node_modules/chai-next/dist/blocks/**/*.{js,cjs}",
   ],
-  safelist: ["w-[inherit]", "h-[inherit]"],
+  safelist: ["w-[inherit]", "h-[inherit]", "prose"],
   theme: {
     extend: {
       ...(getChaiBuilderTheme() as Partial<CustomThemeConfig>),
@@ -44,7 +43,7 @@ const config: Config = {
     },
   },
   plugins: [
-    typography,
+    require("@tailwindcss/typography"),
     aspectRatio,
     forms,
     plugin(function ({ addBase, theme }) {
