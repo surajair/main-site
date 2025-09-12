@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { getSite, getSites } from "@/lib/getter";
+import { SiteData } from "@/utils/types";
 import { useFlag } from "@openfeature/react-sdk";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Popover, PopoverContent, PopoverTrigger, useSavePage } from "chai-next";
+import { omit } from "lodash";
 import {
   Activity,
   ChevronDown,
@@ -69,21 +71,50 @@ const SIDEBAR_ITEMS = [
 function WebsiteSettingsContent({
   websiteId,
   onUnsavedChanges,
+  isDataChange,
+  setIsDataChange,
 }: {
   websiteId: string;
   onUnsavedChanges: (hasChanges: boolean) => void;
+  isDataChange: boolean;
+  setIsDataChange: (value: boolean) => void;
 }) {
+  const [initData, setInitData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("general");
   const [hasUnsavedChanges, setHasUnsavedChangesInternal] = useState(false);
   const [showTabChangeDialog, setShowTabChangeDialog] = useState(false);
   const [pendingTabChange, setPendingTabChange] = useState<string | null>(null);
 
-  const { data: siteData, isLoading } = useQuery({
+  const handleGetSiteData = async () => {
+    const siteData = await getSite(websiteId);
+    setInitData(siteData);
+    return siteData;
+  };
+
+  const { data: siteData, isLoading } = useQuery<SiteData | null>({
     queryKey: ["website-settings", websiteId],
-    queryFn: async () => getSite(websiteId),
+    queryFn: async () => (await handleGetSiteData()) as any,
     enabled: !!websiteId,
     initialData: null,
   });
+
+  const updateSiteDataLocally = (updates: Partial<SiteData>) => {
+    queryClient.setQueryData(["website-settings", websiteId], (prevData: SiteData) => {
+      return prevData
+        ? {
+            ...prevData,
+            ...omit(updates, "settings"),
+            ...{ settings: { ...(prevData.settings || {}), ...(updates?.settings || {}) } },
+          }
+        : prevData;
+    });
+  };
+
+  useEffect(() => {
+    if (!siteData || !initData) return;
+    const isDataChanged = JSON.stringify(siteData) !== JSON.stringify(initData);
+    setIsDataChange(isDataChanged);
+  }, [siteData, initData, setIsDataChange]);
 
   const setHasUnsavedChanges = (value: boolean) => {
     setHasUnsavedChangesInternal(value);
@@ -172,20 +203,34 @@ function WebsiteSettingsContent({
                 {Icon && <Icon className="h-5 w-5" />}
                 <h2 className="font-semibold">{activeItem?.label}</h2>
               </div>
-              {activeItem && activeItem?.id !== "domain" && (
+              {/* {activeItem && activeItem?.id !== "domain" && (
                 <SaveButton
                   showPublish={true}
                   websiteId={websiteId}
-                  hasChanges={hasUnsavedChanges}
+                  hasChanges={isDataChange}
                   saveAction={() => Promise.resolve({ success: true })}
                 />
-              )}
+              )} */}
             </div>
             <div
               className="h-full scroll-smooth overflow-y-auto px-6 no-scrollbar"
               style={{ scrollBehavior: "smooth" }}>
-              {Component && <Component websiteId={websiteId} initial={siteData?.settings} siteData={siteData as any} />}
+              {Component && (
+                <Component
+                  websiteId={websiteId}
+                  initial={siteData?.settings}
+                  siteData={siteData as any}
+                  data={siteData}
+                  onChange={updateSiteDataLocally}
+                />
+              )}
             </div>
+
+            {Component && (
+              <div className="px-6 border-t pt-4 flex items-center gap-x-4">
+                <SaveButton data={siteData} websiteId={websiteId} hasChanges={isDataChange} />
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -213,6 +258,7 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const { value: showWebsiteSettings } = useFlag("website_settings", false);
   const { savePageAsync } = useSavePage();
+  const [isDataChange, setIsDataChange] = useState(false);
 
   const handleOpenChange = async (newOpen: boolean) => {
     if (newOpen) savePageAsync();
@@ -253,7 +299,14 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
           className="max-w-5xl overflow-y-auto"
           style={{ height: "80vh", maxHeight: "860px" }}
           onInteractOutside={(e) => e.preventDefault()}>
-          {showModal && <WebsiteSettingsContent websiteId={websiteId} onUnsavedChanges={setHasUnsavedChanges} />}
+          {showModal && (
+            <WebsiteSettingsContent
+              websiteId={websiteId}
+              onUnsavedChanges={setHasUnsavedChanges}
+              isDataChange={isDataChange}
+              setIsDataChange={setIsDataChange}
+            />
+          )}
         </DialogContent>
       </Dialog>
 

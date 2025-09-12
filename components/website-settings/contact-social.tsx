@@ -1,15 +1,14 @@
 "use client";
 
-import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SiteData } from "@/utils/types";
 import { Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import SaveButton from "./save-button";
+import { useState } from "react";
 
-// List of 25 major social networking sites
+// List of social networking sites
 const SOCIAL_PLATFORMS = [
   { value: "facebook", label: "Facebook", placeholder: "https://facebook.com/yourpage" },
   { value: "twitter", label: "Twitter/X", placeholder: "https://twitter.com/yourusername" },
@@ -17,51 +16,33 @@ const SOCIAL_PLATFORMS = [
   { value: "linkedin", label: "LinkedIn", placeholder: "https://linkedin.com/in/yourprofile" },
   { value: "youtube", label: "YouTube", placeholder: "https://youtube.com/@yourchannel" },
   { value: "tiktok", label: "TikTok", placeholder: "https://tiktok.com/@yourusername" },
-  { value: "snapchat", label: "Snapchat", placeholder: "https://snapchat.com/add/yourusername" },
-  { value: "pinterest", label: "Pinterest", placeholder: "https://pinterest.com/yourusername" },
-  { value: "reddit", label: "Reddit", placeholder: "https://reddit.com/u/yourusername" },
-  { value: "discord", label: "Discord", placeholder: "https://discord.gg/yourserver" },
-  { value: "telegram", label: "Telegram", placeholder: "https://t.me/yourusername" },
-  { value: "whatsapp", label: "WhatsApp", placeholder: "https://wa.me/yournumber" },
-  { value: "twitch", label: "Twitch", placeholder: "https://twitch.tv/yourusername" },
   { value: "github", label: "GitHub", placeholder: "https://github.com/yourusername" },
-  { value: "behance", label: "Behance", placeholder: "https://behance.net/yourusername" },
-  { value: "dribbble", label: "Dribbble", placeholder: "https://dribbble.com/yourusername" },
-  { value: "medium", label: "Medium", placeholder: "https://medium.com/@yourusername" },
-  { value: "quora", label: "Quora", placeholder: "https://quora.com/profile/yourname" },
-  { value: "tumblr", label: "Tumblr", placeholder: "https://yourusername.tumblr.com" },
-  { value: "flickr", label: "Flickr", placeholder: "https://flickr.com/people/yourusername" },
-  { value: "vimeo", label: "Vimeo", placeholder: "https://vimeo.com/yourusername" },
-  { value: "soundcloud", label: "SoundCloud", placeholder: "https://soundcloud.com/yourusername" },
-  { value: "spotify", label: "Spotify", placeholder: "https://open.spotify.com/user/yourusername" },
-  { value: "clubhouse", label: "Clubhouse", placeholder: "https://clubhouse.com/@yourusername" },
-  { value: "mastodon", label: "Mastodon", placeholder: "https://mastodon.social/@yourusername" },
 ];
-
-type SocialLinks = Record<string, string> & {
-  facebook?: string;
-  twitter?: string;
-  linkedin?: string;
-  instagram?: string;
-  youtube?: string;
-};
 
 type SocialLinkItem = {
   key: string;
   value: string;
 };
 
-// Social Links Component
+type SocialLinksObject = Record<string, string>;
+
 interface SocialLinksProps {
   value: SocialLinkItem[];
   onChange: (links: SocialLinkItem[]) => void;
+  selectedPlatform: string;
+  setSelectedPlatform: (platform: string) => void;
+  newValue: string;
+  setNewValue: (value: string) => void;
 }
 
-function SocialLinks({ value, onChange }: SocialLinksProps) {
-  const [selectedPlatform, setSelectedPlatform] = useState("");
-  const [newValue, setNewValue] = useState("");
-
-  // Helper functions
+function SocialLinks({
+  value,
+  onChange,
+  selectedPlatform,
+  setSelectedPlatform,
+  newValue,
+  setNewValue,
+}: SocialLinksProps) {
   const getPlatformInfo = (key: string) => {
     return SOCIAL_PLATFORMS.find((platform) => platform.value === key);
   };
@@ -72,11 +53,10 @@ function SocialLinks({ value, onChange }: SocialLinksProps) {
 
   const getAvailablePlatformsForEdit = (currentPlatform: string) => {
     return SOCIAL_PLATFORMS.filter(
-      (platform) => platform.value === currentPlatform || !value.some((item) => item.key === platform.value),
+      (platform) => platform.value === currentPlatform || !value.some((item) => item.key === platform.value)
     );
   };
 
-  // Actions
   const addSocialLink = () => {
     const platform = selectedPlatform.trim();
     const url = newValue.trim();
@@ -102,15 +82,13 @@ function SocialLinks({ value, onChange }: SocialLinksProps) {
     onChange(value.map((item, i) => (i === index ? { ...item, key: newKey } : item)));
   };
 
-  // Validation
   const hasIncompleteLinks = value.some((item) => !item.key.trim() || !item.value.trim());
   const availablePlatforms = getAvailablePlatforms();
 
   return (
-    <div className="space-y-1">
-      <Label className="text-xs">Social links</Label>
+    <div className="space-y-4">
+      <Label className="text-sm font-medium">Social Links</Label>
       <div className="space-y-2">
-        {/* Existing Social Links */}
         {value.map((item, index) => {
           const platformInfo = getPlatformInfo(item.key);
           const availableForEdit = getAvailablePlatformsForEdit(item.key);
@@ -118,8 +96,8 @@ function SocialLinks({ value, onChange }: SocialLinksProps) {
           return (
             <div key={index} className="flex items-center gap-2">
               <Select value={item.key} onValueChange={(newKey) => changePlatformType(index, newKey)}>
-                <SelectTrigger className="w-56 shrink-0">
-                  <SelectValue placeholder="Select platform">{platformInfo?.label || item.key}</SelectValue>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Select platform" />
                 </SelectTrigger>
                 <SelectContent>
                   {availableForEdit.map((platform) => (
@@ -133,26 +111,26 @@ function SocialLinks({ value, onChange }: SocialLinksProps) {
                 value={item.value}
                 onChange={(e) => updateSocialValue(index, e.target.value)}
                 placeholder={platformInfo?.placeholder || "Enter URL"}
+                className="flex-1"
               />
               <Button
                 type="button"
+                variant="ghost"
                 size="icon"
-                variant="outline"
                 onClick={() => removeSocialLink(index)}
-                className="shrink-0">
+              >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           );
         })}
 
-        {/* Add New Social Link */}
         {availablePlatforms.length > 0 && !hasIncompleteLinks && (
-          <>
+          <div className="space-y-2 pt-2">
             <div className="flex items-center gap-2">
               <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
-                <SelectTrigger className="w-56 shrink-0">
-                  <SelectValue placeholder="Select platform" />
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Add platform" />
                 </SelectTrigger>
                 <SelectContent>
                   {availablePlatforms.map((platform) => (
@@ -166,38 +144,29 @@ function SocialLinks({ value, onChange }: SocialLinksProps) {
                 placeholder={
                   selectedPlatform
                     ? getPlatformInfo(selectedPlatform)?.placeholder || "Enter URL"
-                    : "Select a platform first"
+                    : "Select a platform"
                 }
                 value={newValue}
                 onChange={(e) => setNewValue(e.target.value)}
                 disabled={!selectedPlatform}
+                className="flex-1"
               />
             </div>
-            <div className="w-full flex items-center justify-start">
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={addSocialLink}
-                disabled={!selectedPlatform || !newValue.trim()}
-                className="mt-1 px-0 hover:bg-transparent hover:underline hover:text-primary">
-                + Add social link
-              </Button>
-            </div>
-          </>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addSocialLink}
+              disabled={!selectedPlatform || !newValue.trim()}
+              className="mt-1"
+            >
+              Add Link
+            </Button>
+          </div>
         )}
 
-        {/* Status Messages */}
         {hasIncompleteLinks && (
-          <div className="text-sm text-muted-foreground bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-            Please complete all existing social links before adding new ones.
-          </div>
-        )}
-
-        {availablePlatforms.length === 0 && !hasIncompleteLinks && (
-          <div className="text-sm text-muted-foreground bg-blue-50 border border-blue-200 rounded-lg p-3">
-            All available social platforms have been added.
-          </div>
+          <p className="text-sm text-amber-600">Please complete all social links before adding new ones.</p>
         )}
       </div>
     </div>
@@ -206,280 +175,107 @@ function SocialLinks({ value, onChange }: SocialLinksProps) {
 
 interface ContactSocialProps {
   websiteId: string;
-  initial?: {
-    email?: string;
-    phone?: string;
-    address?: string;
-    socialLinks?: SocialLinks;
-  };
+  data: SiteData;
+  onChange?: (updates: any) => void;
 }
 
-export default function ContactSocial({ websiteId, initial }: ContactSocialProps) {
-  // Helper functions to convert between formats
-  const objectToArray = (obj: SocialLinks): SocialLinkItem[] => {
-    return Object.entries(obj).map(([key, value]) => ({ key, value }));
-  };
+const convertToSocialLinksArray = (links?: Record<string, string>): SocialLinkItem[] => {
+  if (!links) return [];
+  return Object.entries(links)
+    .filter(([_, value]) => value)
+    .map(([key, value]) => ({
+      key,
+      value: String(value)
+    }));
+};
 
-  const arrayToObject = (arr: SocialLinkItem[]): SocialLinks => {
-    return arr.reduce((acc, item) => {
-      // Only include entries that have both key and value filled
-      if (item.key.trim() && item.value.trim()) {
-        acc[item.key] = item.value;
-      }
-      return acc;
-    }, {} as SocialLinks);
-  };
+const convertToSocialLinksObject = (items: SocialLinkItem[]): SocialLinksObject => {
+  return items.reduce((acc, item) => {
+    if (item.key && item.value) {
+      acc[item.key] = item.value;
+    }
+    return acc;
+  }, {} as SocialLinksObject);
+};
 
-  const [email, setEmail] = useState(initial?.email ?? "");
-  const [phone, setPhone] = useState(initial?.phone ?? "");
-  const [address, setAddress] = useState(initial?.address ?? "");
-  const [socialLinks, setSocialLinks] = useState<SocialLinkItem[]>(objectToArray(initial?.socialLinks ?? {}));
+export default function ContactSocial({ websiteId, data, onChange }: ContactSocialProps) {
   const [selectedPlatform, setSelectedPlatform] = useState("");
   const [newValue, setNewValue] = useState("");
-  const [baseline, setBaseline] = useState({
-    email: initial?.email ?? "",
-    phone: initial?.phone ?? "",
-    address: initial?.address ?? "",
-    socialLinks: objectToArray(initial?.socialLinks ?? {}),
-  });
+  
+  const socialLinks = convertToSocialLinksArray(data?.settings?.socialLinks);
 
-  // Update local state when initial data changes
-  useEffect(() => {
-    if (initial) {
-      setEmail(initial.email ?? "");
-      setPhone(initial.phone ?? "");
-      setAddress(initial.address ?? "");
-      setSocialLinks(objectToArray(initial.socialLinks ?? {}));
-
-      setBaseline({
-        email: initial.email ?? "",
-        phone: initial.phone ?? "",
-        address: initial.address ?? "",
-        socialLinks: objectToArray(initial.socialLinks ?? {}),
-      });
-    }
-  }, [initial]);
-
-  // Helper function to compare social links arrays
-  const socialLinksChanged = () => {
-    try {
-      // Convert both current and baseline to objects for comparison (only complete entries)
-      const currentComplete = arrayToObject(socialLinks);
-      const baselineComplete = arrayToObject(baseline.socialLinks);
-
-      const condOne = JSON.stringify(currentComplete) !== JSON.stringify(baselineComplete);
-      const condTwo = selectedPlatform?.trim().length > 0 && newValue?.trim().length > 0;
-      return condOne || condTwo;
-    } catch (error) {
-      return true;
-    }
+  const handleInputChange = (field: 'email' | 'phone' | 'address', value: string) => {
+    if (!onChange) return;
+    
+    onChange({
+      settings: {
+        ...data.settings,
+        [field]: value
+      }
+    });
   };
 
-  const hasChanges =
-    email !== baseline.email || phone !== baseline.phone || address !== baseline.address || socialLinksChanged();
-
-  // Check if all existing social links have both platform and URL filled
-  const hasIncompleteLinks = socialLinks.some((item) => !item.key.trim() || !item.value.trim());
-
-  const addSocial = () => {
-    const platform = selectedPlatform.trim();
-    const val = newValue.trim();
-
-    // Check if platform already exists
-    if (socialLinks.some((item) => item.key === platform)) {
-      return;
-    }
-
-    setSocialLinks((s) => [...s, { key: platform, value: val }]);
-    setSelectedPlatform("");
-    setNewValue("");
-  };
-
-  // Get available platforms for new additions (not already added)
-  const availablePlatforms = SOCIAL_PLATFORMS.filter(
-    (platform) => !socialLinks.some((item) => item.key === platform.value),
-  );
-
-  // Get available platforms for editing existing entries (exclude current platform and already used ones)
-  const getAvailablePlatformsForEdit = (currentPlatform: string) => {
-    return SOCIAL_PLATFORMS.filter(
-      (platform) => platform.value === currentPlatform || !socialLinks.some((item) => item.key === platform.value),
-    );
-  };
-
-  // Get platform info for display
-  const getPlatformInfo = (key: string) => {
-    return SOCIAL_PLATFORMS.find((platform) => platform.value === key);
-  };
-
-  // Handle platform type change for existing social links
-  const changePlatformType = (index: number, newKey: string) => {
-    // Check if new platform already exists
-    if (socialLinks.some((item, i) => i !== index && item.key === newKey)) {
-      return;
-    }
-
-    setSocialLinks((s) => s.map((item, i) => (i === index ? { ...item, key: newKey } : item)));
-  };
-
-  const removeSocial = (index: number) => {
-    setSocialLinks((s) => s.filter((_, i) => i !== index));
-  };
-
-  const updateSocialValue = (index: number, value: string) => {
-    setSocialLinks((s) => s.map((item, i) => (i === index ? { ...item, value } : item)));
-  };
-
-  const saveAction = async () => {
-    try {
-      // Convert array to object and filter out empty entries
-      const socialLinksObject = arrayToObject(socialLinks);
-
-      const res = await updateWebsiteData({
-        id: websiteId,
-        updates: { email, phone, address, socialLinks: socialLinksObject },
-      });
-      if (!res.success) throw new Error(res.error);
-
-      // Update baseline to reflect saved state (only complete entries)
-      const savedArray = objectToArray(socialLinksObject);
-      const newBaseline = {
-        email,
-        phone,
-        address,
-        socialLinks: JSON.parse(JSON.stringify(savedArray)), // Deep copy to avoid reference issues
-      };
-      setBaseline(newBaseline);
-
-      // Keep current local state as is - don't overwrite with filtered data
-      // This preserves any incomplete entries the user is working on
-
-      return { success: true };
-    } catch (e: any) {
-      return { success: false, error: e?.message || "Failed to save Contact & Social" };
-    }
+  const handleSocialLinksChange = (newLinks: SocialLinkItem[]) => {
+    if (!onChange) return;
+    
+    onChange({
+      settings: {
+        ...data.settings,
+        socialLinks: convertToSocialLinksObject(newLinks)
+      }
+    });
   };
 
   return (
-    <section id="contact-social" className="space-y-4">
-      <div className="space-y-1">
-        <Label htmlFor="email" className="text-xs">
-          Email
-        </Label>
-        <Input id="email" placeholder="eg: user@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-      </div>
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-sm font-medium">
+            Email
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="contact@example.com"
+            value={data?.settings?.email || ""}
+            onChange={(e) => handleInputChange('email', e.target.value)}
+          />
+        </div>
 
-      <div className="space-y-1">
-        <Label htmlFor="phone" className="text-xs">
-          Phone
-        </Label>
-        <Input id="phone" placeholder="eg: XXXXXX" value={phone} onChange={(e) => setPhone(e.target.value)} />
-      </div>
+        <div className="space-y-2">
+          <Label htmlFor="phone" className="text-sm font-medium">
+            Phone
+          </Label>
+          <Input
+            id="phone"
+            type="tel"
+            placeholder="+1 (555) 123-4567"
+            value={data?.settings?.phone || ""}
+            onChange={(e) => handleInputChange('phone', e.target.value)}
+          />
+        </div>
 
-      <div className="space-y-1">
-        <Label htmlFor="address" className="text-xs">
-          Address
-        </Label>
-        <Input
-          id="address"
-          placeholder="eg: 123 Main St, City, Country"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
+        <div className="space-y-2">
+          <Label htmlFor="address" className="text-sm font-medium">
+            Address
+          </Label>
+          <Input
+            id="address"
+            placeholder="123 Main St, City, Country"
+            value={data?.settings?.address || ""}
+            onChange={(e) => handleInputChange('address', e.target.value)}
+          />
+        </div>
+
+        <SocialLinks 
+          value={socialLinks}
+          onChange={handleSocialLinksChange}
+          selectedPlatform={selectedPlatform}
+          setSelectedPlatform={setSelectedPlatform}
+          newValue={newValue}
+          setNewValue={setNewValue}
         />
       </div>
-
-      <div className="space-y-1">
-        <Label className="text-xs">Social links</Label>
-        <div className="space-y-2">
-          {socialLinks.map((item, index) => {
-            const platformInfo = getPlatformInfo(item.key);
-            const availableForEdit = getAvailablePlatformsForEdit(item.key);
-            return (
-              <div key={index} className="flex items-center gap-2">
-                <Select value={item.key} onValueChange={(newKey) => changePlatformType(index, newKey)}>
-                  <SelectTrigger className="w-56 shrink-0">
-                    <SelectValue placeholder="Select platform">{platformInfo?.label || item.key}</SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableForEdit.map((platform) => (
-                      <SelectItem key={platform.value} value={platform.value}>
-                        {platform.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Input
-                  value={item.value}
-                  onChange={(e) => updateSocialValue(index, e.target.value)}
-                  placeholder={platformInfo?.placeholder || "Enter URL"}
-                />
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="outline"
-                  onClick={() => removeSocial(index)}
-                  className="shrink-0">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            );
-          })}
-
-          {availablePlatforms.length > 0 && !hasIncompleteLinks && (
-            <>
-              <div className="flex items-center gap-2">
-                <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
-                  <SelectTrigger className="w-56 shrink-0">
-                    <SelectValue placeholder="Select platform" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availablePlatforms.map((platform) => (
-                      <SelectItem key={platform.value} value={platform.value}>
-                        {platform.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Input
-                  placeholder={
-                    selectedPlatform
-                      ? getPlatformInfo(selectedPlatform)?.placeholder || "Enter URL"
-                      : "Select a platform first"
-                  }
-                  value={newValue}
-                  onChange={(e) => setNewValue(e.target.value)}
-                  disabled={!selectedPlatform}
-                />
-              </div>
-              <div className="w-full flex items-center justify-start">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={addSocial}
-                  disabled={!selectedPlatform || !newValue.trim()}
-                  className="mt-1 px-0 hover:bg-transparent hover:underline hover:text-primary">
-                  + Add social link
-                </Button>
-              </div>
-            </>
-          )}
-
-          {hasIncompleteLinks && (
-            <div className="text-sm text-muted-foreground bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-              Please complete all existing social links before adding new ones.
-            </div>
-          )}
-
-          {availablePlatforms.length === 0 && !hasIncompleteLinks && (
-            <div className="text-sm text-muted-foreground bg-blue-50 border border-blue-200 rounded-lg p-3">
-              All available social platforms have been added.
-            </div>
-          )}
-        </div>
-      </div>
-
-      <SaveButton websiteId={websiteId} hasChanges={hasChanges} saveAction={saveAction} />
-    </section>
+    </div>
   );
 }

@@ -5,8 +5,8 @@ import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LANGUAGE_CODES } from "@/lib/language-config";
-import SaveButton from "./save-button";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SiteData } from "@/utils/types";
 import { useState } from "react";
 import AdditionalLanguageSelector from "./additional-language-selector";
 
@@ -22,11 +22,13 @@ interface GeneralProps {
   siteData?: {
     languages?: string[];
   };
+  data: SiteData;
+  onChange?: (updates: any) => void;
 }
 
 // const timeZones = Intl.supportedValuesOf("timeZone");
 
-export default function General({ websiteId, initial, siteData }: GeneralProps) {
+export default function General({ websiteId, initial, siteData, data, onChange }: GeneralProps) {
   const [siteName, setSiteName] = useState(initial?.siteName ?? "");
   const [siteTagline, setSiteTagline] = useState(initial?.siteTagline ?? "");
   const [language, setLanguage] = useState(initial?.language ?? "en");
@@ -85,8 +87,8 @@ export default function General({ websiteId, initial, siteData }: GeneralProps) 
         <Input
           placeholder="eg: My Website"
           id="siteName"
-          value={siteName}
-          onChange={(e) => setSiteName(e.target.value)}
+          value={data?.settings?.siteName}
+          onChange={(e) => onChange?.({ name: e.target.value, settings: { siteName: e.target.value } })}
         />
       </div>
 
@@ -97,8 +99,8 @@ export default function General({ websiteId, initial, siteData }: GeneralProps) 
         <Input
           placeholder="eg: The best website ever"
           id="siteTagline"
-          value={siteTagline}
-          onChange={(e) => setSiteTagline(e.target.value)}
+          value={data?.settings?.siteTagline}
+          onChange={(e) => onChange?.({ settings: { siteTagline: e.target.value } })}
         />
       </div>
 
@@ -141,7 +143,7 @@ export default function General({ websiteId, initial, siteData }: GeneralProps) 
               </div> */}
       </div>
 
-      <SaveButton websiteId={websiteId} hasChanges={hasChanges} saveAction={saveAction} />
+      {/* <SaveButton websiteId={websiteId} hasChanges={hasChanges} saveAction={saveAction} /> */}
     </section>
   );
 }
