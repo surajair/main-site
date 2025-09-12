@@ -34,12 +34,18 @@ export default function SaveButton({ websiteId, hasChanges, type = "submit", dat
         }
       });
 
-      const updates = {
-        ...data?.settings,
-        socialLinks: socialLinks,
+      const updates: Partial<SiteData> = {
+        name: data?.name,
+        languages: data?.languages,
+        settings: {
+          ...data?.settings,
+          socialLinks: socialLinks,
+        },
       };
 
-      const result = await updateWebsiteData({ id: websiteId, updates });
+      console.log("##", updates);
+
+      const result = await updateWebsiteData({ id: websiteId, updates: updates });
       if (result.success) {
         toast.success("Website settings updated successfully!");
         queryClient.invalidateQueries({ queryKey: ["website-settings"] });

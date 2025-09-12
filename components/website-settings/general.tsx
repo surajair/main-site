@@ -1,7 +1,5 @@
 "use client";
 
-import { updateSite, updateWebsiteName } from "@/actions/update-site-action";
-import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LANGUAGE_CODES } from "@/lib/language-config";
@@ -23,59 +21,17 @@ interface GeneralProps {
     languages?: string[];
   };
   data: SiteData;
-  onChange?: (updates: any) => void;
+  onChange: (updates: any) => void;
 }
 
 // const timeZones = Intl.supportedValuesOf("timeZone");
 
-export default function General({ websiteId, initial, siteData, data, onChange }: GeneralProps) {
-  const [siteName, setSiteName] = useState(initial?.siteName ?? "");
-  const [siteTagline, setSiteTagline] = useState(initial?.siteTagline ?? "");
-  const [language, setLanguage] = useState(initial?.language ?? "en");
-  const [timezone, setTimezone] = useState(initial?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone);
-  const [additionalLanguages, setAdditionalLanguages] = useState<string[]>(siteData?.languages ?? []);
+export default function General({ data, onChange }: GeneralProps) {
+  const [baseline, setBaseline] = useState(data);
 
-  const [baseline, setBaseline] = useState({
-    siteName: initial?.siteName ?? "",
-    siteTagline: initial?.siteTagline ?? "",
-    language: initial?.language ?? "en",
-    timezone: initial?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
-    additionalLanguages: siteData?.languages ?? [],
-  });
-
-  const hasChanges =
-    siteName !== baseline.siteName ||
-    siteTagline !== baseline.siteTagline ||
-    language !== baseline.language ||
-    timezone !== baseline.timezone ||
-    JSON.stringify(additionalLanguages.sort()) !== JSON.stringify(baseline.additionalLanguages.sort());
-
-  const saveAction = async () => {
-    try {
-      // Update website name through the dedicated function
-      if (siteName !== baseline.siteName) {
-        const nameResult = await updateWebsiteName(websiteId, siteName);
-        if (!nameResult.success) throw new Error(nameResult.error);
-      }
-
-      // Update other settings through website data
-      const res = await updateWebsiteData({
-        id: websiteId,
-        updates: { siteTagline, language, timezone },
-      });
-      if (!res.success) throw new Error(res.error);
-
-      // Update additional languages using updateSite
-      const languagesResult = await updateSite(websiteId, {
-        languages: additionalLanguages,
-      });
-      if (!languagesResult.success) throw new Error(languagesResult.error);
-
-      setBaseline({ siteName, siteTagline, language, timezone, additionalLanguages });
-      return { success: true };
-    } catch (e: any) {
-      return { success: false, error: e?.message || "Failed to save general settings" };
-    }
+  const handleChange = (updates: any) => {
+    setBaseline(updates);
+    onChange(updates);
   };
 
   return (
@@ -87,8 +43,8 @@ export default function General({ websiteId, initial, siteData, data, onChange }
         <Input
           placeholder="eg: My Website"
           id="siteName"
-          value={data?.settings?.siteName}
-          onChange={(e) => onChange?.({ name: e.target.value, settings: { siteName: e.target.value } })}
+          value={baseline?.settings?.siteName}
+          onChange={(e) => handleChange?.({ name: e.target.value, settings: { siteName: e.target.value } })}
         />
       </div>
 
@@ -99,8 +55,8 @@ export default function General({ websiteId, initial, siteData, data, onChange }
         <Input
           placeholder="eg: The best website ever"
           id="siteTagline"
-          value={data?.settings?.siteTagline}
-          onChange={(e) => onChange?.({ settings: { siteTagline: e.target.value } })}
+          value={baseline?.settings?.siteTagline}
+          onChange={(e) => handleChange?.({ settings: { siteTagline: e.target.value } })}
         />
       </div>
 
@@ -112,38 +68,12 @@ export default function General({ websiteId, initial, siteData, data, onChange }
           </Label>
           <Input
             className="bg-gray-100"
-            id={language}
-            value={LANGUAGE_CODES[language as keyof typeof LANGUAGE_CODES]}
+            value={LANGUAGE_CODES[data?.fallbackLang as keyof typeof LANGUAGE_CODES]}
             readOnly
           />
         </div>
-        {Object.keys(LANGUAGE_CODES).length > 1 && (
-          <AdditionalLanguageSelector
-            availableLanguages={LANGUAGE_CODES}
-            defaultLanguage={language}
-            additionalLanguages={additionalLanguages}
-            setAdditionalLanguages={setAdditionalLanguages}
-          />
-        )}
-        {/* TODO: Need to handle this later for Now we  are Hiding this */}
-        {/* <div className="space-y-2">
-                <Label>Timezone</Label>
-                <Select value={timezone} onValueChange={(v) => setTimezone(v)}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Timezone" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {timeZones.map((zone) => (
-                      <SelectItem key={zone} value={zone}>
-                        {zone}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div> */}
+        {Object.keys(LANGUAGE_CODES).length > 1 && <AdditionalLanguageSelector data={data} onChange={onChange} />}
       </div>
-
-      {/* <SaveButton websiteId={websiteId} hasChanges={hasChanges} saveAction={saveAction} /> */}
     </section>
   );
 }

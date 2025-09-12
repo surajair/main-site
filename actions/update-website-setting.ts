@@ -1,31 +1,11 @@
 "use server";
 
+import { SiteData } from "@/utils/types";
 import { getSupabaseAdmin } from "chai-next/server";
 
-type AllowedField =
-  | "siteName"
-  | "siteTagline"
-  | "language"
-  | "timezone"
-  | "logoURL"
-  | "faviconURL"
-  | "email"
-  | "phone"
-  | "address"
-  | "socialLinks"
-  | "googleAnalyticsId"
-  | "googleTagManagerId"
-  | "metaPixelId"
-  | "headHTML"
-  | "footerHTML"
-  | "cookieConsentEnabled"
-  | "recaptchaSiteKey"
-  | "recaptchaSecretKey";
-
-// ✅ Payload for updating multiple fields at once
 export type UpdateWebsiteDataPayload = {
   id: string;
-  updates: Partial<Record<AllowedField, any>>;
+  updates: Partial<SiteData>;
 };
 
 export async function updateWebsiteData({ id, updates }: UpdateWebsiteDataPayload) {
@@ -37,20 +17,30 @@ export async function updateWebsiteData({ id, updates }: UpdateWebsiteDataPayloa
     const supabase = await getSupabaseAdmin();
 
     // fetch current data
-    const { data: current, error: fetchError } = await supabase.from("apps").select("settings").eq("id", id).single();
+    const { data: current, error: fetchError } = await supabase
+      .from("apps")
+      .select("name,languages,settings")
+      .eq("id", id)
+      .single();
+    if (fetchError || !current) throw fetchError;
 
-    if (fetchError) throw fetchError;
+    const update = { ...(current || {}), ...(updates || {}) };
+    const { error: updateError } = await supabase.from("apps").update(update).eq("id", id);
 
-    // merge updates into the JSON settings column
-    const currentData = (current?.settings ?? {}) as Record<string, any>;
-    const nextData = { ...currentData, ...updates };
-
-    // update apps > settings
-    const { error: updateError } = await supabase.from("apps").update({ settings: nextData }).eq("id", id);
+    const isNameChanged = updates.name && current?.name !== updates?.name;
+    const isLanguagesChanged =
+      updates?.languages && JSON.stringify(current?.languages || []) !== JSON.stringify(updates?.languages || []);
+    console.log("##", { isNameChanged, isLanguagesChanged, current, updates });
+    if (isNameChanged || isLanguagesChanged) {
+      await supabase
+        .from("apps_online")
+        .update(isNameChanged ? { name: updates?.name } : { languages: updates?.languages })
+        .eq("id", id);
+    }
 
     if (updateError) throw updateError;
 
-    return { success: true, data: nextData } as const;
+    return { success: true, data: update } as const;
   } catch (error: any) {
     return { success: false, error: error?.message || "Failed to update data" } as const;
   }

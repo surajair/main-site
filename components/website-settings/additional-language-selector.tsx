@@ -3,35 +3,35 @@
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LANGUAGE_CODES } from "@/lib/language-config";
+import { SiteData } from "@/utils/types";
 import { X } from "lucide-react";
+import { useState } from "react";
 
 const MAX_ADDITIONAL_LANGUAGES = 2;
 
 interface AdditionalLanguageSelectorProps {
-  availableLanguages: Record<string, string>;
-  defaultLanguage: string;
-  additionalLanguages: string[];
-  setAdditionalLanguages: (languages: string[]) => void;
+  data: SiteData;
+  onChange: (updates: any) => void;
 }
 
-export default function AdditionalLanguageSelector({
-  availableLanguages,
-  defaultLanguage,
-  additionalLanguages,
-  setAdditionalLanguages,
-}: AdditionalLanguageSelectorProps) {
+export default function AdditionalLanguageSelector({ data, onChange }: AdditionalLanguageSelectorProps) {
+  const defaultLanguage = data?.fallbackLang;
+  const availableLanguages: Record<string, string> = LANGUAGE_CODES;
+  const [addLangs, setAddLangs] = useState(data?.languages);
   const selectableLanguages = Object.entries(availableLanguages).filter(
-    ([code]) => code !== defaultLanguage && !additionalLanguages.includes(code),
+    ([code]) => code !== defaultLanguage && !addLangs.includes(code),
   );
 
   const handleLanguageAdd = (languageCode: string) => {
-    if (additionalLanguages.length < MAX_ADDITIONAL_LANGUAGES && !additionalLanguages.includes(languageCode)) {
-      setAdditionalLanguages([...additionalLanguages, languageCode]);
-    }
+    setAddLangs((prev) => [...(prev || []), languageCode]);
+    onChange({ languages: addLangs });
   };
 
   const handleLanguageRemove = (languageCode: string) => {
-    setAdditionalLanguages(additionalLanguages.filter((lang) => lang !== languageCode));
+    const updated = addLangs?.filter((lang) => lang !== languageCode);
+    setAddLangs(updated);
+    onChange({ languages: updated || [] });
   };
 
   return (
@@ -41,7 +41,7 @@ export default function AdditionalLanguageSelector({
           Additional Languages <small className="text-muted-foreground">(Maximum {MAX_ADDITIONAL_LANGUAGES})</small>
         </Label>
 
-        {additionalLanguages.length < MAX_ADDITIONAL_LANGUAGES && selectableLanguages.length > 0 ? (
+        {addLangs.length < MAX_ADDITIONAL_LANGUAGES && selectableLanguages.length > 0 ? (
           <Select value="" onValueChange={handleLanguageAdd}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select additional language from here..." />
@@ -54,7 +54,7 @@ export default function AdditionalLanguageSelector({
               ))}
             </SelectContent>
           </Select>
-        ) : additionalLanguages.length >= MAX_ADDITIONAL_LANGUAGES ? (
+        ) : addLangs.length >= MAX_ADDITIONAL_LANGUAGES ? (
           <div className="text-sm text-muted-foreground bg-gray-50 p-3 rounded-md">
             Maximum of {MAX_ADDITIONAL_LANGUAGES} additional languages reached
           </div>
@@ -64,10 +64,10 @@ export default function AdditionalLanguageSelector({
       </div>
 
       {/* Selected Languages Badges */}
-      {additionalLanguages.length > 0 && (
+      {addLangs.length > 0 && (
         <div className="space-y-1">
           <div className="flex flex-wrap gap-2">
-            {additionalLanguages.map((langCode) => (
+            {addLangs.map((langCode) => (
               <Badge key={langCode} variant="secondary" className="flex items-center gap-1 px-3 py-1">
                 {availableLanguages[langCode]}
                 <button

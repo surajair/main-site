@@ -51,7 +51,6 @@ function SocialLinks({ data, onChange }: SocialLinksProps) {
   const availablePlatforms = SOCIAL_PLATFORMS.filter((platform) => !socialLinks[platform.value]);
 
   const isAddEnabled = Object.values(data?.settings?.socialLinks || {}).filter((value) => !value).length === 0;
-  console.log("##", data?.settings?.socialLinks, { isAddEnabled });
 
   return (
     <div className="space-y-4">
