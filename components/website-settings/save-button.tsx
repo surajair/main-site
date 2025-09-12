@@ -3,6 +3,7 @@
 import { publishWebsiteSettings } from "@/actions/publish-website-settings-action";
 import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Button } from "@/components/ui/button";
+import { SiteData } from "@/utils/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useReloadPage } from "chai-next";
 import { Loader, Rocket, Save } from "lucide-react";
@@ -14,7 +15,7 @@ interface SaveButtonProps {
   hideSave?: boolean;
   hasChanges: boolean;
   type?: "button" | "submit";
-  data: any;
+  data: SiteData;
   showPublish?: boolean;
 }
 
@@ -25,7 +26,20 @@ export default function SaveButton({ websiteId, hasChanges, type = "submit", dat
   // * Save action
   const [, handleSave, isSaving] = useActionState(async () => {
     try {
-      const result = await updateWebsiteData({ id: websiteId, updates: data?.settings });
+      if (typeof data?.settings !== "object") return { success: false };
+      const socialLinks = data?.settings?.socialLinks || {};
+      Object.keys(socialLinks).forEach((link) => {
+        if (socialLinks && !socialLinks[link]) {
+          delete socialLinks[link];
+        }
+      });
+
+      const updates = {
+        ...data?.settings,
+        socialLinks: socialLinks,
+      };
+
+      const result = await updateWebsiteData({ id: websiteId, updates });
       if (result.success) {
         toast.success("Website settings updated successfully!");
         queryClient.invalidateQueries({ queryKey: ["website-settings"] });

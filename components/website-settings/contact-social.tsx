@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SiteData } from "@/utils/types";
-import { Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 // List of social networking sites
@@ -27,75 +27,52 @@ type SocialLinkItem = {
 type SocialLinksObject = Record<string, string>;
 
 interface SocialLinksProps {
-  value: SocialLinkItem[];
-  onChange: (links: SocialLinkItem[]) => void;
-  selectedPlatform: string;
-  setSelectedPlatform: (platform: string) => void;
-  newValue: string;
-  setNewValue: (value: string) => void;
+  data: SiteData;
+  onChange: (links: any) => void;
 }
 
-function SocialLinks({
-  value,
-  onChange,
-  selectedPlatform,
-  setSelectedPlatform,
-  newValue,
-  setNewValue,
-}: SocialLinksProps) {
+function SocialLinks({ data, onChange }: SocialLinksProps) {
+  const [selectedPlatform] = useState("");
+  const [newValue, setNewValue] = useState("");
+  const [socialLinks, setSocialLinks] = useState(data?.settings?.socialLinks);
+  const [canAddNew, setCanAddNew] = useState(false);
+
   const getPlatformInfo = (key: string) => {
     return SOCIAL_PLATFORMS.find((platform) => platform.value === key);
   };
 
-  const getAvailablePlatforms = () => {
-    return SOCIAL_PLATFORMS.filter((platform) => !value.some((item) => item.key === platform.value));
+  const removeSocialLink = (key: string) => {
+    let updatedSocialLinks = { ...socialLinks };
+    delete updatedSocialLinks[key];
+    setSocialLinks(updatedSocialLinks);
+    onChange(updatedSocialLinks as any);
   };
 
-  const getAvailablePlatformsForEdit = (currentPlatform: string) => {
-    return SOCIAL_PLATFORMS.filter(
-      (platform) => platform.value === currentPlatform || !value.some((item) => item.key === platform.value)
-    );
-  };
+  const availablePlatforms = SOCIAL_PLATFORMS.filter((platform) => !socialLinks[platform.value]);
 
-  const addSocialLink = () => {
-    const platform = selectedPlatform.trim();
-    const url = newValue.trim();
-
-    if (!platform || !url) return;
-    if (value.some((item) => item.key === platform)) return;
-
-    onChange([...value, { key: platform, value: url }]);
-    setSelectedPlatform("");
-    setNewValue("");
-  };
-
-  const removeSocialLink = (index: number) => {
-    onChange(value.filter((_, i) => i !== index));
-  };
-
-  const updateSocialValue = (index: number, newUrl: string) => {
-    onChange(value.map((item, i) => (i === index ? { ...item, value: newUrl } : item)));
-  };
-
-  const changePlatformType = (index: number, newKey: string) => {
-    if (value.some((item, i) => i !== index && item.key === newKey)) return;
-    onChange(value.map((item, i) => (i === index ? { ...item, key: newKey } : item)));
-  };
-
-  const hasIncompleteLinks = value.some((item) => !item.key.trim() || !item.value.trim());
-  const availablePlatforms = getAvailablePlatforms();
+  const isAddEnabled = Object.values(data?.settings?.socialLinks || {}).filter((value) => !value).length === 0;
+  console.log("##", data?.settings?.socialLinks, { isAddEnabled });
 
   return (
     <div className="space-y-4">
       <Label className="text-sm font-medium">Social Links</Label>
       <div className="space-y-2">
-        {value.map((item, index) => {
-          const platformInfo = getPlatformInfo(item.key);
-          const availableForEdit = getAvailablePlatformsForEdit(item.key);
+        {Object.keys(socialLinks || {}).map((key, index) => {
+          const platformInfo = getPlatformInfo(key);
+          const availableForEdit = SOCIAL_PLATFORMS.filter(({ value }) => value === key || !socialLinks[value]);
+          const item = { key, value: socialLinks[key] };
 
           return (
             <div key={index} className="flex items-center gap-2">
-              <Select value={item.key} onValueChange={(newKey) => changePlatformType(index, newKey)}>
+              <Select
+                value={item.key}
+                onValueChange={(newKey) => {
+                  const updatedSocialLinks = { ...socialLinks };
+                  delete updatedSocialLinks[item.key];
+                  updatedSocialLinks[newKey] = item.value;
+                  setSocialLinks(updatedSocialLinks);
+                  onChange(updatedSocialLinks);
+                }}>
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Select platform" />
                 </SelectTrigger>
@@ -109,26 +86,37 @@ function SocialLinks({
               </Select>
               <Input
                 value={item.value}
-                onChange={(e) => updateSocialValue(index, e.target.value)}
+                onChange={(e) => {
+                  const val = e?.target?.value?.trim();
+                  setSocialLinks({
+                    ...socialLinks,
+                    [item.key]: val,
+                  });
+                  onChange({ ...data.settings.socialLinks, [item.key]: val });
+                }}
                 placeholder={platformInfo?.placeholder || "Enter URL"}
                 className="flex-1"
               />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => removeSocialLink(index)}
-              >
+              <Button type="button" variant="ghost" size="icon" onClick={() => removeSocialLink(key)}>
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           );
         })}
 
-        {availablePlatforms.length > 0 && !hasIncompleteLinks && (
-          <div className="space-y-2 pt-2">
+        {availablePlatforms.length > 0 && canAddNew && isAddEnabled && (
+          <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+              <Select
+                value={selectedPlatform}
+                onValueChange={(value) => {
+                  setSocialLinks({
+                    ...socialLinks,
+                    [value]: "",
+                  });
+                  onChange({ ...data.settings.socialLinks, [value]: "" });
+                  setCanAddNew(false);
+                }}>
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Add platform" />
                 </SelectTrigger>
@@ -141,32 +129,25 @@ function SocialLinks({
                 </SelectContent>
               </Select>
               <Input
-                placeholder={
-                  selectedPlatform
-                    ? getPlatformInfo(selectedPlatform)?.placeholder || "Enter URL"
-                    : "Select a platform"
-                }
+                placeholder={"Enter URL"}
                 value={newValue}
                 onChange={(e) => setNewValue(e.target.value)}
-                disabled={!selectedPlatform}
+                disabled={true}
                 className="flex-1"
               />
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={addSocialLink}
-              disabled={!selectedPlatform || !newValue.trim()}
-              className="mt-1"
-            >
-              Add Link
-            </Button>
           </div>
         )}
-
-        {hasIncompleteLinks && (
-          <p className="text-sm text-amber-600">Please complete all social links before adding new ones.</p>
+        {Object.keys(socialLinks || {}).length < SOCIAL_PLATFORMS.length && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setCanAddNew(true)}
+            disabled={!isAddEnabled || canAddNew}
+            className="mt-1">
+            <Plus /> Add Link
+          </Button>
         )}
       </div>
     </div>
@@ -179,16 +160,6 @@ interface ContactSocialProps {
   onChange?: (updates: any) => void;
 }
 
-const convertToSocialLinksArray = (links?: Record<string, string>): SocialLinkItem[] => {
-  if (!links) return [];
-  return Object.entries(links)
-    .filter(([_, value]) => value)
-    .map(([key, value]) => ({
-      key,
-      value: String(value)
-    }));
-};
-
 const convertToSocialLinksObject = (items: SocialLinkItem[]): SocialLinksObject => {
   return items.reduce((acc, item) => {
     if (item.key && item.value) {
@@ -198,36 +169,31 @@ const convertToSocialLinksObject = (items: SocialLinkItem[]): SocialLinksObject 
   }, {} as SocialLinksObject);
 };
 
-export default function ContactSocial({ websiteId, data, onChange }: ContactSocialProps) {
-  const [selectedPlatform, setSelectedPlatform] = useState("");
-  const [newValue, setNewValue] = useState("");
-  
-  const socialLinks = convertToSocialLinksArray(data?.settings?.socialLinks);
-
-  const handleInputChange = (field: 'email' | 'phone' | 'address', value: string) => {
+export default function ContactSocial({ data, onChange }: ContactSocialProps) {
+  const handleInputChange = (field: "email" | "phone" | "address", value: string) => {
     if (!onChange) return;
-    
+
     onChange({
       settings: {
         ...data.settings,
-        [field]: value
-      }
+        [field]: value,
+      },
     });
   };
 
-  const handleSocialLinksChange = (newLinks: SocialLinkItem[]) => {
+  const handleSocialLinksChange = (socialLinks: any) => {
     if (!onChange) return;
-    
+
     onChange({
       settings: {
         ...data.settings,
-        socialLinks: convertToSocialLinksObject(newLinks)
-      }
+        socialLinks: socialLinks,
+      },
     });
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-4">
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email" className="text-sm font-medium">
@@ -238,7 +204,7 @@ export default function ContactSocial({ websiteId, data, onChange }: ContactSoci
             type="email"
             placeholder="contact@example.com"
             value={data?.settings?.email || ""}
-            onChange={(e) => handleInputChange('email', e.target.value)}
+            onChange={(e) => handleInputChange("email", e.target.value)}
           />
         </div>
 
@@ -251,7 +217,7 @@ export default function ContactSocial({ websiteId, data, onChange }: ContactSoci
             type="tel"
             placeholder="+1 (555) 123-4567"
             value={data?.settings?.phone || ""}
-            onChange={(e) => handleInputChange('phone', e.target.value)}
+            onChange={(e) => handleInputChange("phone", e.target.value)}
           />
         </div>
 
@@ -263,18 +229,11 @@ export default function ContactSocial({ websiteId, data, onChange }: ContactSoci
             id="address"
             placeholder="123 Main St, City, Country"
             value={data?.settings?.address || ""}
-            onChange={(e) => handleInputChange('address', e.target.value)}
+            onChange={(e) => handleInputChange("address", e.target.value)}
           />
         </div>
 
-        <SocialLinks 
-          value={socialLinks}
-          onChange={handleSocialLinksChange}
-          selectedPlatform={selectedPlatform}
-          setSelectedPlatform={setSelectedPlatform}
-          newValue={newValue}
-          setNewValue={setNewValue}
-        />
+        <SocialLinks data={data} onChange={handleSocialLinksChange} />
       </div>
     </div>
   );

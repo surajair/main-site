@@ -203,14 +203,6 @@ function WebsiteSettingsContent({
                 {Icon && <Icon className="h-5 w-5" />}
                 <h2 className="font-semibold">{activeItem?.label}</h2>
               </div>
-              {/* {activeItem && activeItem?.id !== "domain" && (
-                <SaveButton
-                  showPublish={true}
-                  websiteId={websiteId}
-                  hasChanges={isDataChange}
-                  saveAction={() => Promise.resolve({ success: true })}
-                />
-              )} */}
             </div>
             <div
               className="h-full scroll-smooth overflow-y-auto px-6 no-scrollbar"
