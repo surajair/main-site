@@ -15,10 +15,10 @@ import DeleteDomainModal from "./delete-domain-modal";
 
 interface DomainConfigurationProps {
   websiteId: string;
-  siteData: Site;
+  data: Site;
 }
 
-function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) {
+function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
   const queryClient = useQueryClient();
   const [customDomain, setCustomDomain] = useState("");
   const [isDomainVerified, setIsDomainVerified] = useState(false);
@@ -29,12 +29,10 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
   const subdomainSuffix = process.env.NEXT_PUBLIC_SUBDOMAIN;
 
   const subdomainBase = useMemo(() => {
-    if (!siteData.subdomain) return "";
+    if (!data.subdomain) return "";
     const suffix = subdomainSuffix ? `.${subdomainSuffix}` : "";
-    return suffix && siteData.subdomain.endsWith(suffix)
-      ? siteData.subdomain.slice(0, -suffix.length)
-      : siteData.subdomain;
-  }, [siteData.subdomain, subdomainSuffix]);
+    return suffix && data.subdomain.endsWith(suffix) ? data.subdomain.slice(0, -suffix.length) : data.subdomain;
+  }, [data.subdomain, subdomainSuffix]);
   const [subdomainInput, setSubdomainInput] = useState(subdomainBase);
 
   const [_, saveSubdomain, savingSubdomain] = useActionState(async () => {
@@ -58,7 +56,7 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
       toast.error("Enter a valid subdomain");
       return { success: false } as any;
     }
-    const res = await updateSubdomain(siteData.id, sanitized);
+    const res = await updateSubdomain(data.id, sanitized);
     if (res.success) {
       toast.success("Subdomain updated");
       queryClient.invalidateQueries({ queryKey: ["website-settings"] });
@@ -72,14 +70,14 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
   const defaultDomains = useMemo(() => {
     const displayDomains = [];
     // Show domain if available and configured, otherwise show subdomain
-    if (siteData.domain && isDomainVerified) {
-      displayDomains.push(siteData.domain);
+    if (data.domain && isDomainVerified) {
+      displayDomains.push(data.domain);
     }
-    if (siteData.subdomain) {
-      displayDomains.push(siteData.subdomain);
+    if (data.subdomain) {
+      displayDomains.push(data.subdomain);
     }
     return displayDomains;
-  }, [isDomainVerified, siteData.domain, siteData.subdomain]);
+  }, [isDomainVerified, data.domain, data.subdomain]);
 
   const [, addDomainAction, addDomainPending] = useActionState(
     async (prevState: any, formData: FormData) => {
@@ -138,10 +136,10 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
 
   // Auto-verify domain when component mounts
   useEffect(() => {
-    if (siteData.domain) {
-      handleVerifyDomain(siteData.domain, false);
+    if (data.domain) {
+      handleVerifyDomain(data.domain, false);
     }
-  }, [siteData.domain]);
+  }, [data.domain]);
 
   if (!defaultDomains.length) return null;
 
@@ -169,7 +167,7 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
             <div className="flex items-center w-full justify-between gap-2">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-green-500" />
-                <span className="text-sm">{siteData.subdomain}</span>
+                <span className="text-sm">{data.subdomain}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline">Subdomain</Badge>
@@ -228,7 +226,7 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
         </div>
 
         {/* Custom Domain */}
-        {siteData.domain ? (
+        {data.domain ? (
           <div className="space-y-3">
             <div className="p-3 space-y-3 border rounded-lg">
               <div className="w-full flex items-center justify-between">
@@ -238,7 +236,7 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
                   ) : (
                     <AlertCircle className="h-4 w-4 text-yellow-500" />
                   )}
-                  <span className="text-sm">{siteData.domain}</span>
+                  <span className="text-sm">{data.domain}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -252,7 +250,7 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
                       onClick={(e) => {
                         e.stopPropagation();
                         if (isVerifying) return;
-                        handleVerifyDomain(siteData.domain!, true);
+                        handleVerifyDomain(data.domain!, true);
                       }}
                       className={isVerifying ? "text-primary border-primary/30 pointer-events-none" : ""}
                       disabled={isDomainVerified}>
@@ -269,7 +267,7 @@ function DomainConfiguration({ websiteId, siteData }: DomainConfigurationProps) 
                       )}
                     </Button>
                   )}
-                  {!isVerifying && <DeleteDomainModal websiteId={websiteId} domain={siteData.domain!} />}
+                  {!isVerifying && <DeleteDomainModal websiteId={websiteId} domain={data.domain!} />}
                 </div>
               </div>
 

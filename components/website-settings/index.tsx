@@ -216,14 +216,7 @@ function WebsiteSettingsContent({
             <div
               className="h-full scroll-smooth overflow-y-auto px-6 no-scrollbar"
               style={{ scrollBehavior: "smooth" }}>
-              {Component && (
-                <Component
-                  data={siteData}
-                  websiteId={websiteId}
-                  siteData={siteData as any}
-                  onChange={updateSiteDataLocally}
-                />
-              )}
+              {Component && <Component data={siteData} websiteId={websiteId} onChange={updateSiteDataLocally} />}
               <div className="h-16" />
             </div>
 

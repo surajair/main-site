@@ -35,6 +35,8 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
   const [faviconUploading, setFaviconUploading] = useState(false);
   const [logoRemoving, setLogoRemoving] = useState(false);
   const [faviconRemoving, setFaviconRemoving] = useState(false);
+  const [updatingLogoUrl, setUpdatingLogoUrl] = useState(false);
+  const [updatingFaviconUrl, setUpdatingFaviconUrl] = useState(false);
 
   const logoFileRef = useRef<HTMLInputElement>(null);
   const faviconFileRef = useRef<HTMLInputElement>(null);
@@ -51,6 +53,9 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
     } catch (e: any) {
       toast.error(e?.message || "Failed to update branding");
       return false;
+    } finally {
+      if ('logoURL' in updates) setUpdatingLogoUrl(false);
+      if ('faviconURL' in updates) setUpdatingFaviconUrl(false);
     }
   };
 
@@ -203,11 +208,25 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => logoURL && updateBrandingData({ logoURL })}
-                  disabled={!logoURL.trim()}
+                  onClick={() => {
+                    if (logoURL) {
+                      setUpdatingLogoUrl(true);
+                      updateBrandingData({ logoURL });
+                    }
+                  }}
+                  disabled={!logoURL.trim() || updatingLogoUrl}
                   className="flex items-center gap-2">
-                  <Check className="h-4 w-4" />
-                  Update
+                  {updatingLogoUrl ? (
+                    <>
+                      <Loader className="h-4 w-4 animate-spin" />
+                      Updating
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Update
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
@@ -265,11 +284,25 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => faviconURL && updateBrandingData({ faviconURL })}
-                  disabled={!faviconURL.trim()}
+                  onClick={() => {
+                    if (faviconURL) {
+                      setUpdatingFaviconUrl(true);
+                      updateBrandingData({ faviconURL });
+                    }
+                  }}
+                  disabled={!faviconURL.trim() || updatingFaviconUrl}
                   className="flex items-center gap-2">
-                  <Check className="h-4 w-4" />
-                  Update
+                  {updatingFaviconUrl ? (
+                    <>
+                      <Loader className="h-4 w-4 animate-spin" />
+                      Updating
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Update
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
