@@ -5,6 +5,7 @@ import { removeBrandingAsset, uploadBrandingAsset } from "@/actions/upload-brand
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SiteData } from "@/utils/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, Loader, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
@@ -12,13 +13,10 @@ import { toast } from "sonner";
 
 interface BrandingProps {
   websiteId: string;
-  initial?: {
-    logoURL?: string;
-    faviconURL?: string;
-  };
+  data: SiteData;
 }
 
-export default function BrandingConfiguration({ websiteId, initial }: BrandingProps) {
+export default function BrandingConfiguration({ data, websiteId }: BrandingProps) {
   const queryClient = useQueryClient();
 
   const isValidImageUrl = (val?: string) => {
@@ -31,8 +29,8 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
     }
   };
 
-  const [logoURL, setLogoURL] = useState(initial?.logoURL ?? "");
-  const [faviconURL, setFaviconURL] = useState(initial?.faviconURL ?? "");
+  const [logoURL, setLogoURL] = useState(data?.settings?.logoURL ?? "");
+  const [faviconURL, setFaviconURL] = useState(data?.settings?.faviconURL ?? "");
   const [logoUploading, setLogoUploading] = useState(false);
   const [faviconUploading, setFaviconUploading] = useState(false);
   const [logoRemoving, setLogoRemoving] = useState(false);
@@ -43,7 +41,10 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
 
   const updateBrandingData = async (updates: { logoURL?: string; faviconURL?: string }) => {
     try {
-      const res = await updateWebsiteData({ id: websiteId, updates });
+      const res = await updateWebsiteData({
+        id: websiteId,
+        updates: { settings: { ...(data?.settings || {}), ...updates } },
+      });
       if (!res.success) throw new Error(res.error || "Failed to update branding");
       queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       return true;
@@ -153,11 +154,11 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
       <div className="space-y-4">
         <div className="space-y-1">
           <Label className="text-xs">Logo</Label>
-          {isValidImageUrl(initial?.logoURL) ? (
+          {isValidImageUrl(data?.settings?.logoURL) ? (
             <div className="flex items-center gap-x-4 border p-4 rounded-md">
               <div className="h-10 min-w-10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={initial?.logoURL} alt="logo" className="h-10 w-auto object-contain rounded" />
+                <img src={data?.settings?.logoURL} alt="logo" className="h-10 w-auto object-contain rounded" />
               </div>
               <Button
                 type="button"
@@ -215,11 +216,11 @@ export default function BrandingConfiguration({ websiteId, initial }: BrandingPr
 
         <div className="space-y-1">
           <Label className="text-xs">Favicon</Label>
-          {isValidImageUrl(initial?.faviconURL) ? (
+          {isValidImageUrl(data?.settings?.faviconURL) ? (
             <div className=" flex items-center gap-x-4 border p-4 rounded-md">
               <div className="min-w-10 h-6 flex justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={initial?.faviconURL} alt="favicon" className="h-6 w-6 object-contain rounded" />
+                <img src={data?.settings?.faviconURL} alt="favicon" className="h-6 w-6 object-contain rounded" />
               </div>
               <Button
                 type="button"

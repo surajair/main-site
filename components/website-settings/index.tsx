@@ -218,10 +218,9 @@ function WebsiteSettingsContent({
               style={{ scrollBehavior: "smooth" }}>
               {Component && (
                 <Component
-                  websiteId={websiteId}
-                  initial={siteData?.settings}
-                  siteData={siteData as any}
                   data={siteData}
+                  websiteId={websiteId}
+                  siteData={siteData as any}
                   onChange={updateSiteDataLocally}
                 />
               )}

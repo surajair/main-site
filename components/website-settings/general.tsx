@@ -9,17 +9,6 @@ import { useState } from "react";
 import AdditionalLanguageSelector from "./additional-language-selector";
 
 interface GeneralProps {
-  websiteId: string;
-  initial?: {
-    siteName?: string;
-    siteTagline?: string;
-    language?: string;
-    timezone?: string;
-    additionalLanguages?: string[];
-  };
-  siteData?: {
-    languages?: string[];
-  };
   data: SiteData;
   onChange: (updates: any) => void;
 }

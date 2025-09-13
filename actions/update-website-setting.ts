@@ -28,9 +28,11 @@ export async function updateWebsiteData({ id, updates }: UpdateWebsiteDataPayloa
     const { error: updateError } = await supabase.from("apps").update(update).eq("id", id);
 
     const isNameChanged = updates.name && current?.name !== updates?.name;
-    const isLanguagesChanged =
-      updates?.languages && JSON.stringify(current?.languages || []) !== JSON.stringify(updates?.languages || []);
-    console.log("##", { isNameChanged, isLanguagesChanged, current, updates });
+    const isLanguagesChanged = updates?.languages
+      ? JSON.stringify(current?.languages || []) !== JSON.stringify(updates?.languages || [])
+      : false;
+
+    // * Updating Online Table if name or language changed
     if (isNameChanged || isLanguagesChanged) {
       await supabase
         .from("apps_online")
