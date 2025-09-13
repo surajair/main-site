@@ -168,15 +168,25 @@ function WebsiteSettingsContent({
     <SettingsContext.Provider value={settingsContextValue}>
       <div className="flex overflow-hidden">
         <div className="w-52 h-full bg-sidebar border-r border-sidebar-border pr-2">
-          <h2 className="font-semibold text-sidebar-foreground px-2">Website Settings</h2>
-          <div className="text-xs font-medium px-2 text-primary">{siteData?.name}</div>
+          <h2 className="font-semibold text-sidebar-foreground px-2 pt-1">Website Settings</h2>
+          <div className="text-xs text-primary px-2">{siteData?.name}</div>
+          {siteData?.domainConfigured && siteData?.domain && (
+            <a
+              href={siteData?.domain}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-light px-2 text-primary flex items-center gap-1 truncate">
+              <span className="truncate">{siteData?.domain}</span>
+              <ExternalLinkIcon className="h-2.5 w-2.5 flex-shrink-0" />
+            </a>
+          )}
           <a
-            href={siteData?.domain || siteData?.subdomain}
+            href={siteData?.subdomain || ""}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-medium px-2 text-primary flex items-center gap-x-2">
-            <span>{siteData?.domain || siteData?.subdomain}</span>
-            <ExternalLinkIcon className="h-4 w-4" />
+            className="text-xs font-light px-2 text-primary flex items-center gap-1 truncate">
+            <span className="truncate">{siteData?.subdomain}</span>
+            <ExternalLinkIcon className="h-2.5 w-2.5 flex-shrink-0" />
           </a>
 
           <nav className="pt-6">
