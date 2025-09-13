@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { getSite, getSites } from "@/lib/getter";
 import { SiteData } from "@/utils/types";
@@ -13,6 +13,7 @@ import {
   Activity,
   ChevronDown,
   Code,
+  ExternalLinkIcon,
   Globe,
   ImageIcon,
   Loader,
@@ -61,7 +62,7 @@ const SIDEBAR_ITEMS = [
   { id: "legal-compliance", label: "Cookie Consent", icon: ShieldCheck, component: LegalCompliance },
   { id: "analytics-tracking", label: "Analytics Tracking", icon: Activity, component: AnalyticsTracking },
   { id: "custom-html", label: "Custom HTML", icon: Code, component: CustomHtml },
-  { id: "domain", label: "Domain", icon: Globe, component: DomainConfiguration },
+  { id: "domain", label: "Domains", icon: Globe, component: DomainConfiguration },
 ];
 
 /**
@@ -169,6 +170,14 @@ function WebsiteSettingsContent({
         <div className="w-52 h-full bg-sidebar border-r border-sidebar-border pr-2">
           <h2 className="font-semibold text-sidebar-foreground px-2">Website Settings</h2>
           <div className="text-xs font-medium px-2 text-primary">{siteData?.name}</div>
+          <a
+            href={siteData?.domain || siteData?.subdomain}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-medium px-2 text-primary flex items-center gap-x-2">
+            <span>{siteData?.domain || siteData?.subdomain}</span>
+            <ExternalLinkIcon className="h-4 w-4" />
+          </a>
 
           <nav className="pt-6">
             {SIDEBAR_ITEMS.map((item) => {
@@ -216,6 +225,7 @@ function WebsiteSettingsContent({
                   onChange={updateSiteDataLocally}
                 />
               )}
+              <div className="h-16" />
             </div>
 
             {Component && (
@@ -238,7 +248,7 @@ function WebsiteSettingsContent({
         onOpenChange={setShowTabChangeDialog}
         onCancel={handleCancelTabChange}
         onConfirm={handleConfirmTabChange}
-        description="You have unsaved changes in the current tab. Are you sure you want to switch tabs without saving?"
+        description="You have unsaved changes. Are you sure you want to switch tabs without saving?"
         confirmText="Switch without saving"
       />
     </SettingsContext.Provider>
@@ -294,8 +304,9 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
         </DialogTrigger>
         <DialogContent
           className="max-w-5xl overflow-y-auto"
-          style={{ height: "80vh", maxHeight: "860px" }}
+          style={{ height: "60vh", maxHeight: "860px" }}
           onInteractOutside={(e) => e.preventDefault()}>
+          <DialogTitle className="sr-only">Website Settings</DialogTitle>
           {showModal && (
             <WebsiteSettingsContent
               websiteId={websiteId}
