@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { BrandLogo } from "../branding";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
@@ -226,7 +227,10 @@ function WebsiteSettingsContent({
             <div
               className="h-full scroll-smooth overflow-y-auto px-6 no-scrollbar"
               style={{ scrollBehavior: "smooth" }}>
-              {Component && <Component data={siteData} websiteId={websiteId} onChange={updateSiteDataLocally} />}
+              <ErrorBoundary
+                fallback={<div className="text-center text-red-500 p-10">Something went wrong, Please try again</div>}>
+                {Component && <Component data={siteData} websiteId={websiteId} onChange={updateSiteDataLocally} />}
+              </ErrorBoundary>
               <div className="h-16" />
             </div>
 

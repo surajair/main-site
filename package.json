@@ -28,6 +28,7 @@
     "react": "19.1.0",
     "react-diff-view": "^3.3.2",
     "react-dom": "19.1.0",
+    "react-error-boundary": "^6.0.0",
     "react-hook-form": "^7.62.0",
     "react-resizable-panels": "^3.0.4",
     "recharts": "^3.1.2",

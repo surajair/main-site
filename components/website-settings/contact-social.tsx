@@ -34,7 +34,7 @@ interface SocialLinksProps {
 function SocialLinks({ data, onChange }: SocialLinksProps) {
   const [selectedPlatform] = useState("");
   const [newValue, setNewValue] = useState("");
-  const [socialLinks, setSocialLinks] = useState(data?.settings?.socialLinks);
+  const [socialLinks, setSocialLinks] = useState(data?.settings?.socialLinks ?? {});
   const [canAddNew, setCanAddNew] = useState(false);
 
   const getPlatformInfo = (key: string) => {
@@ -50,7 +50,7 @@ function SocialLinks({ data, onChange }: SocialLinksProps) {
 
   const availablePlatforms = SOCIAL_PLATFORMS.filter((platform) => !socialLinks[platform.value]);
 
-  const isAddEnabled = Object.values(data?.settings?.socialLinks || {}).filter((value) => !value).length === 0;
+  const isAddEnabled = Object.values(data?.settings?.socialLinks ?? {}).filter((value) => !value).length === 0;
 
   return (
     <div className="space-y-4">
