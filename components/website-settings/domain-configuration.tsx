@@ -145,7 +145,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
 
   return (
     <section id="domain" className="space-y-4">
-      <div className="p-2 rounded-lg">
+      <div className="p-1 rounded-lg">
         {defaultDomains.map((domain) => (
           <a
             key={domain}

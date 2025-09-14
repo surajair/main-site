@@ -142,16 +142,18 @@ export async function updateSubdomain(siteId: string, newSubdomainPrefix: string
       .eq("app", siteId)
       .single();
 
+    const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
+
     if (appDomainData?.subdomain) {
-      const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
-      await vercel.projects.removeProjectDomain({
-        idOrName: process.env.VERCEL_PROJECT_ID!,
-        teamId: process.env.VERCEL_TEAM_ID!,
-        domain: appDomainData?.subdomain,
-      });
+      try {
+        await vercel.projects.removeProjectDomain({
+          idOrName: process.env.VERCEL_PROJECT_ID!,
+          teamId: process.env.VERCEL_TEAM_ID!,
+          domain: appDomainData?.subdomain,
+        });
+      } catch (error) {}
     }
 
-    const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
     await vercel.projects.addProjectDomain({
       idOrName: process.env.VERCEL_PROJECT_ID!,
       teamId: process.env.VERCEL_TEAM_ID!,

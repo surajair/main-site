@@ -173,19 +173,19 @@ function WebsiteSettingsContent({
           <div className="text-xs text-primary px-2">{siteData?.name}</div>
           {siteData?.domainConfigured && siteData?.domain && (
             <a
-              href={siteData?.domain}
+              href={`https://${siteData?.domain}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-light px-2 text-primary flex items-center gap-1 truncate">
+              className="text-xs font-light px-2 text-blue-500 hover:text-blue-800 flex items-center gap-1 truncate">
               <span className="truncate">{siteData?.domain}</span>
               <ExternalLinkIcon className="h-2.5 w-2.5 flex-shrink-0" />
             </a>
           )}
           <a
-            href={siteData?.subdomain || ""}
+            href={`https://${siteData?.subdomain}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-light px-2 text-primary flex items-center gap-1 truncate">
+            className="text-xs font-light px-2 text-blue-500 hover:text-blue-800 flex items-center gap-1 truncate">
             <span className="truncate">{siteData?.subdomain}</span>
             <ExternalLinkIcon className="h-2.5 w-2.5 flex-shrink-0" />
           </a>
