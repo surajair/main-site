@@ -24,7 +24,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { BrandLogo } from "../branding";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
@@ -41,21 +41,6 @@ import LegalCompliance from "./legal-compliance";
 import SaveButton from "./save-button";
 import { UnsavedChangesDialog } from "./unsaved-changes-dialog";
 
-interface SettingsContextType {
-  hasUnsavedChanges: boolean;
-  setHasUnsavedChanges: (value: boolean) => void;
-}
-
-const SettingsContext = createContext<SettingsContextType | null>(null);
-
-export function useSettingsContext() {
-  const context = useContext(SettingsContext);
-  if (!context) {
-    throw new Error("useSettingsContext must be used within SettingsProvider");
-  }
-  return context;
-}
-
 const SIDEBAR_ITEMS = [
   { id: "general", label: "General", icon: Settings, component: General },
   { id: "branding", label: "Branding", icon: ImageIcon, component: BrandingConfiguration },
@@ -68,22 +53,22 @@ const SIDEBAR_ITEMS = [
 
 /**
  * Website settings content component
- * @param params websiteId, onUnsavedChanges
+ * @param params websiteId
  */
 function WebsiteSettingsContent({
   websiteId,
-  onUnsavedChanges,
+  initData,
+  setInitData,
   isDataChange,
   setIsDataChange,
 }: {
   websiteId: string;
-  onUnsavedChanges: (hasChanges: boolean) => void;
+  initData: any;
+  setInitData: (value: any) => void;
   isDataChange: boolean;
   setIsDataChange: (value: boolean) => void;
 }) {
-  const [initData, setInitData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("general");
-  const [hasUnsavedChanges, setHasUnsavedChangesInternal] = useState(false);
   const [showTabChangeDialog, setShowTabChangeDialog] = useState(false);
   const [pendingTabChange, setPendingTabChange] = useState<string | null>(null);
 
@@ -98,6 +83,7 @@ function WebsiteSettingsContent({
     queryFn: async () => (await handleGetSiteData()) as any,
     enabled: !!websiteId,
     initialData: null,
+    refetchOnWindowFocus: false,
   });
 
   const updateSiteDataLocally = (updates: Partial<SiteData>) => {
@@ -118,13 +104,8 @@ function WebsiteSettingsContent({
     setIsDataChange(isDataChanged);
   }, [siteData, initData, setIsDataChange]);
 
-  const setHasUnsavedChanges = (value: boolean) => {
-    setHasUnsavedChangesInternal(value);
-    onUnsavedChanges(value);
-  };
-
   const handleTabChange = (newTab: string) => {
-    if (hasUnsavedChanges && newTab !== activeTab) {
+    if (isDataChange && newTab !== activeTab) {
       // If there are unsaved changes, show confirmation dialog
       setPendingTabChange(newTab);
       setShowTabChangeDialog(true);
@@ -138,19 +119,15 @@ function WebsiteSettingsContent({
     if (pendingTabChange) {
       setActiveTab(pendingTabChange);
     }
+    updateSiteDataLocally(initData);
     setShowTabChangeDialog(false);
     setPendingTabChange(null);
-    setHasUnsavedChanges(false);
+    setIsDataChange(false);
   };
 
   const handleCancelTabChange = () => {
     setShowTabChangeDialog(false);
     setPendingTabChange(null);
-  };
-
-  const settingsContextValue = {
-    hasUnsavedChanges,
-    setHasUnsavedChanges,
   };
 
   const activeItem = SIDEBAR_ITEMS.find((item) => item.id === activeTab);
@@ -166,7 +143,7 @@ function WebsiteSettingsContent({
   }
 
   return (
-    <SettingsContext.Provider value={settingsContextValue}>
+    <>
       <div className="flex overflow-hidden">
         <div className="w-52 h-full bg-sidebar border-r border-sidebar-border pr-2">
           <h2 className="font-semibold text-sidebar-foreground px-2 pt-1">Website Settings</h2>
@@ -193,21 +170,20 @@ function WebsiteSettingsContent({
           <nav className="pt-6">
             {SIDEBAR_ITEMS.map((item) => {
               const Icon = item.icon;
+              const isDomainItem = item.id === "domain";
 
               return (
-                <>
-                  {item.id === "domain" && <Separator key={`${item.id}-separator`} className="my-2" />}
+                <div key={item.id}>
+                  {isDomainItem && <Separator className="my-2" />}
                   <Button
-                    key={item.id}
-                    size="sm"
-                    disabled={isLoading}
-                    className="w-full flex justify-start"
                     variant={activeTab === item.id ? "default" : "ghost"}
+                    className="w-full justify-start"
+                    size="sm"
                     onClick={() => handleTabChange(item.id)}>
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-4 w-4 mr-2" />
                     {item.label}
                   </Button>
-                </>
+                </div>
               );
             })}
           </nav>
@@ -257,7 +233,7 @@ function WebsiteSettingsContent({
         description="You have unsaved changes. Are you sure you want to switch tabs without saving?"
         confirmText="Switch without saving"
       />
-    </SettingsContext.Provider>
+    </>
   );
 }
 
@@ -268,21 +244,23 @@ function WebsiteSettingsContent({
 const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | undefined; isLoading: boolean }) => {
   const [showModal, setShowModal] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const { value: showWebsiteSettings } = useFlag("website_settings", false);
   const { savePageAsync } = useSavePage();
   const [isDataChange, setIsDataChange] = useState(false);
+  const [initData, setInitData] = useState<any>(null);
 
   const handleOpenChange = async (newOpen: boolean) => {
     if (newOpen) savePageAsync();
-    if (!newOpen && hasUnsavedChanges) setShowConfirmDialog(true);
+    if (!newOpen && isDataChange) setShowConfirmDialog(true);
     else setShowModal(newOpen);
   };
 
   const handleConfirmClose = () => {
     setShowConfirmDialog(false);
     setShowModal(false);
-    setHasUnsavedChanges(false);
+    setIsDataChange(false);
+    if (!initData) return;
+    queryClient.setQueryData(["website-settings", websiteId], () => initData);
   };
 
   const handleCancelClose = () => {
@@ -311,12 +289,14 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
         <DialogContent
           className="max-w-5xl overflow-y-auto"
           style={{ height: "60vh", maxHeight: "860px" }}
-          onInteractOutside={(e) => e.preventDefault()}>
+          onInteractOutside={(e) => e.preventDefault()}
+          aria-describedby="website-settings-description">
           <DialogTitle className="sr-only">Website Settings</DialogTitle>
           {showModal && (
             <WebsiteSettingsContent
+              initData={initData}
               websiteId={websiteId}
-              onUnsavedChanges={setHasUnsavedChanges}
+              setInitData={setInitData}
               isDataChange={isDataChange}
               setIsDataChange={setIsDataChange}
             />

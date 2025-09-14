@@ -44,7 +44,7 @@ export default function SaveButton({ websiteId, hasChanges, data, showSave = tru
       const result = await updateWebsiteData({ id: websiteId, updates: updates });
       if (result.success) {
         toast.success("Website settings updated successfully!");
-        queryClient.invalidateQueries({ queryKey: ["website-settings"] });
+        await queryClient.invalidateQueries({ queryKey: ["website-settings"] });
         reloadPage();
       } else {
         toast.error(result.error || "Failed to update website settings");
@@ -65,7 +65,6 @@ export default function SaveButton({ websiteId, hasChanges, data, showSave = tru
       const result = await publishWebsiteSettings(websiteId);
       if (result.success) {
         toast.success("Website settings published successfully!");
-        queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       } else {
         toast.error(result.error || "Failed to publish website settings");
       }
