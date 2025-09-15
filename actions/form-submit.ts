@@ -8,12 +8,16 @@ interface FormSubmissionData {
 
 export async function formSubmit(data: FormSubmissionData) {
   try {
-    const { formData, additionalData, domain } = data;
+    const { formData, additionalData, domain: subdomain } = data;
+    let domain = subdomain;
+    if (subdomain) {
+      domain = subdomain.replace(/^www\./, "");
+    }
     const supabaseServer = await getSupabaseAdmin();
     const { data: appData } = await supabaseServer
       .from("app_domains")
       .select("*")
-      .or(`domain.eq.${domain},subdomain.eq.${domain}`)
+      .or(`domain.eq.${domain},subdomain.eq.${subdomain}`)
       .single();
     const app = appData?.app;
 
