@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormSubmission, getFormSubmissions, GetFormSubmissionsResponse } from "@/lib/getter/forms";
-import { debounce } from "lodash";
+import { debounce, isEmpty } from "lodash";
 import { ChevronLeft, ChevronRight, FileText, Loader, RefreshCw, Search } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -105,20 +105,24 @@ export default function FormSubmissions() {
             style={{ paddingLeft: "35px" }}
           />
         </div>
-        {!isLoading && submissionsData?.total && submissionsData?.total > 0 ? (
-          <div className="flex gap-4 text-sm text-muted-foreground items-center">
-            <span>Total: {submissionsData?.total || 0}</span>
-            <CsvDownloadModal
-              websiteId={websiteId}
-              searchTerm={debouncedSearchTerm}
-              totalSubmissions={submissionsData?.total || 0}
-            />
+        <div className="flex gap-4 text-sm text-muted-foreground items-center">
+          {!isLoading && submissionsData?.total && submissionsData?.total > 0 ? (
+            <>
+              <span>Total: {submissionsData?.total || 0}</span>
+              <CsvDownloadModal
+                websiteId={websiteId}
+                searchTerm={debouncedSearchTerm}
+                totalSubmissions={submissionsData?.total || 0}
+              />
+            </>
+          ) : null}
+          {
             <Button variant="outline" size="sm" onClick={fetchSubmissions} disabled={isLoading}>
               <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
               Refresh
             </Button>
-          </div>
-        ) : null}
+          }
+        </div>
       </div>
 
       {isLoading ? (
@@ -127,74 +131,79 @@ export default function FormSubmissions() {
         </div>
       ) : (
         <>
-          <div className="space-y-3 overflow-y-auto min-h-[53vh] max-h-[calc(53vh)]">
-            {filteredSubmissions.map((submission: FormSubmission) => (
-              <div
-                key={submission.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="flex items-center gap-4">
-                  <FileText className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium text-foreground">{submission.formData?.formName || "Unknown Form"}</p>
-                    <p className="text-sm text-muted-foreground">{submission.formData.email || "No email provided"}</p>
+          <div className="space-y-3 overflow-y-auto  max-h-[calc(53vh)]">
+            {!isEmpty(filteredSubmissions) &&
+              filteredSubmissions.map((submission: FormSubmission) => (
+                <div
+                  key={submission.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <FileText className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium text-foreground">{submission.formData?.formName || "Unknown Form"}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {submission.formData.email || "No email provided"}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-muted-foreground min-w-[80px]">{formatDate(submission.createdAt)}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-muted-foreground min-w-[80px]">
+                      {formatDate(submission.createdAt)}
+                    </span>
 
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        View Details
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle>Form Submission</DialogTitle>
-                        <DialogDescription>
-                          Submitted by <span className="text-gray-700">{submission.formData.email || "Unknown"}</span>{" "}
-                          on <span className="text-gray-700">{formatDate(submission.createdAt)}</span>
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4 text-sm">
-                        <div className="space-y-2">
-                          <h4 className="font-medium">Form Data</h4>
-                          <div className="bg-muted px-4 py-2 rounded-lg space-y-2 max-h-96 overflow-y-auto">
-                            {Object.entries(submission.formData).map(([key, value]) =>
-                              value ? (
-                                <div key={key} className="flex justify-between">
-                                  <span className="font-medium capitalize">{humanizeKey(key)}</span>
-                                  <span className="text-muted-foreground max-w-md text-right">
-                                    {String(value) || "N/A"}
-                                  </span>
-                                </div>
-                              ) : null,
-                            )}
-                          </div>
-                          <h4 className="font-medium pt-2">Additional Data</h4>
-                          <div className="bg-muted px-4 py-2 rounded-lg space-y-2 max-h-96 overflow-y-auto">
-                            {Object.entries(submission.additionalData).map(([key, value]) =>
-                              value ? (
-                                <div key={key} className="flex justify-between">
-                                  <span className="font-medium capitalize">{humanizeKey(key)}</span>
-                                  <span className="text-muted-foreground max-w-md text-right">
-                                    {String(value) || "N/A"}
-                                  </span>
-                                </div>
-                              ) : null,
-                            )}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          View Details
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle>Form Submission</DialogTitle>
+                          <DialogDescription>
+                            Submitted by <span className="text-gray-700">{submission.formData.email || "Unknown"}</span>{" "}
+                            on <span className="text-gray-700">{formatDate(submission.createdAt)}</span>
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 text-sm">
+                          <div className="space-y-2">
+                            <h4 className="font-medium">Form Data</h4>
+                            <div className="bg-muted px-4 py-2 rounded-lg space-y-2 max-h-96 overflow-y-auto">
+                              {Object.entries(submission.formData).map(([key, value]) =>
+                                value ? (
+                                  <div key={key} className="flex justify-between">
+                                    <span className="font-medium capitalize">{humanizeKey(key)}</span>
+                                    <span className="text-muted-foreground max-w-md text-right">
+                                      {String(value) || "N/A"}
+                                    </span>
+                                  </div>
+                                ) : null,
+                              )}
+                            </div>
+                            <h4 className="font-medium pt-2">Additional Data</h4>
+                            <div className="bg-muted px-4 py-2 rounded-lg space-y-2 max-h-96 overflow-y-auto">
+                              {Object.entries(submission.additionalData).map(([key, value]) =>
+                                value ? (
+                                  <div key={key} className="flex justify-between">
+                                    <span className="font-medium capitalize">{humanizeKey(key)}</span>
+                                    <span className="text-muted-foreground max-w-md text-right">
+                                      {String(value) || "N/A"}
+                                    </span>
+                                  </div>
+                                ) : null,
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
 
           {!isLoading && filteredSubmissions.length === 0 && (
-            <div className="text-center  w-full flex flex-col h-[65vh] justify-center items-center ">
+            <div className="text-center  w-full flex flex-col min-h-[53vh] justify-center items-center ">
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
                 {debouncedSearchTerm ? "No submissions found matching your search." : "No submissions yet."}
