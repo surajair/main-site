@@ -61,11 +61,11 @@ const SubmissionResponse = ({
   if (state === "" || state === "loading") return null;
 
   if (state === "success") {
-    return <p className="text-green-500">{successMessage}</p>;
+    return <div className="text-green-500" dangerouslySetInnerHTML={{ __html: successMessage }}></div>;
   }
 
   if (state === "error") {
-    return <p className="text-red-500">{errorMessage}</p>;
+    return <div className="text-red-500" dangerouslySetInnerHTML={{ __html: errorMessage }}></div>;
   }
 };
 
