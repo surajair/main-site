@@ -1,3 +1,4 @@
+import { registerBlocks } from "@/blocks";
 import { PageScripts } from "@/components/page-scripts";
 import { loadSiteGlobalData } from "@/data/global";
 import { getBrandConfig } from "@/lib/utils";
@@ -8,6 +9,7 @@ import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
 loadWebBlocks();
+registerBlocks();
 registerChaiGlobalDataProvider(loadSiteGlobalData);
 
 export const dynamic = "force-static";

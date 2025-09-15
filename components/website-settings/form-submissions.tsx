@@ -12,9 +12,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { FormSubmission, getFormSubmissions, GetFormSubmissionsResponse } from "@/lib/getter/forms";
 import { debounce } from "lodash";
-import { ChevronLeft, ChevronRight, FileText, Loader, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, FileText, Loader, RefreshCw, Search } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import CsvDownloadModal from "./csv-download-modal";
 
 function humanizeKey(input: string): string {
   const s = String(input)
@@ -92,7 +93,7 @@ export default function FormSubmissions() {
   const startIndex = submissionsData ? (submissionsData.currentPage - 1) * itemsPerPage : 0;
 
   return (
-    <div className="flex-1 flex flex-col space-y-4  min-h-[70vh]">
+    <div className="flex-1 flex flex-col space-y-4  min-h-[65vh]">
       {/* Search and Stats */}
       <div className="flex items-center justify-between gap-4">
         <div className="relative flex-1 max-w-sm">
@@ -104,20 +105,29 @@ export default function FormSubmissions() {
             style={{ paddingLeft: "35px" }}
           />
         </div>
-        {submissionsData?.total && submissionsData?.total > 0 ? (
-          <div className="flex gap-4 text-sm text-muted-foreground">
+        {!isLoading && submissionsData?.total && submissionsData?.total > 0 ? (
+          <div className="flex gap-4 text-sm text-muted-foreground items-center">
             <span>Total: {submissionsData?.total || 0}</span>
+            <CsvDownloadModal
+              websiteId={websiteId}
+              searchTerm={debouncedSearchTerm}
+              totalSubmissions={submissionsData?.total || 0}
+            />
+            <Button variant="outline" size="sm" onClick={fetchSubmissions} disabled={isLoading}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
           </div>
         ) : null}
       </div>
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center h-[65vh]">
+        <div className="flex flex-col items-center justify-center h-[60vh]">
           <Loader className="animate-spin text-primary" />
         </div>
       ) : (
         <>
-          <div className="space-y-3 overflow-y-auto max-h-[calc(60vh)]">
+          <div className="space-y-3 overflow-y-auto min-h-[53vh] max-h-[calc(53vh)]">
             {filteredSubmissions.map((submission: FormSubmission) => (
               <div
                 key={submission.id}
@@ -150,25 +160,29 @@ export default function FormSubmissions() {
                         <div className="space-y-2">
                           <h4 className="font-medium">Form Data</h4>
                           <div className="bg-muted px-4 py-2 rounded-lg space-y-2 max-h-96 overflow-y-auto">
-                            {Object.entries(submission.formData).map(([key, value]) => (
-                              <div key={key} className="flex justify-between">
-                                <span className="font-medium capitalize">{humanizeKey(key)}</span>
-                                <span className="text-muted-foreground max-w-md text-right">
-                                  {String(value) || "N/A"}
-                                </span>
-                              </div>
-                            ))}
+                            {Object.entries(submission.formData).map(([key, value]) =>
+                              value ? (
+                                <div key={key} className="flex justify-between">
+                                  <span className="font-medium capitalize">{humanizeKey(key)}</span>
+                                  <span className="text-muted-foreground max-w-md text-right">
+                                    {String(value) || "N/A"}
+                                  </span>
+                                </div>
+                              ) : null,
+                            )}
                           </div>
                           <h4 className="font-medium pt-2">Additional Data</h4>
                           <div className="bg-muted px-4 py-2 rounded-lg space-y-2 max-h-96 overflow-y-auto">
-                            {Object.entries(submission.additionalData).map(([key, value]) => (
-                              <div key={key} className="flex justify-between">
-                                <span className="font-medium capitalize">{humanizeKey(key)}</span>
-                                <span className="text-muted-foreground max-w-md text-right">
-                                  {String(value) || "N/A"}
-                                </span>
-                              </div>
-                            ))}
+                            {Object.entries(submission.additionalData).map(([key, value]) =>
+                              value ? (
+                                <div key={key} className="flex justify-between">
+                                  <span className="font-medium capitalize">{humanizeKey(key)}</span>
+                                  <span className="text-muted-foreground max-w-md text-right">
+                                    {String(value) || "N/A"}
+                                  </span>
+                                </div>
+                              ) : null,
+                            )}
                           </div>
                         </div>
                       </div>

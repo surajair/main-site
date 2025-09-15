@@ -1,5 +1,6 @@
 "use client";
 
+import { registerBlocks } from "@/blocks";
 import WebsiteSettings from "@/components/website-settings";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { registerPanels } from "@/utils/register-panels";
@@ -14,6 +15,7 @@ const getLiveUrl = (slug: string, domain?: string) => {
   return `//${domain}/api/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`;
 };
 registerPanels();
+registerBlocks();
 
 export default function Editor({ domain, websiteId }: { domain?: string; websiteId?: string }) {
   const { ready } = useSupabaseUser();
