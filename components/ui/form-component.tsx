@@ -92,11 +92,12 @@ const FormComponent = ({
     e.stopPropagation();
     if (inBuilder) return;
     setState("loading");
+    const domain = typeof window !== "undefined" ? window.location.hostname.replace(/^www\./, "") : "";
     try {
       const form = e.currentTarget;
       const formData = getFormData(form);
       const additionalData = getAdditionalData();
-      const result = await formSubmit({ formData, additionalData, domain: window.location.hostname });
+      const result = await formSubmit({ formData, additionalData, domain });
       setState(result.success ? "success" : "error");
     } catch {
       setState("error");
