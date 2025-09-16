@@ -1,4 +1,5 @@
 import { registerBlocks } from "@/blocks";
+import { ImageBlock } from "@/components/image";
 import { PageScripts } from "@/components/page-scripts";
 import { loadSiteGlobalData } from "@/data/global";
 import { getBrandConfig } from "@/lib/utils";
@@ -62,7 +63,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
       </head>
       <body className={`font-body antialiased`}>
         <PreviewBanner slug={slug} show={isEnabled} />
-        <RenderChaiBlocks page={page} pageProps={pageProps} />
+        <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
         <PageScripts />
       </body>
     </html>
