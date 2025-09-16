@@ -6,8 +6,11 @@ import { getBrandConfig } from "@/lib/utils";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
 import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
+import { Roboto } from "next/font/google";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
+
+const roboto = Roboto({ subsets: ["latin"] });
 
 loadWebBlocks();
 registerBlocks();
@@ -56,12 +59,12 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   return (
     <html lang={page.lang} className={`smooth-scroll`}>
       <head>
-        <FontsAndStyles page={page} />
+        <FontsAndStyles page={page} googleFonts={false} />
         {settings?.headHTML && (
           <div dangerouslySetInnerHTML={{ __html: settings.headHTML }} style={{ display: "contents" }} />
         )}
       </head>
-      <body className={`font-body antialiased`}>
+      <body className={`${roboto.className} antialiased`}>
         <PreviewBanner slug={slug} show={isEnabled} />
         <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
         <PageScripts />

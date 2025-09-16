@@ -6,7 +6,7 @@ import { isEmpty } from "lodash";
 import Script from "next/script";
 import "./builder.css";
 
-const geist = Geist({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"], preload: true });
 
 const brandConfig = getBrandConfig();
 
