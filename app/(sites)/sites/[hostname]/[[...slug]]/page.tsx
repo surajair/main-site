@@ -3,6 +3,7 @@ import { ImageBlock } from "@/components/image";
 import { PageScripts } from "@/components/page-scripts";
 import { loadSiteGlobalData } from "@/data/global";
 import { getBrandConfig } from "@/lib/utils";
+import { Analytics } from "@vercel/analytics/next";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
 import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
@@ -68,6 +69,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
         <PreviewBanner slug={slug} show={isEnabled} />
         <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
         <PageScripts />
+        <Analytics />
       </body>
     </html>
   );
