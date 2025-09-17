@@ -41,7 +41,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   await ChaiBuilder.initByHostname(hostname, isEnabled);
   const data = await ChaiBuilder.getSiteSettings();
   const settings = data?.settings || null;
-  const showChaiBadge = hostname.endsWith(".chaibuilder.site") ? true : false;
+  const showChaiBadge = hostname.endsWith(".chaibuilder.site");
   let page = null;
   try {
     page = await ChaiBuilder.getPage(slug);
@@ -70,7 +70,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
       <body className={`${roboto.className} antialiased`}>
         <PreviewBanner slug={slug} show={isEnabled} />
         <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
-        {showChaiBadge && <ChaiBuilderBadge position="bottom-left" />}
+        {showChaiBadge && <ChaiBuilderBadge />}
         <PageScripts />
         <Analytics />
       </body>
