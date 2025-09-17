@@ -15,10 +15,10 @@ const ChaiBuilderBadge = ({ position = "bottom-left" }: { position?: keyof typeo
           variant="default"
           className="flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium bg-black hover:bg-black border-[1px] border-purple-400 text-white  rounded-full">
           <div className="w-5 h-5 mr-1 rounded flex items-center justify-center">
-            <Image src="/chai-builder-logo.png" alt="Chai Builder" className="rounded" width={18} height={18} />
+            <Image src="/assets/chai-builder-logo.png" alt="Chai Builder" className="rounded" width={18} height={18} />
           </div>
-          <span>Made with</span>
-          <span className="font-bold underline">Chai Builder</span>
+          <span className="font-normal">Made with</span>
+          <span className="font-bold">Chai Builder</span>
         </Badge>
       </Link>
     </div>
