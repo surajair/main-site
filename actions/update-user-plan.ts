@@ -40,7 +40,8 @@ export const updateUserPlan = async (data: any) => {
         user: user.id,
         status: "ACTIVE",
         renewAt: getRenewDate(data),
-        plan: get(data, "items[0].price_id", "FREE"),
+        planId: get(data, "items[0].product.id", "FREE"),
+        priceId: get(data, "items[0].price_id", "FREE"),
         data,
       };
       const { error } = await supabaseServer.from("app_user_plans").insert(payload);

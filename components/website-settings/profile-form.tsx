@@ -17,11 +17,10 @@ import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSavePage } from "chai-next";
 import { get } from "lodash";
-import { Crown, Loader, X } from "lucide-react";
+import { Crown, Loader } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import UpgradeModal from "../dashboard/upgrade-modal";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 function ProfileName({ initialName }: { initialName: string }) {
   const [fullName, setFullName] = useState(initialName || "");
@@ -113,50 +112,9 @@ const ChangePasswordModal = () => {
 const ProfileAvatarTrigger = ({ data }: { data: any }) => {
   const displayName = get(data, "user.user_metadata?.full_name");
   const isFreePlan = get(data, "isFreePlan");
-  const [showBetaTooltip, setShowBetaTooltip] = useState(() => {
-    const hasSeenTooltip = localStorage.getItem("beta-tooltip-seen");
-    return !hasSeenTooltip;
-  });
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-
-  const handleCloseBetaTooltip = () => {
-    localStorage.setItem("beta-tooltip-seen", "true");
-    setShowBetaTooltip(false);
-    setTooltipOpen(false);
-  };
-
-  const handleBetaClick = () => {
-    if (!showBetaTooltip) {
-      setTooltipOpen(!tooltipOpen);
-    }
-  };
-
   return (
-    <div className="flex flex-col items-center justify-center relative">
-      <Tooltip open={showBetaTooltip || tooltipOpen} onOpenChange={setTooltipOpen}>
-        <TooltipTrigger asChild onClick={(e) => e.stopPropagation()}>
-          <span
-            className="text-xs text-primary font-black text-center cursor-pointer hover:text-primary/70"
-            onClick={handleBetaClick}>
-            BETA
-          </span>
-        </TooltipTrigger>
-        <TooltipContent align="center" side="right" onClick={(e) => e.stopPropagation()} className="p-0">
-          <div className="flex items-start gap-2 p-2 text-primary-foreground">
-            <span className="max-w-72">
-              You are currently using in beta mode. All premium features are available free for limited period.
-            </span>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={handleCloseBetaTooltip}
-              className="w-5 h-5 text-primary-foreground">
-              <X />
-            </Button>
-          </div>
-        </TooltipContent>
-      </Tooltip>
-      <div className="pt-2 flex items-center justify-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
+    <div className="flex flex-col items-center justify-center relative pb-2">
+      <div className="flex items-center justify-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
         <Avatar className={`h-9 w-9 border-2 ${isFreePlan ? "border-border" : "border-amber-600"}`}>
           <AvatarImage
             src={get(data, "user.user_metadata?.avatar_url") || "https://avatar.iran.liara.run/public/boy"}
@@ -165,7 +123,7 @@ const ProfileAvatarTrigger = ({ data }: { data: any }) => {
           <AvatarFallback>{displayName ? displayName.charAt(0) : "U"}</AvatarFallback>
         </Avatar>
         {!isFreePlan && (
-          <span className="absolute w-9 -bottom-1.5 text-center right-0 z-50 text-[10px] bg-amber-100 font-bold text-amber-600 border border-amber-600 rounded-full px-1 py-px leading-none">
+          <span className="absolute w-9 bottom-px text-center right-0 z-50 text-[10px] bg-amber-100 font-bold text-amber-600 border border-amber-600 rounded-full px-1 py-px leading-none">
             PRO
           </span>
         )}

@@ -13,7 +13,7 @@ export const useUser = () => {
     queryFn: async () => {
       const user = await getUser();
       const userPlan = await getPlan();
-      const plan = get(userPlan, "plan", "FREE");
+      const plan = get(userPlan, "planId", "FREE");
       return { user, isFreePlan: plan === "FREE", plan: userPlan };
     },
   });
