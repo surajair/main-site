@@ -149,7 +149,7 @@ const ProfileForm = ({ data }: { data: any }) => {
           <ProfileAvatarTrigger data={data} />
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-3">
             <Avatar className="h-12 w-12 border-2">
@@ -164,7 +164,6 @@ const ProfileForm = ({ data }: { data: any }) => {
               <p className="text-sm text-gray-600">{email}</p>
             </div>
           </DialogTitle>
-          <DialogDescription>Manage your account settings and profile information.</DialogDescription>
         </DialogHeader>
 
         {isFreePlan ? (
@@ -183,7 +182,7 @@ const ProfileForm = ({ data }: { data: any }) => {
           </div>
         )}
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-6 py-4 overflow-y-auto">
           {/* Account Details Section */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Details</h3>
@@ -206,11 +205,10 @@ const ProfileForm = ({ data }: { data: any }) => {
               <ChangePasswordModal />
             </div>
           </div>
-
-          {/* Sign Out Section */}
-          <div className="pt-4 border-t flex justify-end border-gray-200">
-            <LogoutButton />
-          </div>
+        </div>
+        {/* Sign Out Section */}
+        <div className="pt-4 border-t flex justify-end border-gray-200">
+          <LogoutButton />
         </div>
       </DialogContent>
     </Dialog>

@@ -85,6 +85,10 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
 
   const [, addDomainAction, addDomainPending] = useActionState(
     async (prevState: any, formData: FormData) => {
+      if (isFreePlan) {
+        toast.error("Please upgrade to add custom domains", { position: "top-center" });
+        return { success: false, error: "Please upgrade to add custom domains" };
+      }
       const domain = formData.get("customDomain") as string;
       if (!domain) {
         toast.error("Domain is required");
@@ -358,7 +362,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
           <form action={addDomainAction} className="space-y-1 pt-2">
             <input type="hidden" name="websiteId" value={websiteId} />
             <Label htmlFor="custom-domain" className="text-xs">
-              Domain Name
+              Add custom domain
             </Label>
             <div className={`flex gap-2`}>
               <Input
@@ -394,7 +398,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
             </div>
             {isFreePlan && (
               <div className="space-y-2 mt-4 text-sm text-muted-foreground border bg-muted p-4 rounded-md">
-                <div>To add custom domain upgrade.</div>
+                <div>Please upgrade to add custom domains</div>
                 <UpgradeModal withTrigger />
               </div>
             )}

@@ -10,7 +10,7 @@ const UpgradeButton = ({ show }: { show: () => void }) => {
   return (
     <div
       onClick={show}
-      className="w-9 h-9 mb-2 flex flex-col items-center justify-center text-amber-600 hover:text-primary hover:bg-primary/10 rounded cursor-pointer duration-200">
+      className="w-11 -mx-1 h-9 mb-2 flex flex-col items-center bg-amber-100 justify-center text-amber-600 hover:text-primary hover:bg-primary/10 rounded cursor-pointer duration-200">
       <Crown className="h-4 w-4" />
       <small className="text-[8px] font-semibold">UPGRADE</small>
     </div>
