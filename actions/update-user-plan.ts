@@ -3,6 +3,7 @@
 import { getUser } from "@/lib/getter";
 import { getSupabaseAdmin } from "chai-next/server";
 import { get } from "lodash";
+import { headers } from "next/headers";
 
 function getRenewDate(data: any) {
   const billingCycle = get(data, "items[0].billing_cycle.interval", "month") === "month" ? "monthly" : "yearly";
@@ -21,6 +22,20 @@ function getRenewDate(data: any) {
 
 export const updateUserPlan = async (data: any) => {
   try {
+    const headersList = await headers();
+    const host = headersList?.get("host");
+    const protocol = host?.includes("localhost") ? "http" : "https";
+    const origin = `${protocol}://${host}`;
+    const transactionId = get(data, "transaction_id");
+    const response = await fetch(`${origin}/api/subscription-details?transactionId=${encodeURIComponent(transactionId)}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const payload = await response.json();
+    if (!payload) throw Error("Something went wrong");
+
     const supabaseServer = await getSupabaseAdmin();
     const user = await getUser();
     if (!user) return;
@@ -32,19 +47,11 @@ export const updateUserPlan = async (data: any) => {
     if (existingPlans?.length > 0) {
       const { error } = await supabaseServer
         .from("app_user_plans")
-        .update({ data, renewAt: getRenewDate(data) })
+        .update({ ...payload })
         .eq("user", user.id);
       if (error) return false;
     } else {
-      const payload = {
-        user: user.id,
-        status: "ACTIVE",
-        renewAt: getRenewDate(data),
-        planId: get(data, "items[0].product.id", "FREE"),
-        priceId: get(data, "items[0].price_id", "FREE"),
-        data,
-      };
-      const { error } = await supabaseServer.from("app_user_plans").insert(payload);
+      const { error } = await supabaseServer.from("app_user_plans").insert({ user: user.id, ...payload });
       if (error) return false;
     }
 
