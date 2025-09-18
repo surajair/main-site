@@ -3,7 +3,7 @@ import { get } from "lodash";
 import { NextResponse } from "next/server";
 
 const paddle = new Paddle(process.env.PAYMENT_API_KEY!, {
-  environment: Environment.sandbox,
+  environment: process.env.NODE_ENV === "development" ? Environment.sandbox : Environment.production,
 });
 
 export async function GET(request: Request) {
