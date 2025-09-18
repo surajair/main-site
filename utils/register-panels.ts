@@ -5,8 +5,8 @@ import { upgradePanel } from "@/components/website-settings/upgrade-panel";
 import { registerChaiSidebarPanel } from "chai-next";
 
 export const registerPanels = () => {
-  registerChaiSidebarPanel("upgrade-modal", upgradePanel);
   registerChaiSidebarPanel("user-info", profilePanel);
-  registerChaiSidebarPanel("forms-panel", formsPanel);
   registerChaiSidebarPanel("help-panel", helpPanel);
+  registerChaiSidebarPanel("forms-panel", formsPanel);
+  registerChaiSidebarPanel("upgrade-modal", upgradePanel);
 };

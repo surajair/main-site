@@ -9,7 +9,7 @@ const HelpButton = ({ isActive, show }: { isActive: boolean; show: () => void })
     <Tooltip>
       <TooltipContent side="left">Help</TooltipContent>
       <TooltipTrigger asChild>
-        <Button variant={isActive ? "outline" : "ghost"} onClick={show} size="icon" className="w-full mb-1">
+        <Button variant={isActive ? "default" : "ghost"} onClick={show} size="icon" className="w-full mb-2">
           <HelpCircle size={18} className="h-7 w-7" />
         </Button>
       </TooltipTrigger>
@@ -23,6 +23,6 @@ export const helpPanel = {
   panel: SupportPanel,
   button: HelpButton,
   position: "bottom" as const,
-  width: 400,
+  width: 280,
   view: "standard" as const,
 };

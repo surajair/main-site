@@ -4,16 +4,34 @@ import { formSubmit } from "@/actions/form-submit";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { getUser } from "@/lib/getter/users";
+import { useQuery } from "@tanstack/react-query";
+import { get } from "lodash";
 import { Mail, MessageCircle, Send } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 const FEEDBACK_DOMAIN = "chaibuilder.com";
 
+const useUser = () => {
+  return useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const user = await getUser();
+      return { user };
+    },
+  });
+};
+
 export const SupportPanel = () => {
   const [feedback, setFeedback] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { data } = useUser();
+
+  const user = get(data, "user");
+  const email = user?.email;
+  const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name;
 
   const handleFeedbackSubmit = async () => {
     if (!feedback.trim()) return;
@@ -24,6 +42,8 @@ export const SupportPanel = () => {
       const result = await formSubmit({
         formData: {
           formName: "Feedback",
+          email: email || null,
+          name: displayName || null,
           message: feedback,
           submittedAt: new Date().toISOString(),
         },
@@ -62,13 +82,13 @@ export const SupportPanel = () => {
         <div className="group">
           <a
             href="mailto:support@chaibuilder.com"
-            className="flex items-center p-4 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 shadow-sm hover:shadow-md">
+            className="flex items-center px-2 py-2 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 shadow-sm hover:shadow-md">
             <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full group-hover:bg-blue-200 transition-colors">
               <Mail className="w-5 h-5 text-blue-600" />
             </div>
             <div className="ml-4 flex-1">
               <h4 className="font-medium text-slate-800">Email support</h4>
-              <p className="text-sm text-slate-600">support@chaibuilder.com</p>
+              <p className="text-sm text-slate-600 hover:text-blue-500 hover:underline">support@chaibuilder.com</p>
             </div>
           </a>
         </div>
@@ -77,13 +97,13 @@ export const SupportPanel = () => {
         <div className="group">
           <a
             href="mailto:suraj@chaibuilder.com"
-            className="flex items-center p-4 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 shadow-sm hover:shadow-md">
+            className="flex items-center px-2 py-2 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 shadow-sm hover:shadow-md">
             <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full group-hover:bg-blue-200 transition-colors">
               <Mail className="w-5 h-5 text-blue-600" />
             </div>
             <div className="ml-4 flex-1">
               <h4 className="font-medium text-slate-800">Founder email</h4>
-              <p className="text-sm text-slate-600">suraj@chaibuilder.com</p>
+              <p className="text-sm text-slate-600 hover:text-blue-500 hover:underline">suraj@chaibuilder.com</p>
             </div>
           </a>
         </div>
@@ -94,15 +114,17 @@ export const SupportPanel = () => {
             href="https://discord.com/invite/czkgwX2rnD"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center p-4 bg-white rounded-lg border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-200 shadow-sm hover:shadow-md">
-            <div className="flex items-center justify-center w-10 h-10 bg-indigo-100 rounded-full group-hover:bg-indigo-200 transition-colors">
-              <MessageCircle className="w-5 h-5 text-indigo-600" />
+            className="flex flex-col items-center px-2 py-2 bg-white rounded-lg border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-200 shadow-sm hover:shadow-md">
+            <div className="flex items-center w-full mb-4">
+              <div className="flex items-center justify-center w-10 h-10 bg-indigo-100 rounded-full group-hover:bg-indigo-200 transition-colors">
+                <MessageCircle className="w-5 h-5 text-indigo-600" />
+              </div>
+              <div className="ml-4 flex-1">
+                <h4 className="font-medium text-slate-800">Support on Discord</h4>
+                <p className="text-sm text-slate-600">Chat with our community</p>
+              </div>
             </div>
-            <div className="ml-4 flex-1">
-              <h4 className="font-medium text-slate-800">Support on Discord</h4>
-              <p className="text-sm text-slate-600">Chat with our community</p>
-            </div>
-            <Button variant="default" className="rounded-md w-fit px-2 py-0 " size="icon">
+            <Button variant="default" className="rounded-md w-full px-2 py-0" size="icon">
               Join
             </Button>
           </a>
