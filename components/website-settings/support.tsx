@@ -112,7 +112,11 @@ export const SupportPanel = () => {
         <div className="flex justify-center pt-4">
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-green-600 hover:bg-green-700">
+              <Button
+                variant={dialogOpen ? "outline" : "default"}
+                className={
+                  dialogOpen ? "border-green-600 text-green-600 hover:bg-green-50" : "bg-green-600 hover:bg-green-700"
+                }>
                 <Send className="w-4 h-4 mr-2" />
                 Give Feedback
               </Button>

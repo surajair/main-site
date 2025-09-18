@@ -8,7 +8,7 @@ const FormPanel = () => {
 
 const FormsButton = ({ isActive, show }: { isActive: boolean; show: () => void }) => {
   return (
-    <Button variant="ghost" onClick={show} size="icon" className="w-full mb-1">
+    <Button variant={isActive ? "default" : "ghost"} onClick={show} size="icon" className="w-full mb-1">
       <BookOpenText size={16} className="h-7 w-7" />
     </Button>
   );
