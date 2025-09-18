@@ -2,13 +2,13 @@ import { Environment, Paddle } from "@paddle/paddle-node-sdk";
 import { get } from "lodash";
 import { NextResponse } from "next/server";
 
-const paddle = new Paddle("pdl_sdbx_apikey_01k5ecdq2cba0sxfc354cyp35a_DBf7XMHKQJ1y9vyg4XBDAY_Awa", {
+const paddle = new Paddle(process.env.PAYMENT_API_KEY!, {
   environment: Environment.sandbox,
 });
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const transactionId = searchParams.get('transactionId');
+  const transactionId = searchParams.get("transactionId");
 
   if (!transactionId) {
     return NextResponse.json({ error: "Transaction ID required" }, { status: 400 });
