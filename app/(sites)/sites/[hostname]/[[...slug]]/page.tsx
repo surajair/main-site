@@ -1,6 +1,5 @@
 import { registerBlocks } from "@/blocks";
 import ChaiBuilderBadge from "@/components/chai-builder-badge";
-import { CrispChatWidget } from "@/components/crisp-chat-widget";
 import { ImageBlock } from "@/components/image";
 import { PageScripts } from "@/components/page-scripts";
 import { loadSiteGlobalData } from "@/data/global";
@@ -43,7 +42,6 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   const data = await ChaiBuilder.getSiteSettings();
   const settings = data?.settings || null;
   const showChaiBadge = hostname.endsWith(".chaibuilder.site");
-  const showChatWidget = hostname.includes("app.chaibuilder.com");
   let page = null;
   try {
     page = await ChaiBuilder.getPage(slug);
@@ -73,7 +71,6 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
         <PreviewBanner slug={slug} show={isEnabled} />
         <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
         {showChaiBadge && <ChaiBuilderBadge />}
-        {showChatWidget && <CrispChatWidget />}
         <PageScripts />
         <Analytics />
       </body>

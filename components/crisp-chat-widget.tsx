@@ -1,9 +1,19 @@
 "use client";
 import Script from "next/script";
+import { useEffect, useState } from "react";
 
 export const CrispChatWidget = () => {
   const crispWebsiteId = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID;
+  const domain = process.env.APP_DOMAIN;
+  const [showWidget, setShowWidget] = useState(false);
+
+  useEffect(() => {
+    const shouldShow = window.location.hostname.includes(`${domain}`);
+    setShowWidget(shouldShow);
+  }, [domain]);
   if (!crispWebsiteId) return null;
+  if (!showWidget) return null;
+
   return (
     <Script
       id="crisp-chat-widget"

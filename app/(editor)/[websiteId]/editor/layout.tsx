@@ -2,6 +2,7 @@ import { getBrandConfig } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 
+import { CrispChatWidget } from "@/components/crisp-chat-widget";
 import { isEmpty } from "lodash";
 import Script from "next/script";
 import "./builder.css";
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }}
           />
         ) : null}
+        <CrispChatWidget />
       </body>
     </html>
   );
