@@ -11,7 +11,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, Check, CheckCircle, Copy, ExternalLink, Loader, Pencil, RefreshCw } from "lucide-react";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import UpgradeModal from "../dashboard/upgrade-modal";
 import DeleteDomainModal from "./delete-domain-modal";
+import { useUser } from "./profile-panel";
 
 interface DomainConfigurationProps {
   websiteId: string;
@@ -19,6 +21,8 @@ interface DomainConfigurationProps {
 }
 
 function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
+  const { data: user } = useUser();
+  const isFreePlan = user?.isFreePlan;
   const queryClient = useQueryClient();
   const [customDomain, setCustomDomain] = useState("");
   const [isDomainVerified, setIsDomainVerified] = useState(false);
@@ -356,7 +360,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
             <Label htmlFor="custom-domain" className="text-xs">
               Domain Name
             </Label>
-            <div className="flex gap-2">
+            <div className={`flex gap-2`}>
               <Input
                 id="custom-domain"
                 name="customDomain"
@@ -371,13 +375,13 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                 }
                 placeholder="example.com"
                 className=" "
-                disabled={addDomainPending}
+                disabled={addDomainPending || isFreePlan}
               />
               <Button
                 variant={addDomainPending ? "ghost" : "default"}
                 type="submit"
                 className={addDomainPending ? "text-primary pointer-events-none" : ""}
-                disabled={addDomainPending || customDomain.length < 3}>
+                disabled={addDomainPending || customDomain.length < 3 || isFreePlan}>
                 {addDomainPending ? (
                   <>
                     <Loader className="h-3 w-3 animate-spin" />
@@ -388,6 +392,12 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                 )}
               </Button>
             </div>
+            {isFreePlan && (
+              <div className="space-y-2 mt-4 text-sm text-muted-foreground border bg-muted p-4 rounded-md">
+                <div>To add custom domain upgrade.</div>
+                <UpgradeModal withTrigger />
+              </div>
+            )}
           </form>
         )}
       </div>

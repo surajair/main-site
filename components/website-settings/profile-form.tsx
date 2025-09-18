@@ -16,9 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSavePage } from "chai-next";
-import { Loader, X } from "lucide-react";
+import { get } from "lodash";
+import { Crown, Loader, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import UpgradeModal from "../dashboard/upgrade-modal";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 function ProfileName({ initialName }: { initialName: string }) {
@@ -61,6 +63,7 @@ function ProfileName({ initialName }: { initialName: string }) {
           onChange={handleNameChange}
           placeholder="Enter your full name"
           className="w-full"
+          autoFocus={false}
         />
       </div>
 
@@ -107,8 +110,9 @@ const ChangePasswordModal = () => {
 };
 
 // Avatar trigger component that opens the profile dialog
-const ProfileAvatarTrigger = ({ user }: { user: any }) => {
-  const displayName = user.user_metadata?.full_name;
+const ProfileAvatarTrigger = ({ data }: { data: any }) => {
+  const displayName = get(data, "user.user_metadata?.full_name");
+  const isFreePlan = get(data, "isFreePlan");
   const [showBetaTooltip, setShowBetaTooltip] = useState(() => {
     const hasSeenTooltip = localStorage.getItem("beta-tooltip-seen");
     return !hasSeenTooltip;
@@ -128,7 +132,7 @@ const ProfileAvatarTrigger = ({ user }: { user: any }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center relative">
       <Tooltip open={showBetaTooltip || tooltipOpen} onOpenChange={setTooltipOpen}>
         <TooltipTrigger asChild onClick={(e) => e.stopPropagation()}>
           <span
@@ -153,20 +157,28 @@ const ProfileAvatarTrigger = ({ user }: { user: any }) => {
         </TooltipContent>
       </Tooltip>
       <div className="pt-2 flex items-center justify-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
-        <Avatar className="h-9 w-9 border-2 border-border">
+        <Avatar className={`h-9 w-9 border-2 ${isFreePlan ? "border-border" : "border-amber-600"}`}>
           <AvatarImage
-            src={user.user_metadata?.avatar_url || "https://avatar.iran.liara.run/public/boy"}
-            alt={user.user_metadata?.full_name || ""}
+            src={get(data, "user.user_metadata?.avatar_url") || "https://avatar.iran.liara.run/public/boy"}
+            alt={get(data, "user.user_metadata?.full_name") || ""}
           />
           <AvatarFallback>{displayName ? displayName.charAt(0) : "U"}</AvatarFallback>
         </Avatar>
+        {!isFreePlan && (
+          <span className="absolute w-9 -bottom-1.5 text-center right-0 z-50 text-[10px] bg-amber-100 font-bold text-amber-600 border border-amber-600 rounded-full px-1 py-px leading-none">
+            PRO
+          </span>
+        )}
       </div>
     </div>
   );
 };
 
 // Main profile dialog component
-const ProfileForm = ({ user }: { user: any }) => {
+const ProfileForm = ({ data }: { data: any }) => {
+  const user = get(data, "user");
+  const isFreePlan = get(data, "isFreePlan");
+  const planName = get(data, "plan.data.items[0].product.name");
   const [open, setOpen] = useState(false);
   const displayName = user.user_metadata?.full_name;
   const email = user.email;
@@ -176,7 +188,7 @@ const ProfileForm = ({ user }: { user: any }) => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div onClick={() => savePageAsync()}>
-          <ProfileAvatarTrigger user={user} />
+          <ProfileAvatarTrigger data={data} />
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
@@ -196,6 +208,22 @@ const ProfileForm = ({ user }: { user: any }) => {
           </DialogTitle>
           <DialogDescription>Manage your account settings and profile information.</DialogDescription>
         </DialogHeader>
+
+        {isFreePlan ? (
+          <div className="border rounded-md p-3 bg-muted">
+            <p className="text-sm text-gray-600 pb-2">You are currently on Free plan</p>
+            <UpgradeModal withTrigger={true} />
+          </div>
+        ) : (
+          <div className="border rounded-md p-3 bg-muted">
+            <p className="text-sm text-gray-600">
+              You current plan:{" "}
+              <span className="font-semibold text-amber-600">
+                {planName} <Crown className="inline w-4 h-4" />
+              </span>
+            </p>
+          </div>
+        )}
 
         <div className="space-y-6 py-4">
           {/* Account Details Section */}
@@ -222,8 +250,8 @@ const ProfileForm = ({ user }: { user: any }) => {
           </div>
 
           {/* Sign Out Section */}
-          <div className="pt-4 border-t border-gray-200">
-            <LogoutButton fullWidth={true} />
+          <div className="pt-4 border-t flex justify-end border-gray-200">
+            <LogoutButton />
           </div>
         </div>
       </DialogContent>

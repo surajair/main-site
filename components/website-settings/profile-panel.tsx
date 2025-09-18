@@ -1,39 +1,22 @@
 "use client";
-import { supabase } from "@/chai/supabase";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import ProfileForm from "@/components/website-settings/profile-form";
-import { User } from "@supabase/supabase-js";
+import { getUser } from "@/lib/getter";
+import { getPlan } from "@/lib/getter/users";
+import { useQuery } from "@tanstack/react-query";
+import { get } from "lodash";
 import { User as UserIcon } from "lucide-react";
-import { useEffect, useState } from "react";
 
-const useUserData = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const {
-          data: { user },
-          error,
-        } = await supabase.auth.getUser();
-
-        if (error) {
-          console.error("Error fetching user:", error);
-        } else {
-          setUser(user);
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  return { user, loading };
+export const useUser = () => {
+  return useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const user = await getUser();
+      const userPlan = await getPlan();
+      const plan = get(userPlan, "plan", "FREE");
+      return { user, isFreePlan: plan === "FREE", plan: userPlan };
+    },
+  });
 };
 
 const LoadingAvatar = () => {
@@ -49,27 +32,17 @@ const LoadingAvatar = () => {
 };
 
 const ProfilePanel = () => {
-  const { user, loading } = useUserData();
-
-  if (loading) {
-    return <LoadingAvatar />;
-  }
-
-  return <ProfileForm user={user} />;
+  const { data } = useUser();
+  return <ProfileForm data={data} />;
 };
 
 const ProfileButton = ({ isActive, show }: { isActive: boolean; show: () => void }) => {
-  const { user, loading } = useUserData();
+  const { data, isLoading } = useUser();
 
-  if (loading) {
-    return <LoadingAvatar />;
-  }
+  if (isLoading) return <LoadingAvatar />;
+  if (!get(data, "user")) return null;
 
-  if (!user) {
-    return null;
-  }
-
-  return <ProfileForm user={user} />;
+  return <ProfileForm data={data} />;
 };
 
 // Profile Panel Configuration

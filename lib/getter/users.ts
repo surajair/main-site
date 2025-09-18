@@ -2,6 +2,7 @@
 
 import { createClient } from "@/chai/supabase.auth.server";
 import { Session, User } from "@supabase/supabase-js";
+import { getSupabaseAdmin } from "chai-next/server";
 import { redirect } from "next/navigation";
 
 /**
@@ -35,4 +36,12 @@ export async function getSession(): Promise<Session> {
   } = await supabase.auth.getSession();
 
   return session as Session;
+}
+
+export async function getPlan(): Promise<any> {
+  const supabase = await getSupabaseAdmin();
+  const user = await getUser();
+  const { data: plan, error } = await supabase.from("app_user_plans").select("renewAt,plan,data").eq("user", user.id);
+  if (plan?.length === 0 || error) return { plan: "FREE" };
+  return plan[0];
 }
