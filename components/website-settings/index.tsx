@@ -367,7 +367,7 @@ const WebsitesPopoverContent = ({
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-            <div onClick={() => router.push(`/${site?.id}/editor`)} className="px-3 py-1 group-hover:bg-muted rounded">
+            <div onClick={() => window.location.href = `/${site?.id}/editor`} className="px-3 py-1 group-hover:bg-muted rounded">
               <div className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>{site.name}</div>
               <div className="text-xs text-muted-foreground">{site.subdomain}</div>
             </div>
