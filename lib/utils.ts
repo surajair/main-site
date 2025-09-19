@@ -21,6 +21,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function formatPrice(price: string | undefined): string {
+  if (!price) return "";
+  return price.replace(/\.00$/, "");
+}
+
 export interface BrandConfig {
   logo?: string;
   name?: string;

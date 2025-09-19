@@ -1,3 +1,4 @@
+import { formatPrice } from "@/lib/utils";
 import { Paddle } from "@paddle/paddle-js";
 import { chunk } from "lodash";
 
@@ -43,8 +44,8 @@ export const getPricingPlans = async (paddle: Paddle): Promise<any> => {
       return {
         id: isFree ? "free" : "pro",
         name: monthlyItem?.product?.name,
-        monthlyPrice: monthlyItem?.formattedUnitTotals?.total,
-        yearlyPrice: yearlyItem?.formattedUnitTotals?.total,
+        monthlyPrice: formatPrice(monthlyItem?.formattedUnitTotals?.total),
+        yearlyPrice: formatPrice(yearlyItem?.formattedUnitTotals?.total),
         features: JSON.parse((monthlyItem?.product?.customData?.plans as any) || "[]"),
         items: [
           { billingCycle: "monthly", priceId: monthlyItem?.price?.id, quantity: 1 },
