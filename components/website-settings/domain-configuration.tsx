@@ -22,7 +22,7 @@ interface DomainConfigurationProps {
 
 function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
   const { data: user } = useUser();
-  const isFreePlan = user?.isFreePlan;
+  const isPaidPlan = user?.isPaidPlan;
   const queryClient = useQueryClient();
   const [customDomain, setCustomDomain] = useState("");
   const [isDomainVerified, setIsDomainVerified] = useState(false);
@@ -85,7 +85,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
 
   const [, addDomainAction, addDomainPending] = useActionState(
     async (prevState: any, formData: FormData) => {
-      if (isFreePlan) {
+      if (!isPaidPlan) {
         toast.error("Please upgrade to add custom domains", { position: "top-center" });
         return { success: false, error: "Please upgrade to add custom domains" };
       }
@@ -379,13 +379,13 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                 }
                 placeholder="example.com"
                 className=" "
-                disabled={addDomainPending || isFreePlan}
+                disabled={addDomainPending || !isPaidPlan}
               />
               <Button
                 variant={addDomainPending ? "ghost" : "default"}
                 type="submit"
                 className={addDomainPending ? "text-primary pointer-events-none" : ""}
-                disabled={addDomainPending || customDomain.length < 3 || isFreePlan}>
+                disabled={addDomainPending || customDomain.length < 3 || !isPaidPlan}>
                 {addDomainPending ? (
                   <>
                     <Loader className="h-3 w-3 animate-spin" />
@@ -396,7 +396,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                 )}
               </Button>
             </div>
-            {isFreePlan && (
+            {!isPaidPlan && (
               <div className="space-y-2 mt-4 text-sm text-muted-foreground border bg-muted p-4 rounded-md">
                 <div>Please upgrade to add custom domains</div>
                 <UpgradeModal withTrigger />

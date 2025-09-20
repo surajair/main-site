@@ -5,8 +5,8 @@ import { useUser } from "./profile-panel";
 
 const UpgradeButton = ({ show }: { show: () => void }) => {
   const { data } = useUser();
-  const isFreePlan = get(data, "isFreePlan");
-  if (!isFreePlan) return null;
+  const isPaidPlan = get(data, "isPaidPlan");
+  if (isPaidPlan) return null;
   return (
     <div
       onClick={show}

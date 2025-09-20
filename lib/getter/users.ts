@@ -38,10 +38,13 @@ export async function getSession(): Promise<Session> {
   return session as Session;
 }
 
-export async function getPlan(): Promise<any> {
-  const supabase = await getSupabaseAdmin();
-  const user = await getUser();
-  const { data: plan, error } = await supabase.from("app_user_plans").select("planId,data").eq("user", user.id);
-  if (plan?.length === 0 || error) return { planId: "FREE" };
-  return plan[0];
+export async function getPlan(userId: string): Promise<any> {
+  try {
+    const supabase = await getSupabaseAdmin();
+    const { data: plan, error } = await supabase.from("app_user_plans").select("planId,data").eq("user", userId);
+    if (plan?.length === 0 || error) return { planId: "FREE" };
+    return plan[0];
+  } catch (error) {
+    return { planId: "FREE" };
+  }
 }

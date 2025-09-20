@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSavePage } from "chai-next";
 import { get } from "lodash";
-import { Crown, Loader } from "lucide-react";
+import { Crown, Loader, User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import UpgradeModal from "../dashboard/upgrade-modal";
@@ -110,19 +110,22 @@ const ChangePasswordModal = () => {
 
 // Avatar trigger component that opens the profile dialog
 const ProfileAvatarTrigger = ({ data }: { data: any }) => {
-  const displayName = get(data, "user.user_metadata?.full_name");
-  const isFreePlan = get(data, "isFreePlan");
+  const user = get(data, "user");
+  const displayName = user.user_metadata?.full_name || "";
+  const isPaidPlan = data?.isPaidPlan;
   return (
-    <div className="flex flex-col items-center justify-center relative pb-2">
+    <div className="flex flex-col items-center justify-center relative">
       <div className="flex items-center justify-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
-        <Avatar className={`h-9 w-9 border-2 ${isFreePlan ? "border-border" : "border-amber-600"}`}>
+        <Avatar className={`mb-1.5 h-9 w-9 border-2 ${!isPaidPlan ? "border-border" : "border-amber-600"}`}>
           <AvatarImage
-            src={get(data, "user.user_metadata?.avatar_url") || "https://avatar.iran.liara.run/public/boy"}
-            alt={get(data, "user.user_metadata?.full_name") || ""}
+            src={user.user_metadata?.avatar_url || "https://avatar.iran.liara.run/public/boy"}
+            alt={displayName || ""}
           />
-          <AvatarFallback>{displayName ? displayName.charAt(0) : "U"}</AvatarFallback>
+          <AvatarFallback className="bg-primary/30 text-primary font-bold">
+            <User className="h-4 w-4" />
+          </AvatarFallback>
         </Avatar>
-        {!isFreePlan && (
+        {isPaidPlan && (
           <span className="absolute w-9 bottom-px text-center right-0 z-50 text-[10px] bg-amber-100 font-bold text-amber-600 border border-amber-600 rounded-full px-1 py-px leading-none">
             PRO
           </span>
@@ -135,8 +138,8 @@ const ProfileAvatarTrigger = ({ data }: { data: any }) => {
 // Main profile dialog component
 const ProfileForm = ({ data }: { data: any }) => {
   const user = get(data, "user");
-  const isFreePlan = get(data, "isFreePlan");
-  const planName = get(data, "plan.data.items[0].product.name");
+  const isPaidPlan = get(data, "isPaidPlan");
+  const planName = get(data, "plan.data.product.name");
   const [open, setOpen] = useState(false);
   const displayName = user.user_metadata?.full_name;
   const email = user.email;
@@ -157,7 +160,9 @@ const ProfileForm = ({ data }: { data: any }) => {
                 src={user.user_metadata?.avatar_url || "https://avatar.iran.liara.run/public/boy"}
                 alt={user.user_metadata?.full_name || ""}
               />
-              <AvatarFallback>{displayName ? displayName.charAt(0) : "U"}</AvatarFallback>
+              <AvatarFallback className="bg-primary/30 text-primary font-bold">
+                <User className="h-5 w-5" />
+              </AvatarFallback>
             </Avatar>
             <div>
               <h2 className="text-xl font-semibold">{displayName || "User Profile"}</h2>
@@ -166,7 +171,7 @@ const ProfileForm = ({ data }: { data: any }) => {
           </DialogTitle>
         </DialogHeader>
 
-        {isFreePlan ? (
+        {!isPaidPlan ? (
           <div className="border rounded-md p-3 bg-muted">
             <p className="text-sm text-gray-600 pb-2">You are currently on Free plan</p>
             <UpgradeModal withTrigger={true} />
