@@ -39,7 +39,6 @@ export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
   const [isSubdomainModified, setIsSubdomainModified] = useState(false);
   const [defaultLanguage, setDefaultLanguage] = useState("en");
   const [isCreating, setIsCreating] = useState(false);
-  const { value: siteLimits } = useFlag("no_of_sites", 1);
   const { value: canCreateSite } = useFlag("create_site", true);
   const queryClient = useQueryClient();
 

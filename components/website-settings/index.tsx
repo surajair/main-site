@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { getSite, getSites } from "@/lib/getter";
 import { SiteData } from "@/utils/types";
 import { useFlag } from "@openfeature/react-sdk";
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Popover, PopoverContent, PopoverTrigger, useSavePage } from "chai-next";
 import { omit } from "lodash";
 import {
@@ -71,7 +71,7 @@ function WebsiteSettingsContent({
   const [activeTab, setActiveTab] = useState("general");
   const [showTabChangeDialog, setShowTabChangeDialog] = useState(false);
   const [pendingTabChange, setPendingTabChange] = useState<string | null>(null);
-
+  const queryClient = useQueryClient();
   const handleGetSiteData = async () => {
     const siteData = await getSite(websiteId);
     setInitData(siteData);
@@ -248,7 +248,7 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
   const { savePageAsync } = useSavePage();
   const [isDataChange, setIsDataChange] = useState(false);
   const [initData, setInitData] = useState<any>(null);
-
+  const queryClient = useQueryClient();
   const handleOpenChange = async (newOpen: boolean) => {
     if (newOpen) savePageAsync();
     if (!newOpen && isDataChange) setShowConfirmDialog(true);
@@ -367,7 +367,9 @@ const WebsitesPopoverContent = ({
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-            <div onClick={() => window.location.href = `/${site?.id}/editor`} className="px-3 py-1 group-hover:bg-muted rounded">
+            <div
+              onClick={() => (window.location.href = `/${site?.id}/editor`)}
+              className="px-3 py-1 group-hover:bg-muted rounded">
               <div className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>{site.name}</div>
               <div className="text-xs text-muted-foreground">{site.subdomain}</div>
             </div>
@@ -470,11 +472,6 @@ function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
   );
 }
 
-const queryClient = new QueryClient();
 export default function WebsiteSettingsWrapper({ websiteId }: { websiteId: string | undefined }) {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <WebsiteSettings websiteId={websiteId} />
-    </QueryClientProvider>
-  );
+  return <WebsiteSettings websiteId={websiteId} />;
 }
