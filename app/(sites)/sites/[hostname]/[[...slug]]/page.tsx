@@ -72,7 +72,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
         <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
         {showChaiBadge && <ChaiBuilderBadge />}
         <PageScripts />
-        <Analytics />
+        {!isEnabled ? <Analytics /> : null}
       </body>
     </html>
   );
