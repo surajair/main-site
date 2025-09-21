@@ -18,7 +18,6 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export default async function HomePage({ params }: { params: Promise<{ websiteId: string }> }) {
   const { websiteId } = await params;
@@ -134,5 +133,5 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
     );
   }
 
-  redirect(`/${websiteId}/editor`);
+  // redirect(`/${websiteId}/editor`);
 }

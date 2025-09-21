@@ -1,11 +1,13 @@
 import "@/app/app.css";
 import { Toaster } from "@/components/ui/sonner";
 import TopNavigation from "@/components/websites-dashboard/top-navigation";
+import { getSession } from "@/lib/getter/users";
 import { FeatureFlagProvider } from "@/lib/openfeature/feature-flag-provider";
 import { fetchFeatureFlags } from "@/lib/openfeature/server";
 import { getBrandConfig } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { redirect } from "next/navigation";
 import type React from "react";
 
 const geist = Geist({ subsets: ["latin"] });
@@ -26,7 +28,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const featureFlags = await fetchFeatureFlags("admin", "free");
-
+  const session = await getSession();
+  if (!session) redirect("/login");
   return (
     <html dir="ltr" className="smooth-scroll">
       <head>

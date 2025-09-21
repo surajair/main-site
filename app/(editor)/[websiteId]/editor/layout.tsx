@@ -1,9 +1,10 @@
+import { CrispChatWidget } from "@/components/crisp-chat-widget";
+import { getSession } from "@/lib/getter/users";
 import { getBrandConfig } from "@/lib/utils";
+import { isEmpty } from "lodash";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-
-import { CrispChatWidget } from "@/components/crisp-chat-widget";
-import { isEmpty } from "lodash";
+import { redirect } from "next/navigation";
 import Script from "next/script";
 import "./builder.css";
 
@@ -19,7 +20,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await getSession();
+  if (!session) redirect("/login");
   return (
     <html lang="en">
       <body className={geist.className}>
