@@ -1,5 +1,5 @@
 import { Environment, Paddle } from "@paddle/paddle-node-sdk";
-import { get } from "lodash";
+import { get, set } from "lodash";
 import { NextResponse } from "next/server";
 
 const paddle = new Paddle(process.env.PAYMENT_API_KEY!, {
@@ -24,6 +24,7 @@ export async function GET(request: Request) {
 
     const subscription = await paddle.subscriptions.get(subscriptionId);
     const data = get(subscription, "items[0]");
+    set(data, "transactionId", transactionId);
     const nextBilledAt = get(data, "nextBilledAt");
     const planId = get(data, "product.id");
     const priceId = get(data, "price.id");
