@@ -7,6 +7,7 @@ import { getPaymentConfig, getPricingPlans } from "@/lib/payment";
 import { initializePaddle, Paddle } from "@paddle/paddle-js";
 import { useQuery } from "@tanstack/react-query";
 import { useChaiAuth } from "chai-next";
+import { get } from "lodash";
 import { Check, Crown, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
@@ -43,9 +44,18 @@ function UpgradeModalContent() {
             variant: "one-page",
           },
         },
-        eventCallback: (event: any) => {
+        eventCallback: async (event: any) => {
           if (event.name === "checkout.completed") {
-            updateUserPlan(event?.data);
+            const transactionId = get(event, "data.transaction_id");
+            const response = await fetch(
+              `/api/subscription-details?transactionId=${encodeURIComponent(transactionId)}`,
+              {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+              },
+            );
+            const payload = await response.json();
+            updateUserPlan(payload);
             paddle?.Checkout?.close();
             setShowSuccess(true);
           }
