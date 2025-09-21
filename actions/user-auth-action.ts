@@ -82,6 +82,33 @@ export async function updatePassword(newPassword: string) {
   return data;
 }
 
+export async function updatePasswordAction(
+  _prevState: any,
+  formData: FormData
+): Promise<{ message: string; success: boolean }> {
+  const newPassword = formData.get("new-password") as string;
+  const confirmPassword = formData.get("confirm-password") as string;
+
+  // Validate passwords match
+  if (newPassword !== confirmPassword) {
+    return { message: "Passwords do not match", success: false };
+  }
+
+  // Validate password length
+  if (newPassword.length < 8) {
+    return { message: "Password must be at least 8 characters long", success: false };
+  }
+
+  try {
+    await updatePassword(newPassword);
+    return { message: "Password updated successfully!", success: true };
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error && error.message ? error.message : "Failed to update password";
+    return { message: errorMessage, success: false };
+  }
+}
+
 export async function signOut() {
   const supabaseServer = await createClient();
 
