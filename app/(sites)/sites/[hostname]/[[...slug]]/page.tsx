@@ -9,13 +9,13 @@ import { Analytics } from "@vercel/analytics/next";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
 import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
-import { Lato } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
-const geist = Lato({
-  subsets: ["latin"],
-  weight: ["100", "300", "400", "700", "900"],
+const geist = DM_Sans({
+  subsets: ["latin", "latin-ext"],
+  weight: ["500", "300", "400", "700", "600", "800"],
 });
 console.log("geist", geist);
 loadWebBlocks();
@@ -59,7 +59,9 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
 
   const { body, heading } = data.theme.fontFamily;
   console.log("body, heading", body, heading);
-  const fontStyles = await getFontStyles(heading, body);
+  const formattedBody = body.split(" ").join("_");
+  const formattedHeading = heading.split(" ").join("_");
+  const fontStyles = await getFontStyles(formattedHeading, formattedBody);
 
   //NOTE: pageProps are received in your dataProvider functions for block and page
   const pageProps: ChaiPageProps = {
