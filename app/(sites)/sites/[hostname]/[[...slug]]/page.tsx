@@ -52,7 +52,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   }
 
   const { body, heading } = data.theme.fontFamily;
-  const fontStyles = await getFontStyles(heading, body);
+  const fontStyles = await getFontStyles("Lavishly_Yours", body);
   console.log("fontStyles", fontStyles);
 
   //NOTE: pageProps are received in your dataProvider functions for block and page
