@@ -13,11 +13,15 @@ export const registerFonts = () => {
     fallback: `"Geist Fallback", Arial, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol`,
     src: [
       {
-        url: "https://vercel.com/vc-ap-vercel-docs/_next/static/media/93f479601ee12b01.p.woff2",
+        url: "/fonts/geist/8a480f0b521d4e75-s.8e0177b5.woff2",
         format: "woff2",
       },
       {
-        url: "https://vercel.com/vc-ap-vercel-docs/_next/static/media/569ce4b8f30dc480-s.p.woff2",
+        url: "/fonts/geist/7178b3e590c64307-s.b97b3418.woff2",
+        format: "woff2",
+      },
+      {
+        url: "/fonts/geist/caa3a2e1cccd8315-s.p.853070df.woff2",
         format: "woff2",
       },
     ],
