@@ -5,6 +5,7 @@ import { getBrandConfig } from "@/lib/utils";
 import { isEmpty } from "lodash";
 import { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import Script from "next/script";
@@ -126,10 +127,7 @@ const WithAuthLayout = ({ children }: { children: React.ReactNode }) => {
  * @param param0
  * @returns
  */
-export default async function AuthLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession();
-  if (session) redirect("/");
-
+const LayoutContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     <html dir="ltr" className="smooth-scroll">
       <head>
@@ -146,18 +144,45 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
             strategy="afterInteractive"
             dangerouslySetInnerHTML={{
               __html: `
-          (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-          })(window, document, "clarity", "script", "${process.env.NEXT_PUBLIC_CLARITY_ID}");
-        `,
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "${process.env.NEXT_PUBLIC_CLARITY_ID}");
+    `,
             }}
           />
         ) : null}
       </body>
     </html>
   );
+};
+
+/**
+ * This layout is used to wrap the children in a layout that is used to
+ * check if the user is authenticated. If the user is authenticated,
+ * they will be redirected to the sites page. If the user is not
+ * authenticated, they will be redirected to the login page.
+ *
+ * @param param0
+ * @returns
+ */
+export default async function AuthLayout({ children, searchParams }: { children: React.ReactNode; searchParams: any }) {
+  const session = await getSession();
+  const headerList = await headers();
+  const isResetPassword = headerList.get("x-redirection-type") === "reset-password";
+  if (session) {
+    if (isResetPassword) {
+      // If reset-password, then open reset-password form in auth container else redirect to editor(/)
+      return <LayoutContainer>{children}</LayoutContainer>;
+    }
+    redirect("/");
+  } else if (isResetPassword) {
+    // If reset-password is tried to access when not authenticated, then redirect to login
+    redirect("/login");
+  }
+
+  return <LayoutContainer>{children}</LayoutContainer>;
 }
 
 // Feature items with icons
