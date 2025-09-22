@@ -7,7 +7,7 @@ import { getFontStyles, registerFonts } from "@/fonts";
 import { getBrandConfig } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/next";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
-import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
+import { ChaiPageStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
 import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
@@ -66,7 +66,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   return (
     <html lang={page.lang} className={`smooth-scroll`}>
       <head>
-        <FontsAndStyles page={page} googleFonts={false} />
+        <ChaiPageStyles page={page} />
         <style>{fontStyles}</style>
         {settings?.headHTML && (
           <div dangerouslySetInnerHTML={{ __html: settings.headHTML }} style={{ display: "contents" }} />
@@ -77,7 +77,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
         <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
         {showChaiBadge && <ChaiBuilderBadge />}
         <PageScripts />
-        {!isEnabled ? <Analytics /> : null}
+        <Analytics />
       </body>
     </html>
   );
