@@ -1,8 +1,5 @@
-import {
-  ChaiFontViaSrc,
-  ChaiFontViaUrl,
-  registerChaiFont,
-} from "chai-next/blocks";
+import { ChaiFontViaSrc, ChaiFontViaUrl, registerChaiFont } from "chai-next/blocks";
+import { fontsMap } from "./fonts-map";
 
 export const registerFonts = () => {
   // Google font
@@ -25,4 +22,12 @@ export const registerFonts = () => {
       },
     ],
   } as ChaiFontViaSrc);
+};
+
+export const getFontStyles = async (headingFont: string, bodyFont: string) => {
+  let fonts = fontsMap[headingFont] ?? "";
+  if (headingFont !== bodyFont) {
+    fonts += fontsMap[bodyFont] ?? "";
+  }
+  return fonts;
 };

@@ -3,20 +3,19 @@ import ChaiBuilderBadge from "@/components/chai-builder-badge";
 import { ImageBlock } from "@/components/image";
 import { PageScripts } from "@/components/page-scripts";
 import { loadSiteGlobalData } from "@/data/global";
+import { getFontStyles, registerFonts } from "@/fonts";
 import { getBrandConfig } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/next";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
 import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
-import { Roboto } from "next/font/google";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
-
-const roboto = Roboto({ subsets: ["latin"] });
 
 loadWebBlocks();
 registerBlocks();
 registerChaiGlobalDataProvider(loadSiteGlobalData);
+registerFonts();
 
 export const dynamic = "force-static";
 
@@ -52,6 +51,10 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
     return notFound();
   }
 
+  const { body, heading } = data.theme.fontFamily;
+  const fontStyles = await getFontStyles(heading, body);
+  console.log("fontStyles", fontStyles);
+
   //NOTE: pageProps are received in your dataProvider functions for block and page
   const pageProps: ChaiPageProps = {
     slug,
@@ -63,11 +66,12 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
     <html lang={page.lang} className={`smooth-scroll`}>
       <head>
         <FontsAndStyles page={page} googleFonts={false} />
+        <style>{fontStyles}</style>
         {settings?.headHTML && (
           <div dangerouslySetInnerHTML={{ __html: settings.headHTML }} style={{ display: "contents" }} />
         )}
       </head>
-      <body className={`${roboto.className} antialiased`}>
+      <body className={`font-body antialiased`}>
         <PreviewBanner slug={slug} show={isEnabled} />
         <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
         {showChaiBadge && <ChaiBuilderBadge />}

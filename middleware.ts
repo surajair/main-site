@@ -13,7 +13,8 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/robots.txt") ||
     pathname.startsWith("/favicon.ico") ||
     pathname.startsWith("/static/") || // Prevent infinite loops
-    pathname.startsWith("/assets/")
+    pathname.startsWith("/assets/") ||
+    pathname.startsWith("/fonts/")
   ) {
     return NextResponse.next();
   }

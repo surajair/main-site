@@ -2,6 +2,7 @@
 
 import { registerBlocks } from "@/blocks";
 import WebsiteSettings from "@/components/website-settings";
+import { registerFonts } from "@/fonts";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { registerPanels } from "@/utils/register-panels";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -17,6 +18,7 @@ const getLiveUrl = (slug: string, domain?: string) => {
 };
 registerPanels();
 registerBlocks();
+registerFonts();
 
 const queryClient = new QueryClient({
   defaultOptions: {
