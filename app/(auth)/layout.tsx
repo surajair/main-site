@@ -167,7 +167,7 @@ const LayoutContainer = ({ children }: { children: React.ReactNode }) => {
  * @param param0
  * @returns
  */
-export default async function AuthLayout({ children, searchParams }: { children: React.ReactNode; searchParams: any }) {
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
   const headerList = await headers();
   const isResetPassword = headerList.get("x-redirection-type") === "reset-password";
