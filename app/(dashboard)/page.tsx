@@ -34,7 +34,7 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
               <BrandName />
               <div className={`text-center ${!hasSites ? "pt-8" : ""}`}>
                 <span className="text-lg font-bold mb-2">
-                  {hasSites ? "Select Website to Start" : "Welcome to Your Website Builder"}
+                  {hasSites ? "Select website to start building" : "Welcome"}
                 </span>
                 <p className="text-muted-foreground text-sm font-light">
                   {hasSites
@@ -44,35 +44,36 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
               </div>
             </div>
             <div className="max-h-96 overflow-y-auto space-y-2 rounded-lg p-4">
-              {sites && sites.length > 0 ? (
-                sites.map((site) => (
-                  <Link
-                    key={site.id}
-                    href={`/${site?.id}/editor`}
-                    className="border group px-3 py-1 hover:bg-muted rounded hover:text-primary flex items-center justify-between">
-                    <div>
-                      <div className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>
-                        {site.name}
+              {sites && sites.length > 0
+                ? sites.map((site) => (
+                    <Link
+                      key={site.id}
+                      href={`/${site?.id}/editor`}
+                      className="border group px-3 py-1 hover:bg-muted rounded hover:text-primary flex items-center justify-between">
+                      <div>
+                        <div className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>
+                          {site.name}
+                        </div>
+                        <div className="text-xs text-muted-foreground">{site.subdomain}</div>
                       </div>
-                      <div className="text-xs text-muted-foreground">{site.subdomain}</div>
-                    </div>
-                    <div>
-                      <MoveRight className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <div className="text-center">
-                  <QueryClientProviderWrapper>
-                    <CreateNewWebsite totalSites={0}>
-                      <Button className="w-full">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Create Your First Website
-                      </Button>
-                    </CreateNewWebsite>
-                  </QueryClientProviderWrapper>
-                </div>
-              )}
+                      <div>
+                        <MoveRight className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+                      </div>
+                    </Link>
+                  ))
+                : null}
+              <div className="text-center">
+                <QueryClientProviderWrapper>
+                  <CreateNewWebsite totalSites={0}>
+                    <Button
+                      className={hasSites ? "my-4 w-fit" : "w-full"}
+                      variant={!hasSites ? "default" : "secondary"}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      {hasSites ? "Create New Website" : "Create Your First Website"}
+                    </Button>
+                  </CreateNewWebsite>
+                </QueryClientProviderWrapper>
+              </div>
             </div>
 
             <div className="w-full flex justify-center pt-2 border-t">
