@@ -469,7 +469,7 @@ export const fontsMap: Record<string, string> = {
   font-style: normal;
   font-weight: 100;
   font-display: swap;
-  src: url("fonts/lato/7d256325d16c464a-s.p.6b5b353b.woff2") format("woff2");
+  src: url("../media/7d256325d16c464a-s.6b5b353b.woff2") format("woff2");
   unicode-range: U+100-2BA, U+2BD-2C5, U+2C7-2CC, U+2CE-2D7, U+2DD-2FF, U+304, U+308, U+329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -478,7 +478,7 @@ export const fontsMap: Record<string, string> = {
   font-style: normal;
   font-weight: 100;
   font-display: swap;
-  src: url("fonts/lato/80dbc432bf467303-s.p.5d34db31.woff2") format("woff2");
+  src: url("../media/80dbc432bf467303-s.5d34db31.woff2") format("woff2");
   unicode-range: U+??, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -487,7 +487,7 @@ export const fontsMap: Record<string, string> = {
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url("fonts/lato/20f1c48c725d3555-s.p.06aaffe1.woff2") format("woff2");
+  src: url("../media/20f1c48c725d3555-s.06aaffe1.woff2") format("woff2");
   unicode-range: U+100-2BA, U+2BD-2C5, U+2C7-2CC, U+2CE-2D7, U+2DD-2FF, U+304, U+308, U+329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -496,7 +496,7 @@ export const fontsMap: Record<string, string> = {
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url("fonts/lato/f30fd2e485acf1bc-s.p.3d1b066d.woff2") format("woff2");
+  src: url("../media/f30fd2e485acf1bc-s.3d1b066d.woff2") format("woff2");
   unicode-range: U+??, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -505,7 +505,7 @@ export const fontsMap: Record<string, string> = {
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("fonts/lato/b529365fa126a3f2-s.p.38647399.woff2") format("woff2");
+  src: url("../media/b529365fa126a3f2-s.38647399.woff2") format("woff2");
   unicode-range: U+100-2BA, U+2BD-2C5, U+2C7-2CC, U+2CE-2D7, U+2DD-2FF, U+304, U+308, U+329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -514,7 +514,7 @@ export const fontsMap: Record<string, string> = {
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("fonts/lato/8e451580e5e95631-s.p.0e564e6e.woff2") format("woff2");
+  src: url("../media/8e451580e5e95631-s.0e564e6e.woff2") format("woff2");
   unicode-range: U+??, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -523,7 +523,7 @@ export const fontsMap: Record<string, string> = {
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("fonts/lato/d74bdd14d6019bc6-s.p.99b0b73b.woff2") format("woff2");
+  src: url("../media/d74bdd14d6019bc6-s.99b0b73b.woff2") format("woff2");
   unicode-range: U+100-2BA, U+2BD-2C5, U+2C7-2CC, U+2CE-2D7, U+2DD-2FF, U+304, U+308, U+329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -532,7 +532,7 @@ export const fontsMap: Record<string, string> = {
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("fonts/lato/345c85a432359eed-s.p.eead68dd.woff2") format("woff2");
+  src: url("../media/345c85a432359eed-s.eead68dd.woff2") format("woff2");
   unicode-range: U+??, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -541,7 +541,7 @@ export const fontsMap: Record<string, string> = {
   font-style: normal;
   font-weight: 900;
   font-display: swap;
-  src: url("fonts/lato/da28569d36042d01-s.p.ff9784a6.woff2") format("woff2");
+  src: url("../media/da28569d36042d01-s.ff9784a6.woff2") format("woff2");
   unicode-range: U+100-2BA, U+2BD-2C5, U+2C7-2CC, U+2CE-2D7, U+2DD-2FF, U+304, U+308, U+329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -550,7 +550,7 @@ export const fontsMap: Record<string, string> = {
   font-style: normal;
   font-weight: 900;
   font-display: swap;
-  src: url("fonts/lato/9be384ea93fe3f49-s.p.ab26386e.woff2") format("woff2");
+  src: url("../media/9be384ea93fe3f49-s.ab26386e.woff2") format("woff2");
   unicode-range: U+??, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -563,10 +563,11 @@ export const fontsMap: Record<string, string> = {
   size-adjust: 97.69%;
 }
 
-.lato_b2a02384-module__YXQ73W__className {
+.lato_4957d177-module__vFzyeq__className {
   font-family: Lato, Lato Fallback;
   font-style: normal;
 }
+
 `,
   Open_Sans: `
 @font-face {
