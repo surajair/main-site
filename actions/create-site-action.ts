@@ -112,14 +112,6 @@ export async function createSite(formData: Partial<Site>) {
     const { error: apiKeyError } = await supabaseServer.from("app_api_keys").insert({ apiKey, app: appData.id });
     if (apiKeyError) throw onlineError;
 
-    // Create entry in libraries table
-    const { error: libraryError } = await supabaseServer.from("libraries").insert({
-      name: newApp.name,
-      app: appData.id,
-      type: "site",
-    });
-    if (libraryError) throw libraryError;
-
     await supabaseServer.from("app_users").insert({
       user: user.id,
       app: appData.id,
