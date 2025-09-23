@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Loader } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { toast } from "sonner";
@@ -30,20 +31,31 @@ function SubmitButton() {
 }
 
 export default function UpdatePassword({ close }: { close?: () => void }) {
+  const pathname = usePathname();
+  const isResetPassword = pathname.includes("reset-password");
   const [state, formAction] = useFormState(updatePasswordAction, initialState);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (state.message) {
       if (state.success) {
-        toast.success(state.message, { position: "top-right" });
-        close?.();
+        toast.success(isResetPassword ? "Password reset successfully!" : "Password updated successfully!", {
+          position: "top-right",
+        });
+        if (isResetPassword) {
+          router.push("/");
+        } else {
+          close?.();
+        }
       } else {
-        toast.error(state.message, { position: "top-right" });
+        toast.error(state.message, {
+          position: "top-right",
+        });
       }
     }
-  }, [state, close]);
+  }, [state, close, isResetPassword, router]);
 
   return (
     <>

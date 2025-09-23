@@ -45,23 +45,6 @@ export async function signupWithEmail(email: string, password: string) {
   return data;
 }
 
-export async function resetPassword(email: string, baseUrl: string) {
-  const supabaseServer = await createClient();
-
-  const { data, error } = await supabaseServer.auth.resetPasswordForEmail(email, {
-    redirectTo: `${baseUrl}/auth/callback?next=/update-password`,
-  });
-
-  if (error) {
-    if (error instanceof AuthError) {
-      throw new Error(error.message);
-    }
-    throw new Error("An error occurred while resetting password");
-  }
-
-  return data;
-}
-
 export async function updatePassword(newPassword: string) {
   const supabaseServer = await createClient();
 
@@ -84,7 +67,7 @@ export async function updatePassword(newPassword: string) {
 
 export async function updatePasswordAction(
   _prevState: any,
-  formData: FormData
+  formData: FormData,
 ): Promise<{ message: string; success: boolean }> {
   const newPassword = formData.get("new-password") as string;
   const confirmPassword = formData.get("confirm-password") as string;
@@ -103,21 +86,7 @@ export async function updatePasswordAction(
     await updatePassword(newPassword);
     return { message: "Password updated successfully!", success: true };
   } catch (error) {
-    const errorMessage =
-      error instanceof Error && error.message ? error.message : "Failed to update password";
+    const errorMessage = error instanceof Error && error.message ? error.message : "Failed to update password";
     return { message: errorMessage, success: false };
-  }
-}
-
-export async function signOut() {
-  const supabaseServer = await createClient();
-
-  const { error } = await supabaseServer.auth.signOut();
-
-  if (error) {
-    if (error instanceof AuthError) {
-      throw new Error(error.message);
-    }
-    throw new Error("An error occurred while signing out");
   }
 }

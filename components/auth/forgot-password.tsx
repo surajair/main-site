@@ -1,13 +1,13 @@
 "use client";
 
+import { supabase } from "@/chai/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { resetPassword } from "@/actions/user-auth-action";
-import { toast } from "sonner";
-import Link from "next/link";
 import { CheckCircle } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function ForgetPassword() {
   const [email, setEmail] = useState("");
@@ -19,18 +19,17 @@ export default function ForgetPassword() {
     setIsLoading(true);
 
     try {
-      await resetPassword(email, window.location.origin);
+      await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/callback?type=reset`,
+      });
       setIsSubmitted(true);
       toast.success("Password reset link sent! Please check your email.", {
         position: "top-right",
       });
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to send reset link",
-        {
-          position: "top-right",
-        }
-      );
+      toast.error(error instanceof Error ? error.message : "Failed to send reset link", {
+        position: "top-right",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -44,14 +43,12 @@ export default function ForgetPassword() {
         </div>
         <h3 className="text-xl font-semibold">Password Reset Link Sent</h3>
         <p className="text-muted-foreground text-sm">
-          Please check your email and follow the instructions to reset your
-          password.
+          Please check your email and follow the instructions to reset your password.
         </p>
         <br />
         <Link
           href="/login"
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-20 py-3 rounded"
-        >
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-20 py-3 rounded">
           Go to login
         </Link>
       </div>
@@ -73,11 +70,7 @@ export default function ForgetPassword() {
             disabled={isLoading}
           />
         </div>
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isLoading}
-        >
+        <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "Sending..." : "Send reset link"}
         </Button>
       </form>

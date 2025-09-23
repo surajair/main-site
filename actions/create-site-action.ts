@@ -43,6 +43,10 @@ const DEFAULT_THEME = {
 };
 
 export async function createSite(formData: Partial<Site>) {
+  const client = process.env.CHAIBUILDER_CLIENT_ID;
+  if (!client) {
+    throw new Error("CHAIBUILDER_CLIENT_ID environment variable is required but not set");
+  }
   try {
     const user = await getUser();
     const supabaseServer = await getSupabaseAdmin();
@@ -68,12 +72,13 @@ export async function createSite(formData: Partial<Site>) {
       settings: {
         siteName: websiteName,
       },
+      client: client,
     };
 
     const { data: appData, error: appError } = await supabaseServer
       .from("apps")
       .insert(newApp)
-      .select("id, user, name, theme, languages, fallbackLang, settings")
+      .select("id, user, name, theme, languages, fallbackLang, settings, client")
       .single();
     if (appError) throw appError;
 

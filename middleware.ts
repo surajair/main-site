@@ -30,6 +30,9 @@ export function middleware(request: NextRequest) {
 
   // For app subdomain, continue without rewriting (dashboard/builder)
   if (finalHostname === appDomain) {
+    if (pathname?.includes("/reset-password")) {
+      return NextResponse.next({ headers: { "x-redirection-type": "reset-password" } });
+    }
     return NextResponse.next();
   }
 

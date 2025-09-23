@@ -2,18 +2,20 @@ import { createClient } from "@/chai/supabase.auth.server";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
+  const host = request.headers.get("host");
+  const origin = process.env.NODE_ENV === "development" ? `http://${host}` : `https://${host}`;
+
   const code = searchParams.get("code");
-  // Get the next path or default to /
+  const type = searchParams.get("type") ?? "";
   const next = searchParams.get("next") ?? "";
 
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-
     if (!error) {
-      if (next === "/update-password") {
-        return NextResponse.redirect(`${origin}/update-password?type=reset`);
+      if (type === "reset") {
+        return NextResponse.redirect(`${origin}/reset-password`);
       }
       return NextResponse.redirect(`${origin}${next}`);
     }
