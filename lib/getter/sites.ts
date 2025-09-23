@@ -52,6 +52,7 @@ export async function getSites(): Promise<Sites[]> {
     `,
     )
     .eq("user", user.id)
+    .eq("client", process.env.CHAIBUILDER_CLIENT_ID)
     .is("deletedAt", null)
     .order("createdAt", { ascending: false });
 
