@@ -1,6 +1,7 @@
 "use client";
 
 import { registerBlocks } from "@/blocks";
+import { supabase } from "@/chai/supabase";
 import WebsiteSettings from "@/components/website-settings";
 import { registerFonts } from "@/fonts";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
@@ -33,6 +34,11 @@ export default function Editor({ domain, websiteId }: { domain?: string; website
   return ready ? (
     <QueryClientProvider client={queryClient}>
       <ChaiBuilder
+        getAccessToken={async () => {
+          const { data, error } = await supabase.auth.getSession();
+          console.log("getAccessToken", data, error);
+          return data?.session?.access_token ?? "";
+        }}
         hasReactQueryProvider
         apiUrl="editor/api"
         logo={() => <WebsiteSettings websiteId={websiteId} />}
