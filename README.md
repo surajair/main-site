@@ -9,3 +9,4 @@ Features:
 2. Visual Editor
 3. Custom blocks
 4. Analytics & Tracking
+5. Roadmap
