@@ -451,7 +451,7 @@ const WebsitesListPopover = ({
  * @param params websiteId, websites, isLoading
  */
 function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
-  const { data: clientSettings } = useQuery({ queryKey: ["client-settings"], queryFn: getClientSettings });
+  const { data: clientSettings, isFetching } = useQuery({ queryKey: ["client-settings"], queryFn: getClientSettings });
   const { data: websites, isLoading } = useQuery({ queryKey: ["websites-list"], queryFn: getSites });
   const router = useRouter();
 
@@ -460,6 +460,14 @@ function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
     const isActiveWebsite = websites?.find((site) => site?.id === websiteId);
     if (!isActiveWebsite) router.push(`/`);
   }, [websiteId, websites, isLoading, router]);
+
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center w-fit">
+        <Loader className="h-4 w-4 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-x-2">

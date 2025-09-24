@@ -36,12 +36,12 @@ export default function Editor({ domain, websiteId }: { domain?: string; website
       <ChaiBuilder
         getAccessToken={async () => {
           const { data, error } = await supabase.auth.getSession();
-          console.log("getAccessToken", data, error);
           return data?.session?.access_token ?? "";
         }}
         hasReactQueryProvider
         apiUrl="editor/api"
-        logo={() => <WebsiteSettings websiteId={websiteId} />}
+        // @ts-ignore
+        topLeftCorner={() => <WebsiteSettings websiteId={websiteId} />}
         getPreviewUrl={(slug: string) => getPreviewUrl(slug, domain)}
         getLiveUrl={(slug: string) => getLiveUrl(slug, domain)}
       />

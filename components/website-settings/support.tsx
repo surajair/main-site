@@ -73,7 +73,7 @@ export const SupportPanel = () => {
   };
 
   return (
-    <div className="space-y-6 ">
+    <div className="space-y-6 text-sm">
       <div className="text-start">
         <p className="text-sm text-slate-600">We&apos;re here to support you every step of the way</p>
       </div>
