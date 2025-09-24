@@ -34,6 +34,8 @@ export default function Editor({ domain, websiteId }: { domain?: string; website
   return ready ? (
     <QueryClientProvider client={queryClient}>
       <ChaiBuilder
+        autoSave
+        autoSaveInterval={20}
         getAccessToken={async () => {
           const { data, error } = await supabase.auth.getSession();
           return data?.session?.access_token ?? "";
