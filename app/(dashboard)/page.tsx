@@ -31,8 +31,8 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
           <Card className="w-full max-w-md mx-auto p-6 bg-white">
             <div className="text-center mb-6 flex flex-col items-center space-y-2">
               <BrandLogo />
-              <BrandName />
-              <div className={`text-center ${!hasSites ? "pt-8" : ""}`}>
+              <BrandName className="text-primary" />
+              <div className={`text-center ${!hasSites ? "pt-8" : "pt-2"}`}>
                 <span className="text-lg font-bold mb-2">
                   {hasSites ? "Select website to start building" : "Welcome"}
                 </span>
@@ -45,7 +45,7 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
             </div>
             <div className="max-h-96 overflow-y-auto space-y-2 rounded-lg p-4">
               {sites && sites.length > 0
-                ? sites.map((site) => (
+                ? sites.map((site: any) => (
                     <Link
                       key={site.id}
                       href={`/${site?.id}/editor`}
@@ -66,7 +66,7 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
                 <QueryClientProviderWrapper>
                   <CreateNewWebsite totalSites={0}>
                     <Button
-                      className={hasSites ? "my-4 w-fit" : "w-full"}
+                      className={hasSites ? "my-4 w-fit border" : "w-full"}
                       variant={!hasSites ? "default" : "secondary"}>
                       <Plus className="h-4 w-4 mr-2" />
                       {hasSites ? "Create New Website" : "Create Your First Website"}

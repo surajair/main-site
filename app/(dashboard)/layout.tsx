@@ -1,25 +1,23 @@
 import "@/app/app.css";
 import { Toaster } from "@/components/ui/sonner";
 import TopNavigation from "@/components/websites-dashboard/top-navigation";
+import { getClientSettings } from "@/lib/getter";
 import { getSession } from "@/lib/getter/users";
 import { FeatureFlagProvider } from "@/lib/openfeature/feature-flag-provider";
 import { fetchFeatureFlags } from "@/lib/openfeature/server";
-import { getBrandConfig } from "@/lib/utils";
-import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { redirect } from "next/navigation";
 import type React from "react";
 
 const geist = Geist({ subsets: ["latin"] });
 
-const brandConfig = getBrandConfig();
-
-export const metadata: Metadata = {
-  title: "Website Builder - Project Management",
-  description: "Manage your website builder projects and settings",
-  icons: {
-    icon: brandConfig.favicon || "/favicon.ico",
-  },
+export const generateMetadata = async () => {
+  const clientSettings = await getClientSettings();
+  return {
+    title: `${clientSettings?.name} - Editor`,
+    description: "Build and manage your websites with ease",
+    icons: { icon: clientSettings?.favicon },
+  };
 };
 
 export default async function RootLayout({
@@ -33,8 +31,6 @@ export default async function RootLayout({
   return (
     <html dir="ltr" className="smooth-scroll">
       <head>
-        <link rel="icon" href={brandConfig.favicon} />
-        <title>{brandConfig.name}</title>
         <link rel="stylesheet" href={`/${process.env.APP_DOMAIN?.replace(":", ".")}.css`} />
       </head>
       <body className={`${geist.className} flex h-screen flex-col`}>

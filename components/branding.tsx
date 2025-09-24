@@ -1,12 +1,15 @@
-import { getBrandConfig } from "@/lib/utils";
+import { getClientSettings } from "@/lib/getter";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-const getLogo = ({ width, height }: { width: number; height: number }) => {
-  const brandConfig = getBrandConfig();
+const getClientLogo = async ({ width, height }: { width: number; height: number }) => {
+  const clientSettings = await getClientSettings();
 
-  if (brandConfig.logo) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={brandConfig.logo} width={width} height={height} alt="brand-logo" className="rounded-md" />;
+  if (clientSettings?.logo) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={clientSettings.logo} width={width} height={height} alt="brand-logo" className="rounded-md" />
+    );
   }
 
   return (
@@ -18,7 +21,7 @@ const getLogo = ({ width, height }: { width: number; height: number }) => {
   );
 };
 
-export const BrandLogo = ({
+export const BrandLogo = async ({
   width = 25,
   height = 25,
   shouldRedirect = true,
@@ -27,16 +30,22 @@ export const BrandLogo = ({
   height?: number;
   shouldRedirect?: boolean;
 }) => {
+  const logo = await getClientLogo({ width, height });
   return shouldRedirect ? (
     <Link aria-label="Website Builder" href="/">
-      {getLogo({ width, height })}
+      {logo}
     </Link>
   ) : (
-    getLogo({ width, height })
+    logo
   );
 };
 
-export const BrandName = ({ className }: { className?: string }) => {
-  const brandConfig = getBrandConfig();
-  return <span className={`text-sm font-medium ${className}`}>{brandConfig.name || "Your Brand"}</span>;
+const getClientName = async () => {
+  const clientSettings = await getClientSettings();
+  return clientSettings?.name;
+};
+
+export const BrandName = async ({ className }: { className?: string }) => {
+  const name = await getClientName();
+  return <span className={cn("text-sm text-primary-foreground font-medium", className)}>{name}</span>;
 };

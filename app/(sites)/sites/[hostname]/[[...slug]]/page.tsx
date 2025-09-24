@@ -4,7 +4,7 @@ import { ImageBlock } from "@/components/image";
 import { PageScripts } from "@/components/page-scripts";
 import { loadSiteGlobalData } from "@/data/global";
 import { getFontStyles, registerFonts } from "@/fonts";
-import { getBrandConfig } from "@/lib/utils";
+import { getClientSettings } from "@/lib/getter";
 import { Analytics } from "@vercel/analytics/next";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { ChaiPageStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
@@ -27,8 +27,8 @@ export const generateMetadata = async (props: { params: Promise<{ hostname: stri
   const { isEnabled } = await draftMode();
   await ChaiBuilder.initByHostname(hostname, isEnabled);
   const data = await ChaiBuilder.getSiteSettings();
-  const brandConfig = getBrandConfig();
-  const favicon = data?.settings?.faviconURL || brandConfig.favicon || "/favicon.ico";
+  const clientSettings = await getClientSettings();
+  const favicon = data?.settings?.faviconURL || clientSettings.favicon;
   return { ...((await ChaiBuilder.getPageSeoData(slug)) as any), icons: { icon: favicon } };
 };
 

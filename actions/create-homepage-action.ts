@@ -1,7 +1,9 @@
-import { getBrandConfig } from "@/lib/utils";
+"use server";
 
-export const getHomepageBlocks = () => {
-  const brandConfig = getBrandConfig();
+import { getClientSettings } from "@/lib/getter";
+
+export const getHomepageBlocks = async () => {
+  const clientSettings = await getClientSettings();
   return [
     {
       _id: "amBjaf",
@@ -47,7 +49,7 @@ export const getHomepageBlocks = () => {
       _id: "gjeeln",
       _parent: "eBsCcc",
       styles: "#styles:,w-12 h-12 rounded-xl",
-      image: brandConfig.logo,
+      image: clientSettings.logo,
       alt: "",
       lazyLoading: true,
       width: "48",
@@ -60,7 +62,7 @@ export const getHomepageBlocks = () => {
       _type: "Span",
       tag: "span",
       styles: "#styles:,text-2xl font-bold",
-      content: brandConfig.name || "Builder",
+      content: clientSettings.name,
     },
     {
       _id: "zlbqpl",
@@ -243,6 +245,7 @@ export const getHomepageBlocks = () => {
 
 export async function createHomePage(appId: string, name: string, supabaseServer: any) {
   try {
+    const homepageBlocks = await getHomepageBlocks();
     const { data, error } = await supabaseServer
       .from("app_pages")
       .insert({
@@ -263,7 +266,7 @@ export async function createHomePage(appId: string, name: string, supabaseServer
           ogDescription: "",
           searchDescription: "",
         },
-        blocks: getHomepageBlocks(),
+        blocks: homepageBlocks,
         online: true,
       })
       .select("*")

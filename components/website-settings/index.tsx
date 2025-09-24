@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { getSite, getSites } from "@/lib/getter";
+import { getClientSettings, getSite, getSites } from "@/lib/getter";
 import { SiteData } from "@/utils/types";
 import { useFlag } from "@openfeature/react-sdk";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -26,7 +26,6 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { BrandLogo } from "../branding";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import AnalyticsTracking from "./analytics-tracking";
@@ -452,6 +451,7 @@ const WebsitesListPopover = ({
  * @param params websiteId, websites, isLoading
  */
 function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
+  const { data: clientSettings } = useQuery({ queryKey: ["client-settings"], queryFn: getClientSettings });
   const { data: websites, isLoading } = useQuery({ queryKey: ["websites-list"], queryFn: getSites });
   const router = useRouter();
 
@@ -463,7 +463,8 @@ function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
 
   return (
     <div className="flex items-center gap-x-2">
-      <BrandLogo height={32} width={32} shouldRedirect={false} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={clientSettings?.logo} width={32} height={32} alt="brand-logo" className="rounded-md" />
       <div className="flex items-center border rounded-md p-0 h-9 px-px">
         <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
         <WebsiteSettingsModal websiteId={websiteId} isLoading={isLoading} />

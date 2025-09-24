@@ -2,8 +2,15 @@
 
 import { createClient } from "@/chai/supabase.auth.server";
 import { AuthError } from "@supabase/supabase-js";
+import { checkBotId } from "botid/server";
 
 export async function loginWithEmail(email: string, password: string) {
+  // Check for bot
+  const verification = await checkBotId();
+  if (verification.isBot) {
+    throw new Error("Access denied");
+  }
+
   const supabaseServer = await createClient();
 
   const { data, error } = await supabaseServer.auth.signInWithPassword({
@@ -22,6 +29,12 @@ export async function loginWithEmail(email: string, password: string) {
 }
 
 export async function signupWithEmail(email: string, password: string) {
+  // Check for bot
+  const verification = await checkBotId();
+  if (verification.isBot) {
+    throw new Error("Access denied");
+  }
+
   const supabaseServer = await createClient();
 
   const { data, error } = await supabaseServer.auth.signUp({
@@ -46,6 +59,12 @@ export async function signupWithEmail(email: string, password: string) {
 }
 
 export async function updatePassword(newPassword: string) {
+  // Check for bot
+  const verification = await checkBotId();
+  if (verification.isBot) {
+    throw new Error("Access denied");
+  }
+
   const supabaseServer = await createClient();
 
   const { data, error } = await supabaseServer.auth.updateUser({

@@ -1,15 +1,13 @@
 import "@/app/(sites)/site.css";
-import { getBrandConfig } from "@/lib/utils";
-import type { Metadata } from "next";
+import { getClientSettings } from "@/lib/getter";
 
-const brandConfig = getBrandConfig();
-
-export const metadata: Metadata = {
-  title: brandConfig.name || "Chai Builder",
-  description: "Chai Builder",
-  icons: {
-    icon: brandConfig.favicon || "/favicon.ico",
-  },
+export const generateMetadata = async () => {
+  const clientSettings = await getClientSettings();
+  return {
+    title: `${clientSettings?.name}`,
+    description: clientSettings?.name,
+    icons: { icon: clientSettings?.favicon },
+  };
 };
 
 export default async function RootLayout({

@@ -12,3 +12,6 @@ export {
 
 // Users related functions
 export { getSession, getUser } from "./users";
+
+// Clients related functions
+export { getClientSettings, type ClientSettings } from "./client";

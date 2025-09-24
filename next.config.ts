@@ -1,3 +1,4 @@
+import { withBotId } from "botid/next/config";
 import withChaiBuilder from "chai-next/config";
 import { IMAGE_DOMAINS } from "./remote-pattern";
 
@@ -8,4 +9,4 @@ const nextConfig = {
     remotePatterns: [...IMAGE_DOMAINS.map((domain) => ({ hostname: domain }))],
   },
 };
-export default withChaiBuilder(nextConfig);
+export default withBotId(withChaiBuilder(nextConfig));
