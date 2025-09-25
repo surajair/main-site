@@ -41,7 +41,7 @@ function ProfileName({ initialName }: { initialName: string }) {
     setIsUpdating(true);
     try {
       const result = await updateUserProfile(fullName.trim());
-      
+
       if (result.success) {
         toast.success(result.message);
         setHasChanges(false);
@@ -75,8 +75,8 @@ function ProfileName({ initialName }: { initialName: string }) {
         <Button type="submit" disabled={isUpdating || fullName === initialName} className="px-6">
           {isUpdating ? (
             <>
-              <Loader className="h-4 w-4 animate-spin mr-2" />
-              Updating...
+              <Loader className="h-4 w-4 animate-spin" />
+              Updating
             </>
           ) : (
             "Update Name"

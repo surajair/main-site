@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getUser } from "@/lib/getter/users";
 import { useQuery } from "@tanstack/react-query";
 import { get } from "lodash";
-import { Mail, MessageCircle, Send } from "lucide-react";
+import { Loader, Mail, MessageCircle, Send } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -178,11 +178,11 @@ export const SupportPanel = () => {
                   className="bg-green-600 hover:bg-green-700">
                   {isSubmitting ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Sending...
+                      <Loader className="h-4 w-4 animate-spin" />
+                      Sending
                     </>
                   ) : (
-                    <>Send Feedback</>
+                    "Send Feedback"
                   )}
                 </Button>
               </DialogFooter>
