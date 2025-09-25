@@ -29,12 +29,17 @@ function DeleteWebsite({ websiteId, websiteName }: { websiteId: string; websiteN
   const handleDeleteWebsite = async () => {
     setIsDeleting(true);
     try {
-      await deleteSite(websiteId);
-      queryClient.invalidateQueries({ queryKey: ["websites-list"] });
-      setIsDialogOpen(false);
-      toast.success("Website deleted successfully");
+      const result = await deleteSite(websiteId);
+      
+      if (result.success) {
+        queryClient.invalidateQueries({ queryKey: ["websites-list"] });
+        setIsDialogOpen(false);
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
     } catch (error: any) {
-      toast.error(error?.message || "Failed to delete website");
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsDeleting(false);
     }

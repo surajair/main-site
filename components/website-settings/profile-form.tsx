@@ -40,12 +40,17 @@ function ProfileName({ initialName }: { initialName: string }) {
 
     setIsUpdating(true);
     try {
-      await updateUserProfile(fullName.trim());
-      toast.success("Profile updated successfully");
-      setHasChanges(false);
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      const result = await updateUserProfile(fullName.trim());
+      
+      if (result.success) {
+        toast.success(result.message);
+        setHasChanges(false);
+        queryClient.invalidateQueries({ queryKey: ["user"] });
+      } else {
+        toast.error(result.message);
+      }
     } catch (error) {
-      toast.error("Failed to update profile");
+      toast.error("An unexpected error occurred. Please try again.");
       console.error("Profile update error:", error);
     } finally {
       setIsUpdating(false);

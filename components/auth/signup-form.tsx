@@ -40,21 +40,22 @@ export default function SignupForm() {
     setIsLoading(true);
 
     try {
-      await signupWithEmail(email, password);
-      toast.success(
-        "Account created successfully! Please check your email to verify your account.",
-        {
+      const result = await signupWithEmail(email, password);
+      
+      if (result.success) {
+        toast.success(result.message, {
           position: "top-right",
-        }
-      );
-      router.push("/login");
+        });
+        router.push("/login");
+      } else {
+        toast.error(result.message, {
+          position: "top-right",
+        });
+      }
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to create account",
-        {
-          position: "top-right",
-        }
-      );
+      toast.error("An unexpected error occurred. Please try again.", {
+        position: "top-right",
+      });
     } finally {
       setIsLoading(false);
     }
