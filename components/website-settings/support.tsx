@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getUser } from "@/lib/getter/users";
 import { useQuery } from "@tanstack/react-query";
 import { get } from "lodash";
-import { Mail, MessageCircle, Send } from "lucide-react";
+import { Loader, Mail, MessageCircle, Send } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -75,20 +75,20 @@ export const SupportPanel = () => {
   return (
     <div className="space-y-6 text-sm">
       <div className="text-start">
-        <p className="text-sm text-slate-600">We&apos;re here to support you every step of the way</p>
+        <p className="text-sm text-slate-500">We&apos;re here to support you every step of the way</p>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-2">
         {/* First Support Email */}
         <div className="group">
           <a
             href="mailto:support@chaibuilder.com"
-            className="flex items-center px-2 py-2 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 shadow-sm hover:shadow-md">
-            <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full group-hover:bg-blue-200 transition-colors">
-              <Mail className="w-5 h-5 text-blue-600" />
+            className="flex items-center px-2 py-2 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200">
+            <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+              <Mail className="w-4 h-4 text-blue-600" />
             </div>
             <div className="ml-4 flex-1">
-              <h4 className="font-medium text-slate-800">Email support</h4>
-              <p className="text-sm text-slate-600 hover:text-blue-500 hover:underline">support@chaibuilder.com</p>
+              <h4 className="font-medium text-sm text-slate-800">Email support</h4>
+              <p className="text-xs text-slate-600">support@chaibuilder.com</p>
             </div>
           </a>
         </div>
@@ -96,14 +96,16 @@ export const SupportPanel = () => {
         {/* Second Support Email */}
         <div className="group">
           <a
-            href="mailto:suraj@chaibuilder.com"
-            className="flex items-center px-2 py-2 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 shadow-sm hover:shadow-md">
-            <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full group-hover:bg-blue-200 transition-colors">
-              <Mail className="w-5 h-5 text-blue-600" />
+            target="_blank"
+            rel="noopener noreferrer"
+            href="mail:suraj@chaibuilder.com"
+            className="flex items-center px-2 py-2 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200">
+            <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+              <Mail className="w-4 h-4 text-blue-600" />
             </div>
             <div className="ml-4 flex-1">
-              <h4 className="font-medium text-slate-800">Founder email</h4>
-              <p className="text-sm text-slate-600 hover:text-blue-500 hover:underline">suraj@chaibuilder.com</p>
+              <h4 className="font-medium text-sm text-slate-800">Founder email</h4>
+              <p className="text-xs text-slate-600">suraj@chaibuilder.com</p>
             </div>
           </a>
         </div>
@@ -114,17 +116,17 @@ export const SupportPanel = () => {
             href="https://discord.com/invite/czkgwX2rnD"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-center px-2 py-2 bg-white rounded-lg border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-200 shadow-sm hover:shadow-md">
+            className="flex flex-col items-center px-2 py-2 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200">
             <div className="flex items-center w-full mb-4">
-              <div className="flex items-center justify-center w-10 h-10 bg-indigo-100 rounded-full group-hover:bg-indigo-200 transition-colors">
-                <MessageCircle className="w-5 h-5 text-indigo-600" />
+              <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                <MessageCircle className="w-4 h-4 text-blue-600" />
               </div>
               <div className="ml-4 flex-1">
-                <h4 className="font-medium text-slate-800">Support on Discord</h4>
-                <p className="text-sm text-slate-600">Chat with our community</p>
+                <h4 className="font-medium text-sm text-slate-800">Support on Discord</h4>
+                <p className="text-xs text-slate-600">Chat with our community</p>
               </div>
             </div>
-            <Button variant="default" className="rounded-md w-full px-2 py-0" size="icon">
+            <Button size="sm" variant="default" className="rounded-md w-full px-2 py-0">
               Join
             </Button>
           </a>
@@ -135,6 +137,7 @@ export const SupportPanel = () => {
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
               <Button
+                size="sm"
                 variant={dialogOpen ? "outline" : "default"}
                 className={
                   dialogOpen ? "border-green-600 text-green-600 hover:bg-green-50" : "bg-green-600 hover:bg-green-700"
@@ -178,11 +181,11 @@ export const SupportPanel = () => {
                   className="bg-green-600 hover:bg-green-700">
                   {isSubmitting ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Sending...
+                      <Loader className="h-4 w-4 animate-spin" />
+                      Sending
                     </>
                   ) : (
-                    <>Send Feedback</>
+                    "Send Feedback"
                   )}
                 </Button>
               </DialogFooter>

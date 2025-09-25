@@ -4,7 +4,7 @@ import { supabase } from "@/chai/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Loader } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -71,7 +71,14 @@ export default function ForgetPassword() {
           />
         </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Sending..." : "Send reset link"}
+          {isLoading ? (
+            <>
+              <Loader className="h-4 w-4 animate-spin" />
+              Sending
+            </>
+          ) : (
+            "Send reset link"
+          )}
         </Button>
       </form>
     </>

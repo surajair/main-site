@@ -4,7 +4,7 @@ import { loginWithEmail } from "@/actions/user-auth-action";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { EyeClosed, EyeIcon } from "lucide-react";
+import { EyeClosed, EyeIcon, Loader } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -22,11 +22,19 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      await loginWithEmail(email, password);
-      toast.success("Login successful", { position: "top-right" });
-      router.push("/");
+      const result = await loginWithEmail(email, password);
+
+      if (result.success) {
+        toast.success(result.message, { position: "top-right" });
+        router.push("/");
+      } else {
+        toast.error(result.message, {
+          position: "top-right",
+        });
+        setIsLoading(false);
+      }
     } catch (error) {
-      toast.error(error instanceof Error && error.message ? "Invalid login credentials" : "Failed to login", {
+      toast.error("An unexpected error occurred. Please try again.", {
         position: "top-right",
       });
       setIsLoading(false);
@@ -77,7 +85,14 @@ export default function LoginForm() {
           </div>
         </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Signing in..." : "Sign in"}
+          {isLoading ? (
+            <>
+              <Loader className="h-4 w-4 animate-spin" />
+              Signing in
+            </>
+          ) : (
+            "Sign in"
+          )}
         </Button>
       </form>
     </>

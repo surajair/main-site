@@ -4,11 +4,11 @@ import { createClient } from "@/chai/supabase.auth.server";
 import { AuthError } from "@supabase/supabase-js";
 import { checkBotId } from "botid/server";
 
-export async function loginWithEmail(email: string, password: string) {
+export async function loginWithEmail(email: string, password: string): Promise<{ success: boolean; message: string; data?: any }> {
   // Check for bot
   const verification = await checkBotId();
   if (verification.isBot) {
-    throw new Error("Access denied");
+    return { success: false, message: "Access denied" };
   }
 
   const supabaseServer = await createClient();
@@ -20,19 +20,19 @@ export async function loginWithEmail(email: string, password: string) {
 
   if (error) {
     if (error instanceof AuthError) {
-      throw new Error(error.message);
+      return { success: false, message: error.message };
     }
-    throw new Error("An error occurred during login");
+    return { success: false, message: "An error occurred during login" };
   }
 
-  return data;
+  return { success: true, message: "Login successful", data };
 }
 
-export async function signupWithEmail(email: string, password: string) {
+export async function signupWithEmail(email: string, password: string): Promise<{ success: boolean; message: string; data?: any }> {
   // Check for bot
   const verification = await checkBotId();
   if (verification.isBot) {
-    throw new Error("Access denied");
+    return { success: false, message: "Access denied" };
   }
 
   const supabaseServer = await createClient();
@@ -50,19 +50,19 @@ export async function signupWithEmail(email: string, password: string) {
 
   if (error) {
     if (error instanceof AuthError) {
-      throw new Error(error.message);
+      return { success: false, message: error.message };
     }
-    throw new Error("An error occurred during signup");
+    return { success: false, message: "An error occurred during signup" };
   }
 
-  return data;
+  return { success: true, message: "Account created successfully! Please check your email to verify your account.", data };
 }
 
-export async function updatePassword(newPassword: string) {
+export async function updatePassword(newPassword: string): Promise<{ success: boolean; message: string; data?: any }> {
   // Check for bot
   const verification = await checkBotId();
   if (verification.isBot) {
-    throw new Error("Access denied");
+    return { success: false, message: "Access denied" };
   }
 
   const supabaseServer = await createClient();
@@ -76,12 +76,12 @@ export async function updatePassword(newPassword: string) {
 
   if (error) {
     if (error instanceof AuthError) {
-      throw new Error(error.message);
+      return { success: false, message: error.message };
     }
-    throw new Error("An error occurred while updating password");
+    return { success: false, message: "An error occurred while updating password" };
   }
 
-  return data;
+  return { success: true, message: "Password updated successfully!", data };
 }
 
 export async function updatePasswordAction(
@@ -102,10 +102,9 @@ export async function updatePasswordAction(
   }
 
   try {
-    await updatePassword(newPassword);
-    return { message: "Password updated successfully!", success: true };
+    const result = await updatePassword(newPassword);
+    return { message: result.message, success: result.success };
   } catch (error) {
-    const errorMessage = error instanceof Error && error.message ? error.message : "Failed to update password";
-    return { message: errorMessage, success: false };
+    return { message: "An unexpected error occurred while updating password", success: false };
   }
 }

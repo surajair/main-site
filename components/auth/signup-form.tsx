@@ -1,13 +1,13 @@
 "use client";
 
-import {  Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Input  } from "@/components/ui/input";
-import { useState } from "react";
 import { signupWithEmail } from "@/actions/user-auth-action";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { EyeClosed, EyeIcon, Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
-import { EyeIcon, EyeClosed } from "lucide-react";
 
 export default function SignupForm() {
   const [email, setEmail] = useState("");
@@ -40,21 +40,22 @@ export default function SignupForm() {
     setIsLoading(true);
 
     try {
-      await signupWithEmail(email, password);
-      toast.success(
-        "Account created successfully! Please check your email to verify your account.",
-        {
+      const result = await signupWithEmail(email, password);
+
+      if (result.success) {
+        toast.success(result.message, {
           position: "top-right",
-        }
-      );
-      router.push("/login");
+        });
+        router.push("/login");
+      } else {
+        toast.error(result.message, {
+          position: "top-right",
+        });
+      }
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to create account",
-        {
-          position: "top-right",
-        }
-      );
+      toast.error("An unexpected error occurred. Please try again.", {
+        position: "top-right",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -95,14 +96,11 @@ export default function SignupForm() {
               onClick={(e) => {
                 e.preventDefault();
                 setShowPassword(!showPassword);
-              }}
-            >
+              }}>
               {!showPassword ? <EyeIcon /> : <EyeClosed />}
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Password must be at least 8 characters long
-          </p>
+          <p className="text-xs text-muted-foreground">Password must be at least 8 characters long</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="confirm-password">Confirm Password</Label>
@@ -124,18 +122,20 @@ export default function SignupForm() {
               onClick={(e) => {
                 e.preventDefault();
                 setShowConfirmPassword(!showConfirmPassword);
-              }}
-            >
+              }}>
               {!showConfirmPassword ? <EyeIcon /> : <EyeClosed />}
             </Button>
           </div>
         </div>
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isLoading}
-        >
-          {isLoading ? "Creating account..." : "Create account"}
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Loader className="h-4 w-4 animate-spin" />
+              Creating account
+            </>
+          ) : (
+            "Create account"
+          )}
         </Button>
       </form>
     </>

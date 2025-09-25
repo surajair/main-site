@@ -207,12 +207,12 @@ export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubm
               className="w-full">
               {isDownloading ? (
                 <>
-                  <Loader className="h-4 w-4 mr-2 animate-spin" />
-                  Downloading...
+                  <Loader className="h-4 w-4 animate-spin" />
+                  Downloading
                 </>
               ) : (
                 <>
-                  <Download className="h-4 w-4 mr-2" />
+                  <Download className="h-4 w-4" />
                   Download with Date Filter
                 </>
               )}
