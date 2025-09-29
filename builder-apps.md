@@ -13,3 +13,97 @@ Impact on site configs:
 Each app can add few things dynamically to builder. Eg, pageTypes, collections, custom blocks, data providers etc.
 
 eg: Blog app can add page types like 'Single blog', 'Blog Category', 'Blog Tag', 'Blog Author',
+
+## TBD:
+
+- Versioning of apps
+- Testing apps
+- hooks for apps
+  - To add data into global data provider
+- Custom blocks
+- Data providers
+- intall flow
+- uninstall flow
+
+### App config:
+
+```ts
+interface PageTypeConfig {
+  id: string;
+  name: string;
+  icon: string;
+  dynamicSegments: string;
+  dynamicSlugLabel: string;
+  seo?: Record<string, any>;
+  JSONLD?: Record<string, any>;
+}
+
+interface CollectionConfig {
+  id: string;
+  name: string;
+  filters: Record<string, any>;
+  sorts: Record<string, any>;
+}
+
+interface AppDataProvider {
+  id: string;
+  name: string;
+  request: {
+    url: string;
+    headers: Record<string, string>;
+    queryParams: Record<string, string>;
+  };
+  pageTypes?: string[];
+  collections?: string[];
+}
+
+interface AppConfig {
+  versoin: number;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  createdById: string;
+  createdBy: string;
+  description: string;
+  icon: string;
+  url: string;
+  pageTypes: PageTypeConfig[];
+  collections: CollectionConfig[];
+  dataProviders: AppDataProvider[];
+}
+```
+
+### Eg FAQ App
+
+```ts
+const FAQApp: AppConfig = {
+  name: "FAQ App",
+  createdAt: "2025-09-29T12:44:57+05:30",
+  updatedAt: "2025-09-29T12:44:57+05:30",
+  createdById: "",
+  createdBy: "ChaiBuilder",
+  description: "FAQ App",
+  icon: "",
+  url: "https://faq-app.chaibuilder.com",
+  pageTypes: [
+    {
+      id: "faq",
+      name: "FAQ",
+      icon: "",
+      dynamicSegments: "",
+      dynamicSlugLabel: "",
+      seo: {},
+      JSONLD: {},
+      dataProvider: "/api/data",
+    },
+  ],
+  collections: [
+    {
+      id: "faq",
+      name: "FAQ",
+      filters: [{ id: "BY_SLUG", name: "By Slug", type: "slug" }],
+      sorts: [{ id: "CREATED_AT", name: "Created At", type: "createdAt" }],
+    },
+  ],
+};
+```
