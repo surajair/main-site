@@ -10,13 +10,14 @@ export type ClientSettings = {
   feedbackSubmissions: string;
   loginProviders: string[];
   loginHtml: string;
+  features: Record<string, any>;
 } & Record<string, any>;
 
 export const getClientSettings = cache(async (): Promise<ClientSettings> => {
   const supabaseServer = await getSupabaseAdmin();
   const { data, error } = await supabaseServer
     .from("clients")
-    .select("settings, loginHtml")
+    .select("settings, loginHtml, features")
     .eq("id", process.env.CHAIBUILDER_CLIENT_ID)
     .single();
   if (error) throw error;
@@ -28,5 +29,6 @@ export const getClientSettings = cache(async (): Promise<ClientSettings> => {
     favicon: data?.settings?.favicon || "https://placehold.co/52x52",
     feedbackSubmissions: data?.settings?.feedbackSubmissions || "",
     loginProviders: data?.settings?.loginProviders || [],
+    features: data?.features || {},
   };
 });

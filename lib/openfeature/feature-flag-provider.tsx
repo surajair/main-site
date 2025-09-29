@@ -1,43 +1,40 @@
 "use client";
 
 import QueryClientProviderWrapper from "@/components/providers/query-client-provider";
-import { getClientSettings, getSites } from "@/lib/getter";
+import { useClientSettings } from "@/hooks/use-client-settings";
+import { useIsBuilderSettingUp } from "@/hooks/use-is-builder-setting-up";
+import { useWebsites } from "@/hooks/use-websites";
 import { InMemoryProvider, OpenFeature, OpenFeatureProvider } from "@openfeature/react-sdk";
-import { useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import { useEffect, useState } from "react";
+import { transformFeatureFlags } from "./helper";
 
-function FeatureFlagProviderComponent({ children, featureFlags }: { children: React.ReactNode; featureFlags?: any }) {
+function FeatureFlagProviderComponent({ children }: { children: React.ReactNode }) {
+  useWebsites();
   const [loading, setLoading] = useState(true);
-  const [providerReady, setProviderReady] = useState(false);
-  const queryClient = useQueryClient();
-
-  queryClient.prefetchQuery({
-    staleTime: Infinity,
-    gcTime: Infinity,
-    queryKey: ["client-settings"],
-    queryFn: getClientSettings,
-  });
-  queryClient.prefetchQuery({ staleTime: Infinity, gcTime: Infinity, queryKey: ["websites-list"], queryFn: getSites });
+  const { data: clientSettings } = useClientSettings();
+  const isBuilderSettingUp = useIsBuilderSettingUp(loading);
 
   useEffect(() => {
-    try {
+    if (clientSettings) {
+      const featureFlags = transformFeatureFlags(clientSettings?.features, "admin", "pro_01k50tmqqxvn40q4gc7bgrw8mk");
       const provider = new InMemoryProvider(featureFlags);
       OpenFeature.setProvider(provider);
-      setProviderReady(true);
       setTimeout(() => setLoading(false), 1000);
-    } catch {}
-  }, [featureFlags]);
+    }
+  }, [clientSettings]);
+
+  const isLoading = loading || isBuilderSettingUp;
 
   return (
     <>
-      {loading && (
-        <div className="w-screen h-screen flex items-center justify-center">
+      {isLoading && (
+        <div className="w-screen h-screen flex items-center justify-center transition-all">
           <Loader className="text-primary animate-spin w-6 h-6" />
         </div>
       )}
-      {providerReady && (
-        <div className={loading ? "sr-only" : ""}>
+      {clientSettings && (
+        <div className={`${isLoading ? "sr-only" : ""}`}>
           <OpenFeatureProvider>{children}</OpenFeatureProvider>
         </div>
       )}
@@ -45,10 +42,10 @@ function FeatureFlagProviderComponent({ children, featureFlags }: { children: Re
   );
 }
 
-export const FeatureFlagProvider = ({ children, featureFlags }: { children: React.ReactNode; featureFlags?: any }) => {
+export const FeatureFlagProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProviderWrapper>
-      <FeatureFlagProviderComponent featureFlags={featureFlags}>{children}</FeatureFlagProviderComponent>
+      <FeatureFlagProviderComponent>{children}</FeatureFlagProviderComponent>
     </QueryClientProviderWrapper>
   );
 };

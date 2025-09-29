@@ -13,12 +13,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import UpgradeModal from "../dashboard/upgrade-modal";
 
 const allLanguages = getLanguagesArray();
 
 interface CreateNewWebsiteProps {
   children: React.ReactNode;
-  totalSites?: number;
+  totalSites: number;
 }
 export function toKebabCase(str = "") {
   return String(str)
@@ -38,7 +39,7 @@ function subdomainFormat(str = "") {
     .replace(/-+/g, "-");
 }
 
-export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
+export default function CreateNewWebsite({ children, totalSites }: CreateNewWebsiteProps) {
   const [open, setOpen] = useState(false);
   const [websiteName, setWebsiteName] = useState("");
   const [subdomain, setSubdomain] = useState("");
@@ -46,6 +47,7 @@ export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
   const [defaultLanguage, setDefaultLanguage] = useState("en");
   const [isCreating, setIsCreating] = useState(false);
   const { value: canCreateSite } = useFlag("create_site", true);
+  const { value: noOfSites } = useFlag("no_of_sites", 1);
   const queryClient = useQueryClient();
 
   const handleWebsiteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,81 +123,88 @@ export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
         </DialogHeader>
 
         <Card className="border-0 p-0 shadow-none">
-          <CardContent className="space-y-4 p-0">
-            {/* Input Field */}
-            <div className="space-y-2">
-              <Label htmlFor="websiteName">Website Name</Label>
-              <div className="flex items-center gap-2 border border-border rounded">
-                <Input
-                  id="websiteName"
-                  value={websiteName}
-                  onChange={handleWebsiteNameChange}
-                  placeholder="My Awesome Website"
-                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                />
+          {totalSites < noOfSites ? (
+            <CardContent className="space-y-4 p-0">
+              {/* Input Field */}
+              <div className="space-y-2">
+                <Label htmlFor="websiteName">Website Name</Label>
+                <div className="flex items-center gap-2 border border-border rounded">
+                  <Input
+                    id="websiteName"
+                    value={websiteName}
+                    onChange={handleWebsiteNameChange}
+                    placeholder="My Awesome Website"
+                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Subdomain Input Field */}
-            <div className="space-y-2">
-              <Label htmlFor="subdomain">Subdomain</Label>
-              <div className="flex items-center gap-2 border border-border rounded pr-2">
-                <Input
-                  id="subdomain"
-                  value={subdomain}
-                  onChange={handleSubdomainChange}
-                  placeholder="my-awesome-website"
-                  className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                />
-                <span className="text-sm text-muted-foreground pr-3">
-                  .{process.env.NEXT_PUBLIC_SUBDOMAIN || "example.com"}
-                </span>
+              {/* Subdomain Input Field */}
+              <div className="space-y-2">
+                <Label htmlFor="subdomain">Subdomain</Label>
+                <div className="flex items-center gap-2 border border-border rounded pr-2">
+                  <Input
+                    id="subdomain"
+                    value={subdomain}
+                    onChange={handleSubdomainChange}
+                    placeholder="my-awesome-website"
+                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  />
+                  <span className="text-sm text-muted-foreground pr-3">
+                    .{process.env.NEXT_PUBLIC_SUBDOMAIN || "example.com"}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            {/* Default Language */}
-            <div className="space-y-1">
-              <Label className="text-xs">Default Language</Label>
-              {allLanguages.length > 1 ? (
-                <>
-                  <Select value={defaultLanguage} onValueChange={setDefaultLanguage}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {allLanguages.map((lang) => (
-                        <SelectItem key={lang.code} value={lang.code}>
-                          {lang.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <div className="text-xs text-muted-foreground">Cannot be changed after creating website</div>
-                </>
-              ) : (
-                <Input className="bg-gray-100" value={allLanguages[0]?.name} readOnly />
-              )}
-            </div>
-
-            {/* Create Button */}
-            <div className="flex gap-3 pt-4">
-              <Button
-                className="w-full"
-                onClick={handleCreateWebsite}
-                disabled={!websiteName.trim() || !subdomain.trim() || isCreating}>
-                {isCreating ? (
+              {/* Default Language */}
+              <div className="space-y-1">
+                <Label className="text-xs">Default Language</Label>
+                {allLanguages.length > 1 ? (
                   <>
-                    <Loader className="h-3 w-3 animate-spin" />
-                    Creating Website
+                    <Select value={defaultLanguage} onValueChange={setDefaultLanguage}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {allLanguages.map((lang) => (
+                          <SelectItem key={lang.code} value={lang.code}>
+                            {lang.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <div className="text-xs text-muted-foreground">Cannot be changed after creating website</div>
                   </>
                 ) : (
-                  <>
-                    <span className="leading-tight">Create Website</span>
-                  </>
+                  <Input className="bg-gray-100" value={allLanguages[0]?.name} readOnly />
                 )}
-              </Button>
-            </div>
-          </CardContent>
+              </div>
+
+              {/* Create Button */}
+              <div className="flex gap-3 pt-4">
+                <Button
+                  className="w-full"
+                  onClick={handleCreateWebsite}
+                  disabled={!websiteName.trim() || !subdomain.trim() || isCreating}>
+                  {isCreating ? (
+                    <>
+                      <Loader className="h-3 w-3 animate-spin" />
+                      Creating Website
+                    </>
+                  ) : (
+                    <>
+                      <span className="leading-tight">Create Website</span>
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          ) : (
+            <CardContent className="px-0 py-2 flex flex-col items-center justify-center gap-4">
+              <div>You have reached the limit of websites you can create.</div>
+              <UpgradeModal withTrigger />
+            </CardContent>
+          )}
         </Card>
       </DialogContent>
     </Dialog>

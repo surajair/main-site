@@ -30,7 +30,7 @@ export default function Editor({ domain, websiteId }: { domain?: string; website
       autoSave
       autoSaveInterval={20}
       getAccessToken={async () => {
-        const { data, error } = await supabase.auth.getSession();
+        const { data } = await supabase.auth.getSession();
         return data?.session?.access_token ?? "";
       }}
       hasReactQueryProvider

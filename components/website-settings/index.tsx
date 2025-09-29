@@ -3,7 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { getClientSettings, getSite, getSites } from "@/lib/getter";
+import { useClientSettings } from "@/hooks/use-client-settings";
+import { useWebsites } from "@/hooks/use-websites";
+import { getSite } from "@/lib/getter";
 import { SiteData } from "@/utils/types";
 import { useFlag } from "@openfeature/react-sdk";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -328,7 +330,6 @@ const WebsitesPopoverContent = ({
   websites: any;
   isLoading: boolean;
 }) => {
-  const router = useRouter();
   const { value: canCreateSite } = useFlag("create_site", false);
 
   if (isLoading) {
@@ -451,28 +452,28 @@ const WebsitesListPopover = ({
  * @param params websiteId, websites, isLoading
  */
 function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
-  const { data: clientSettings, isFetching } = useQuery({ queryKey: ["client-settings"], queryFn: getClientSettings });
-  const { data: websites, isLoading } = useQuery({ queryKey: ["websites-list"], queryFn: getSites });
+  const { data: clientSettings, isFetching: isFetchingClientSettings } = useClientSettings();
+  const { data: websites, isFetching: isFetchingWebsites } = useWebsites();
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isFetchingClientSettings || isFetchingWebsites) return;
     const isActiveWebsite = websites?.find((site) => site?.id === websiteId);
     if (!isActiveWebsite) router.push(`/`);
-  }, [websiteId, websites, isLoading, router]);
+  }, [websiteId, websites, isFetchingClientSettings, isFetchingWebsites, router]);
 
   return (
     <div className="flex items-center gap-x-2">
-      {!isFetching && clientSettings?.logo ? (
+      {!isFetchingClientSettings && clientSettings?.logo ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={clientSettings?.logo} width={32} height={32} alt="brand-logo" className="rounded-md" />
       ) : (
         <div className="w-8 h-8 rounded-md" />
       )}
-      {!isLoading && (
+      {!isFetchingWebsites && (
         <div className="flex items-center border rounded-md p-0 h-9 px-px">
-          <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
-          <WebsiteSettingsModal websiteId={websiteId} isLoading={isLoading} />
+          <WebsitesListPopover websiteId={websiteId} isLoading={isFetchingWebsites} websites={websites} />
+          <WebsiteSettingsModal websiteId={websiteId} isLoading={isFetchingWebsites} />
         </div>
       )}
     </div>

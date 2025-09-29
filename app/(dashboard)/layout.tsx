@@ -1,10 +1,8 @@
 import "@/app/app.css";
 import { Toaster } from "@/components/ui/sonner";
-import TopNavigation from "@/components/websites-dashboard/top-navigation";
 import { getClientSettings } from "@/lib/getter";
 import { getSession } from "@/lib/getter/users";
 import { FeatureFlagProvider } from "@/lib/openfeature/feature-flag-provider";
-import { fetchFeatureFlags } from "@/lib/openfeature/server";
 import { Geist } from "next/font/google";
 import { redirect } from "next/navigation";
 import type React from "react";
@@ -25,7 +23,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const featureFlags = await fetchFeatureFlags("admin", "free");
   const session = await getSession();
   if (!session) redirect("/login");
   return (
@@ -34,9 +31,8 @@ export default async function RootLayout({
         <link rel="stylesheet" href={`/${process.env.APP_DOMAIN?.replace(":", ".")}.css`} />
       </head>
       <body className={`${geist.className} flex h-screen flex-col`}>
-        <FeatureFlagProvider featureFlags={featureFlags}>
+        <FeatureFlagProvider>
           <Toaster richColors theme="light" />
-          <TopNavigation />
           <main className="flex-1 bg-primary container h-[calc(100vh-4rem)] pb-2 overflow-hidden">{children}</main>
         </FeatureFlagProvider>
       </body>
