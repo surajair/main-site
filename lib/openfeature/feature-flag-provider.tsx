@@ -17,7 +17,7 @@ function FeatureFlagProviderComponent({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     if (clientSettings) {
-      const featureFlags = transformFeatureFlags(clientSettings?.features, "admin", "pro_01k50tmqqxvn40q4gc7bgrw8mk");
+      const featureFlags = transformFeatureFlags(clientSettings?.features, "admin", "");
       const provider = new InMemoryProvider(featureFlags);
       OpenFeature.setProvider(provider);
       setTimeout(() => setLoading(false), 1000);
