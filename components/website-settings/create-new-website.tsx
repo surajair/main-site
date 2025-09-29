@@ -31,6 +31,12 @@ export function toKebabCase(str = "") {
     .replace(/-+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
+function subdomainFormat(str = "") {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-");
+}
 
 export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
   const [open, setOpen] = useState(false);
@@ -51,7 +57,7 @@ export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
   };
 
   const handleSubdomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = toKebabCase(e.target.value);
+    const value = subdomainFormat(e.target.value);
     setSubdomain(value);
     setIsSubdomainModified(value?.length > 0);
   };
@@ -62,7 +68,7 @@ export default function CreateNewWebsite({ children }: CreateNewWebsiteProps) {
     setIsCreating(true);
 
     try {
-      const finalSubdomain = subdomain.trim() || toKebabCase(websiteName.trim());
+      const finalSubdomain = subdomain.trim().replace(/-+$/g, "") || toKebabCase(websiteName.trim());
 
       const formData = {
         name: websiteName.trim(),
