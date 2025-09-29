@@ -29,7 +29,14 @@ export const generateMetadata = async (props: { params: Promise<{ hostname: stri
   const data = await ChaiBuilder.getSiteSettings();
   const clientSettings = await getClientSettings();
   const favicon = data?.settings?.faviconURL || clientSettings.favicon;
-  return { ...((await ChaiBuilder.getPageSeoData(slug)) as any), icons: { icon: favicon } };
+  return {
+    ...((await ChaiBuilder.getPageSeoData(slug)) as any),
+    icons: { icon: favicon },
+    metadataBase: new URL(`https://${hostname}`),
+    alternates: {
+      canonical: slug,
+    },
+  };
 };
 
 export default async function Page({ params }: { params: Promise<{ hostname: string; slug: string[] }> }) {
