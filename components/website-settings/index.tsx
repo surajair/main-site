@@ -461,22 +461,20 @@ function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
     if (!isActiveWebsite) router.push(`/`);
   }, [websiteId, websites, isLoading, router]);
 
-  if (isFetching) {
-    return (
-      <div className="flex items-center justify-center w-fit">
-        <Loader className="h-4 w-4 animate-spin" />
-      </div>
-    );
-  }
-
   return (
     <div className="flex items-center gap-x-2">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={clientSettings?.logo} width={32} height={32} alt="brand-logo" className="rounded-md" />
-      <div className="flex items-center border rounded-md p-0 h-9 px-px">
-        <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
-        <WebsiteSettingsModal websiteId={websiteId} isLoading={isLoading} />
-      </div>
+      {!isFetching && clientSettings?.logo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={clientSettings?.logo} width={32} height={32} alt="brand-logo" className="rounded-md" />
+      ) : (
+        <div className="w-8 h-8 rounded-md" />
+      )}
+      {!isLoading && (
+        <div className="flex items-center border rounded-md p-0 h-9 px-px">
+          <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
+          <WebsiteSettingsModal websiteId={websiteId} isLoading={isLoading} />
+        </div>
+      )}
     </div>
   );
 }
