@@ -47,17 +47,8 @@ import { useCallback } from "react";
 export interface PlanLimits {
   id: string;
   name: string;
-  limits: {
-    no_of_sites: number;
-    no_of_pages: number;
-    no_of_page_views: number;
-    no_of_custom_domains: number;
-    no_of_additional_languages: number;
-    no_of_form_sudmissions: number;
-    no_of_ai_edits: number;
-    assets: string;
-    no_of_revisions: number;
-  };
+  isFree?: boolean;
+  limits: Record<string, any>;
 }
 
 export interface UserPermissions {
@@ -73,11 +64,14 @@ export const useFeatureFlag = (flagKey: string, defaultValue = false) => {
 
 // Hook for user plan with typed limits
 export const useUserPlan = () => {
-  return useFlag("user_plan", {
+  const { value } = useFlag("user_plan", {
     id: "",
-    name: "",
     limits: {},
+    name: "FREE",
+    isFree: true,
   });
+
+  return value;
 };
 
 // Hook for user role and permissions
@@ -97,7 +91,7 @@ export const useUserRole = () => {
 
 // Convenience hook for checking plan limits
 export const usePlanLimits = () => {
-  const { value } = useUserPlan();
+  const value = useUserPlan();
   const limits = get(value, "limits", {}) || {};
 
   return {

@@ -4,7 +4,6 @@ import { registerBlocks } from "@/blocks";
 import { supabase } from "@/chai/supabase";
 import WebsiteSettings from "@/components/website-settings";
 import { registerFonts } from "@/fonts";
-import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { registerPanels } from "@/utils/register-panels";
 import ChaiBuilder from "chai-next";
 import { startsWith } from "lodash";
@@ -23,9 +22,8 @@ registerBlocks();
 registerFonts();
 
 export default function Editor({ domain, websiteId }: { domain?: string; websiteId?: string }) {
-  const { ready } = useSupabaseUser();
   const websiteSettings = useMemo(() => <WebsiteSettings websiteId={websiteId} />, [websiteId]);
-  return ready ? (
+  return (
     <ChaiBuilder
       autoSave
       autoSaveInterval={20}
@@ -40,5 +38,5 @@ export default function Editor({ domain, websiteId }: { domain?: string; website
       getPreviewUrl={(slug: string) => getPreviewUrl(slug, domain)}
       getLiveUrl={(slug: string) => getLiveUrl(slug, domain)}
     />
-  ) : null;
+  );
 }

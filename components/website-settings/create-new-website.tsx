@@ -13,7 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import UpgradeModalButton from "../dashboard/updgrade-modal-button";
+import UpgradeModalButton from "../upgrade/upgrade-modal-button";
 
 const allLanguages = getLanguagesArray();
 

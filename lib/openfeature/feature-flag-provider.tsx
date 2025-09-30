@@ -3,6 +3,7 @@
 import QueryClientProviderWrapper from "@/components/providers/query-client-provider";
 import { useClientSettings } from "@/hooks/use-client-settings";
 import { useIsBuilderSettingUp } from "@/hooks/use-is-builder-setting-up";
+import { useUser } from "@/hooks/use-user";
 import { useWebsites } from "@/hooks/use-websites";
 import { InMemoryProvider, OpenFeature, OpenFeatureProvider } from "@openfeature/react-sdk";
 import { Loader } from "lucide-react";
@@ -11,7 +12,7 @@ import { useEffect, useState } from "react";
 import { convertToOpenFeatureDevFormat } from "./helper";
 
 // Lazy load the UpgradeDialog component
-const UpgradeDialog = dynamic(() => import("@/components/dashboard/upgrade-modal"), {
+const UpgradeDialog = dynamic(() => import("@/components/upgrade/upgrade-modal"), {
   ssr: false,
 });
 
@@ -21,11 +22,13 @@ function FeatureFlagProviderComponent({ children }: { children: React.ReactNode 
   const { data: clientSettings } = useClientSettings();
   const isBuilderSettingUp = useIsBuilderSettingUp(loading);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const { data } = useUser();
+
+  const role = data?.role;
+  const plan = data?.plan?.planId;
 
   useEffect(() => {
-    if (clientSettings) {
-      const plan = "pro_01k5drbfma56k4w3rgfsx7dhyd"; //
-      const role = "admin";
+    if (clientSettings && plan && role) {
       const flags = convertToOpenFeatureDevFormat(clientSettings?.features, role, plan);
       const provider = new InMemoryProvider(flags);
       OpenFeature.setProvider(provider);
@@ -36,18 +39,19 @@ function FeatureFlagProviderComponent({ children }: { children: React.ReactNode 
       });
       setTimeout(() => setLoading(false), 1000);
     }
-  }, [clientSettings]);
+  }, [clientSettings, plan, role]);
 
-  const isLoading = loading || isBuilderSettingUp;
+  const showEditor = clientSettings && data?.isLoggedIn;
+  const isLoading = loading || isBuilderSettingUp || !showEditor;
 
   return (
     <>
       {isLoading && (
         <div className="w-screen h-screen flex items-center justify-center transition-all">
-          <Loader className="text-primary animate-spin w-6 h-6" />
+          <Loader className="text-green-600 animate-spin w-6 h-6" />
         </div>
       )}
-      {clientSettings && (
+      {showEditor && (
         <div className={`${isLoading ? "sr-only" : ""}`}>
           <OpenFeatureProvider>{children}</OpenFeatureProvider>
         </div>

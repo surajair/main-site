@@ -7,13 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Site } from "@/lib/getter/sites";
+import { useUserPlan } from "@/lib/openfeature/helper";
 import { useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, Check, CheckCircle, Copy, ExternalLink, Loader, Pencil, RefreshCw } from "lucide-react";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import UpgradeModalButton from "../dashboard/updgrade-modal-button";
+import UpgradeModalButton from "../upgrade/upgrade-modal-button";
 import DeleteDomainModal from "./delete-domain-modal";
-import { useUser } from "./profile-panel";
 
 interface DomainConfigurationProps {
   websiteId: string;
@@ -21,8 +21,7 @@ interface DomainConfigurationProps {
 }
 
 function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
-  const { data: user } = useUser();
-  const isPaidPlan = user?.isPaidPlan;
+  const plan = useUserPlan();
   const queryClient = useQueryClient();
   const [customDomain, setCustomDomain] = useState("");
   const [isDomainVerified, setIsDomainVerified] = useState(false);
@@ -85,7 +84,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
 
   const [, addDomainAction, addDomainPending] = useActionState(
     async (prevState: any, formData: FormData) => {
-      if (!isPaidPlan) {
+      if (plan?.isFree) {
         toast.error("Please upgrade to add custom domains", { position: "top-center" });
         return { success: false, error: "Please upgrade to add custom domains" };
       }
@@ -379,13 +378,13 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                 }
                 placeholder="example.com"
                 className=" "
-                disabled={addDomainPending || !isPaidPlan}
+                disabled={addDomainPending || plan?.isFree}
               />
               <Button
                 variant={addDomainPending ? "ghost" : "default"}
                 type="submit"
                 className={addDomainPending ? "text-primary pointer-events-none" : ""}
-                disabled={addDomainPending || customDomain.length < 3 || !isPaidPlan}>
+                disabled={addDomainPending || customDomain.length < 3 || plan?.isFree}>
                 {addDomainPending ? (
                   <>
                     <Loader className="h-3 w-3 animate-spin" />
@@ -396,7 +395,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                 )}
               </Button>
             </div>
-            {!isPaidPlan && (
+            {plan?.isFree && (
               <div className="space-y-2 mt-4 text-sm text-muted-foreground border bg-muted p-4 rounded-md">
                 <div>Please upgrade to add custom domains</div>
                 <UpgradeModalButton />

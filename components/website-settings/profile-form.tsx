@@ -14,13 +14,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useUserPlan } from "@/lib/openfeature/helper";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSavePage } from "chai-next";
 import { get } from "lodash";
 import { Crown, Loader, User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import UpgradeModalButton from "../dashboard/updgrade-modal-button";
+import UpgradeModalButton from "../upgrade/upgrade-modal-button";
 
 function ProfileName({ initialName }: { initialName: string }) {
   const [fullName, setFullName] = useState(initialName || "");
@@ -117,11 +118,11 @@ const ChangePasswordModal = () => {
 const ProfileAvatarTrigger = ({ data }: { data: any }) => {
   const user = get(data, "user");
   const displayName = user.user_metadata?.full_name || "";
-  const isPaidPlan = data?.isPaidPlan;
+  const plan = useUserPlan();
   return (
     <div className="flex flex-col items-center justify-center relative">
       <div className="flex items-center justify-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
-        <Avatar className={`mb-1.5 h-9 w-9 border-2 ${!isPaidPlan ? "border-border" : "border-amber-600"}`}>
+        <Avatar className={`mb-1.5 h-9 w-9 border-2 ${plan?.isFree ? "border-border" : "border-amber-600"}`}>
           <AvatarImage
             src={user.user_metadata?.avatar_url || "https://avatar.iran.liara.run/public/boy"}
             alt={displayName || ""}
@@ -130,7 +131,7 @@ const ProfileAvatarTrigger = ({ data }: { data: any }) => {
             <User className="h-4 w-4" />
           </AvatarFallback>
         </Avatar>
-        {isPaidPlan && (
+        {!plan?.isFree && (
           <span className="absolute w-9 bottom-px text-center right-0 z-50 text-[10px] bg-amber-100 font-bold text-amber-600 border border-amber-600 rounded-full px-1 py-px leading-none">
             PRO
           </span>
@@ -143,8 +144,8 @@ const ProfileAvatarTrigger = ({ data }: { data: any }) => {
 // Main profile dialog component
 const ProfileForm = ({ data }: { data: any }) => {
   const user = get(data, "user");
-  const isPaidPlan = get(data, "isPaidPlan");
-  const planName = get(data, "plan.data.product.name");
+  const plan = useUserPlan();
+  const planName = plan?.name;
   const [open, setOpen] = useState(false);
   const displayName = user.user_metadata?.full_name;
   const email = user.email;
@@ -176,7 +177,7 @@ const ProfileForm = ({ data }: { data: any }) => {
           </DialogTitle>
         </DialogHeader>
 
-        {!isPaidPlan ? (
+        {plan?.isFree ? (
           <div className="border rounded-md p-3 bg-muted">
             <p className="text-sm text-gray-600 pb-2">You are currently on Free plan</p>
             <UpgradeModalButton />

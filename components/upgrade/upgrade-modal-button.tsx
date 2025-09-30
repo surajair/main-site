@@ -1,9 +1,12 @@
-import { useShowUpgradeDialog } from "@/lib/openfeature/helper";
+import { useShowUpgradeDialog, useUserPlan } from "@/lib/openfeature/helper";
 import { Button } from "chai-next";
 import { Crown } from "lucide-react";
 
 export default function UpgradeModalButton({ children }: { children?: React.ReactNode }) {
+  const plan = useUserPlan();
   const showUpgradeDialog = useShowUpgradeDialog();
+
+  if (!plan?.isFree) return null;
 
   if (children) return <div onClick={() => showUpgradeDialog()}>{children}</div>;
 

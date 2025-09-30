@@ -1,12 +1,10 @@
-import { get } from "lodash";
+import { useUserPlan } from "@/lib/openfeature/helper";
 import { Crown } from "lucide-react";
-import UpgradeModalButton from "../dashboard/updgrade-modal-button";
-import { useUser } from "./profile-panel";
+import UpgradeModalButton from "../upgrade/upgrade-modal-button";
 
 const UpgradeButton = () => {
-  const { data } = useUser();
-  const isPaidPlan = get(data, "isPaidPlan");
-  if (isPaidPlan) return null;
+  const plan = useUserPlan();
+  if (!plan?.isFree) return null;
   return (
     <UpgradeModalButton>
       <div className="w-11 -mx-1 h-9 mb-2 flex flex-col items-center bg-amber-100 justify-center text-amber-600 hover:text-primary hover:bg-primary/10 rounded cursor-pointer duration-200">
