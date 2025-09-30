@@ -133,7 +133,7 @@ function getPriorityReason(priority: number): string {
 
 /**
  * Detects which fonts to preload based on efficiency (priority/size ratio)
- * Preloads 1 font per family - prioritizes smaller fonts that cover essential unicode ranges
+ * Prioritizes smaller fonts that cover essential unicode ranges
  */
 function detectFontsToPreload(cssText: string): string[] {
   const fontFaces: FontInfo[] = [];
@@ -167,33 +167,18 @@ function detectFontsToPreload(cssText: string): string[] {
     }
   }
 
-  // Group fonts by family
-  const fontsByFamily = new Map<string, FontInfo[]>();
-  for (const font of fontFaces) {
-    const family = font.fontFamily;
-    if (!fontsByFamily.has(family)) {
-      fontsByFamily.set(family, []);
-    }
-    fontsByFamily.get(family)!.push(font);
+  // Strategy: Pick the single most efficient font with best priority/size ratio
+  // This ensures we get the most essential characters with minimal file size
+  const sortedByEfficiency = fontFaces.sort((a, b) => b.efficiency - a.efficiency);
+
+  // Select only the most efficient Basic Latin font (priority >= 1000)
+  const basicLatinFonts = sortedByEfficiency.filter((f) => f.priority >= 1000);
+  if (basicLatinFonts.length > 0) {
+    return [basicLatinFonts[0].src];
   }
 
-  // Select the most efficient Basic Latin font (priority >= 1000) for each family
-  const selected: string[] = [];
-  for (const [family, fonts] of fontsByFamily) {
-    // Sort by efficiency within this family
-    const sortedByEfficiency = fonts.sort((a, b) => b.efficiency - a.efficiency);
-
-    // Prefer Basic Latin fonts (priority >= 1000) for maximum coverage
-    const basicLatinFonts = sortedByEfficiency.filter((f) => f.priority >= 1000);
-    if (basicLatinFonts.length > 0) {
-      selected.push(basicLatinFonts[0].src);
-    } else if (sortedByEfficiency.length > 0) {
-      // Fallback to most efficient font in this family
-      selected.push(sortedByEfficiency[0].src);
-    }
-  }
-
-  return selected;
+  // Fallback: if no Basic Latin font found, return the most efficient font
+  return sortedByEfficiency.length > 0 ? [sortedByEfficiency[0].src] : [];
 }
 
 export const getFontStyles = async (
