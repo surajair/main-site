@@ -9,6 +9,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { ChaiPageStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
 import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
+import { isEmpty } from "lodash";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
@@ -61,7 +62,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   const { body, heading } = data.theme.fontFamily;
   const formattedBody = body.split(" ").join("_");
   const formattedHeading = heading.split(" ").join("_");
-  const fontStyles = await getFontStyles(formattedHeading, formattedBody);
+  const { fontStyles, preloads } = await getFontStyles(formattedHeading, formattedBody);
 
   //NOTE: pageProps are received in your dataProvider functions for block and page
   const pageProps: ChaiPageProps = {
@@ -73,9 +74,12 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   return (
     <html lang={page.lang} className={`smooth-scroll`}>
       <head>
+        {preloads.map((preload: string) => (
+          <link rel="preload" href={preload} as="font" type="font/woff2" crossOrigin="anonymous" />
+        ))}
         <ChaiPageStyles page={page} />
         <style>{fontStyles}</style>
-        {settings?.headHTML && (
+        {!isEmpty(settings?.headHTML) && (
           <div dangerouslySetInnerHTML={{ __html: settings.headHTML }} style={{ display: "contents" }} />
         )}
       </head>
