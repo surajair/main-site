@@ -13,7 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import UpgradeModal from "../dashboard/upgrade-modal";
+import UpgradeModalButton from "../dashboard/updgrade-modal-button";
 
 const allLanguages = getLanguagesArray();
 
@@ -200,7 +200,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
           ) : (
             <CardContent className="px-0 py-2 flex flex-col items-center justify-center gap-4">
               <div>You have reached the limit of websites you can create.</div>
-              <UpgradeModal withTrigger />
+              <UpgradeModalButton />
             </CardContent>
           )}
         </Card>

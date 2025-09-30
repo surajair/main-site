@@ -11,7 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, Check, CheckCircle, Copy, ExternalLink, Loader, Pencil, RefreshCw } from "lucide-react";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import UpgradeModal from "../dashboard/upgrade-modal";
+import UpgradeModalButton from "../dashboard/updgrade-modal-button";
 import DeleteDomainModal from "./delete-domain-modal";
 import { useUser } from "./profile-panel";
 
@@ -399,7 +399,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
             {!isPaidPlan && (
               <div className="space-y-2 mt-4 text-sm text-muted-foreground border bg-muted p-4 rounded-md">
                 <div>Please upgrade to add custom domains</div>
-                <UpgradeModal withTrigger />
+                <UpgradeModalButton />
               </div>
             )}
           </form>

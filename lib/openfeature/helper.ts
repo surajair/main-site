@@ -41,7 +41,8 @@ export function convertToOpenFeatureDevFormat(input: Record<string, any>, role: 
 }
 
 // hooks/useFeatureFlags.ts
-import { useFlag } from "@openfeature/react-sdk";
+import { OpenFeature, useFlag } from "@openfeature/react-sdk";
+import { useCallback } from "react";
 
 export interface PlanLimits {
   id: string;
@@ -106,4 +107,12 @@ export const usePlanLimits = () => {
       return typeof limit === "number" ? current >= limit : false;
     },
   };
+};
+
+export const useShowUpgradeDialog = () => {
+  return useCallback(() => {
+    const openfeatureContext = OpenFeature.getContext();
+    const showUpgrade = openfeatureContext?.showUpgrade as any;
+    if (typeof showUpgrade === "function") showUpgrade();
+  }, []);
 };

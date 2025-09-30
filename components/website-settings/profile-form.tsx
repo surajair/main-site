@@ -20,7 +20,7 @@ import { get } from "lodash";
 import { Crown, Loader, User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import UpgradeModal from "../dashboard/upgrade-modal";
+import UpgradeModalButton from "../dashboard/updgrade-modal-button";
 
 function ProfileName({ initialName }: { initialName: string }) {
   const [fullName, setFullName] = useState(initialName || "");
@@ -179,7 +179,7 @@ const ProfileForm = ({ data }: { data: any }) => {
         {!isPaidPlan ? (
           <div className="border rounded-md p-3 bg-muted">
             <p className="text-sm text-gray-600 pb-2">You are currently on Free plan</p>
-            <UpgradeModal withTrigger={true} />
+            <UpgradeModalButton />
           </div>
         ) : (
           <div className="border rounded-md p-3 bg-muted">
