@@ -1,3 +1,4 @@
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import ChaiBuilder from "chai-next/server";
 import Script from "next/script";
 
@@ -30,52 +31,8 @@ export const PageScripts = async () => {
           }}
         />
       )}
-      {settings.googleTagManagerId && (
-        <>
-          <Script
-            id="gtm-script"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-              })(window,document,'script','dataLayer','${settings.googleTagManagerId}');
-            `,
-            }}
-          />
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${settings.googleTagManagerId}`}
-              height="0"
-              width="0"
-              style={{ display: "none", visibility: "hidden" }}
-            />
-          </noscript>
-        </>
-      )}
-      {settings.googleAnalyticsId && (
-        <>
-          <Script
-            id="ga-script"
-            strategy="afterInteractive"
-            src={`https://www.googletagmanager.com/gtag/js?id=${settings.googleAnalyticsId}`}
-          />
-          <Script
-            id="ga-init"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${settings.googleAnalyticsId}');
-            `,
-            }}
-          />
-        </>
-      )}
+      {settings.googleTagManagerId && <GoogleTagManager gtmId={settings.googleTagManagerId} />}
+      {settings.googleAnalyticsId && <GoogleAnalytics gaId={settings.googleAnalyticsId} />}
       {settings.footerHTML && <div dangerouslySetInnerHTML={{ __html: settings.footerHTML }} />}
     </>
   );

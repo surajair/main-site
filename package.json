@@ -1,6 +1,6 @@
 {
   "name": "chaibuilder-multi-tenant",
-  "version": "0.1.21",
+  "version": "0.1.20",
   "private": true,
   "scripts": {
     "dev": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css --watch\" \"next dev --port 3000 --turbopack\"",
@@ -11,6 +11,7 @@
     "check-env": "node scripts/check-env.cjs"
   },
   "dependencies": {
+    "@next/third-parties": "^15.5.0",
     "@openfeature/react-sdk": "^1.0.1",
     "@openfeature/server-sdk": "^1.19.0",
     "@paddle/paddle-js": "^1.4.2",
