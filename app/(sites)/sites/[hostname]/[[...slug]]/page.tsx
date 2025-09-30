@@ -74,8 +74,15 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   return (
     <html lang={page.lang} className={`smooth-scroll`}>
       <head>
-        {preloads.map((preload: string) => (
-          <link rel="preload" href={preload} as="font" type="font/woff2" crossOrigin="anonymous" />
+        {preloads.map((preload: string, index: number) => (
+          <link
+            key={`preload-font-${index}`}
+            rel="preload"
+            href={preload}
+            as="font"
+            type="font/woff2"
+            crossOrigin="anonymous"
+          />
         ))}
         <ChaiPageStyles page={page} />
         <style>{fontStyles}</style>
