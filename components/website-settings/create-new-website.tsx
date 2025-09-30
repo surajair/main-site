@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getLanguagesArray } from "@/lib/language-config";
-import { useFlag } from "@openfeature/react-sdk";
+import { usePlanLimits } from "@/lib/openfeature/helper";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import { useState } from "react";
@@ -46,9 +46,9 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
   const [isSubdomainModified, setIsSubdomainModified] = useState(false);
   const [defaultLanguage, setDefaultLanguage] = useState("en");
   const [isCreating, setIsCreating] = useState(false);
-  const { value: canCreateSite } = useFlag("create_site", true);
-  const { value: noOfSites } = useFlag("no_of_sites", 1);
+  const planLimits = usePlanLimits();
   const queryClient = useQueryClient();
+  const isSiteLimitReached = planLimits?.hasReached("no_of_sites", totalSites);
 
   const handleWebsiteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -112,8 +112,6 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
     }
   };
 
-  if (!canCreateSite) return null;
-
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -123,7 +121,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
         </DialogHeader>
 
         <Card className="border-0 p-0 shadow-none">
-          {totalSites < noOfSites ? (
+          {!isSiteLimitReached ? (
             <CardContent className="space-y-4 p-0">
               {/* Input Field */}
               <div className="space-y-2">

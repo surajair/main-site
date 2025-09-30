@@ -7,7 +7,7 @@ import { useWebsites } from "@/hooks/use-websites";
 import { InMemoryProvider, OpenFeature, OpenFeatureProvider } from "@openfeature/react-sdk";
 import { Loader } from "lucide-react";
 import { useEffect, useState } from "react";
-import { transformFeatureFlags } from "./helper";
+import { convertToOpenFeatureDevFormat } from "./helper";
 
 function FeatureFlagProviderComponent({ children }: { children: React.ReactNode }) {
   useWebsites();
@@ -17,9 +17,12 @@ function FeatureFlagProviderComponent({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     if (clientSettings) {
-      const featureFlags = transformFeatureFlags(clientSettings?.features, "admin", "");
-      const provider = new InMemoryProvider(featureFlags);
+      const plan = "pro_01k5drbfma56k4w3rgfsx7dhyd"; // pro_01k50tmqqxvn40q4gc7bgrw8mk
+      const role = "admin";
+      const flags = convertToOpenFeatureDevFormat(clientSettings?.features, role, plan);
+      const provider = new InMemoryProvider(flags);
       OpenFeature.setProvider(provider);
+      OpenFeature.setContext({ plan, role });
       setTimeout(() => setLoading(false), 1000);
     }
   }, [clientSettings]);
