@@ -85,6 +85,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
           />
         ))}
         <ChaiPageStyles page={page} />
+        <style>{`:root {--font-body: ${body}, ${body} Fallback; --font-heading: ${heading}, ${heading} Fallback;}`}</style>
         <style>{fontStyles}</style>
         {!isEmpty(settings?.headHTML) && (
           <div dangerouslySetInnerHTML={{ __html: settings.headHTML }} style={{ display: "contents" }} />
