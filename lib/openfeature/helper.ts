@@ -2,13 +2,6 @@ import { OpenFeature, useFlag } from "@openfeature/react-sdk";
 import { find, get } from "lodash";
 import { useCallback } from "react";
 
-interface PlanLimits {
-  id: string;
-  name: string;
-  isFree?: boolean;
-  limits: Record<string, any>;
-}
-
 interface UserPermissions {
   permissions: {
     [key: string]: boolean;
@@ -96,6 +89,7 @@ export const usePlanLimits = () => {
   };
 };
 
+// Open Upgrade modal
 export const useShowUpgradeDialog = () => {
   return useCallback(() => {
     const openfeatureContext = OpenFeature.getContext();
