@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 export const useIsBuilderSettingUp = (checkNow: boolean) => {
   const queryClient = useQueryClient();
+  const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,6 +16,14 @@ export const useIsBuilderSettingUp = (checkNow: boolean) => {
       const isLoading = isFetchingPermission || isFetchingPageTypes || isFetchingCollections || isFetchingDraftSetting;
       if (!isLoading) clearInterval(interval);
       setLoading(Boolean(isLoading));
+      setProgress(
+        [
+          isFetchingCollections ? 10 : 0,
+          isFetchingPageTypes ? 10 : 0,
+          isFetchingCollections ? 10 : 0,
+          isFetchingDraftSetting ? 10 : 0,
+        ].reduce((a, b) => a + b, 0),
+      );
     }, 500);
     return () => {
       clearInterval(interval);
@@ -22,5 +31,5 @@ export const useIsBuilderSettingUp = (checkNow: boolean) => {
     };
   }, [checkNow, queryClient]);
 
-  return loading;
+  return { setupProgress: progress, isBuilderReady: !loading };
 };
