@@ -33,7 +33,8 @@ const StartingLoader = ({ logo, progress }: { logo: any; progress: number }) => 
       <div className="w-screen h-screen flex flex-col gap-4 items-center justify-center transition-all">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {logo ? <img src={logo} className="w-8 h-8 rounded" alt="" /> : <div className="w-8 h-8" />}
-        <div className={`w-[200px] bg-muted rounded-full h-3 border border-border overflow-hidden`}>
+        <div
+          className={`w-[200px] rounded-full h-3 border border-border overflow-hidden ${localProgress === 100 ? "hidden" : ""}`}>
           <div
             className={`h-full rounded-full bg-primary transition-all duration-300`}
             style={{
