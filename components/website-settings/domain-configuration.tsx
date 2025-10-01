@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useCanAddDomain } from "@/hooks/use-can-add-domain";
 import { Site } from "@/lib/getter/sites";
-import { useUserPlan } from "@/lib/openfeature/helper";
 import { useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, Check, CheckCircle, Copy, ExternalLink, Loader, Pencil, RefreshCw } from "lucide-react";
 import { useActionState, useEffect, useMemo, useState } from "react";
@@ -21,7 +21,7 @@ interface DomainConfigurationProps {
 }
 
 function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
-  const plan = useUserPlan();
+  const subdomainSuffix = process.env.NEXT_PUBLIC_SUBDOMAIN;
   const queryClient = useQueryClient();
   const [customDomain, setCustomDomain] = useState("");
   const [isDomainVerified, setIsDomainVerified] = useState(false);
@@ -29,7 +29,8 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
   const [domainConfig, setDomainConfig] = useState<any>({});
   const [editingSubdomain, setEditingSubdomain] = useState(false);
   const [copiedValue, setCopiedValue] = useState<string | null>(null);
-  const subdomainSuffix = process.env.NEXT_PUBLIC_SUBDOMAIN;
+
+  const { isCustomDomainLimitReached, customDomainLimit } = useCanAddDomain();
 
   const subdomainBase = useMemo(() => {
     if (!data.subdomain) return "";
@@ -62,7 +63,9 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
     const res = await updateSubdomain(data.id, sanitized);
     if (res.success) {
       toast.success("Subdomain updated");
-      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["website-settings"] }).then(() => {
+        queryClient.invalidateQueries({ queryKey: ["DOMAINS_COUNT"] });
+      });
       setEditingSubdomain(false);
     } else {
       toast.error(res.error || "Failed to update subdomain");
@@ -84,7 +87,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
 
   const [, addDomainAction, addDomainPending] = useActionState(
     async (prevState: any, formData: FormData) => {
-      if (plan?.isFree) {
+      if (isCustomDomainLimitReached) {
         toast.error("Please upgrade to add custom domains", { position: "top-center" });
         return { success: false, error: "Please upgrade to add custom domains" };
       }
@@ -378,13 +381,13 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                 }
                 placeholder="example.com"
                 className=" "
-                disabled={addDomainPending || plan?.isFree}
+                disabled={addDomainPending || isCustomDomainLimitReached}
               />
               <Button
                 variant={addDomainPending ? "ghost" : "default"}
                 type="submit"
                 className={addDomainPending ? "text-primary pointer-events-none" : ""}
-                disabled={addDomainPending || customDomain.length < 3 || plan?.isFree}>
+                disabled={addDomainPending || customDomain.length < 3 || isCustomDomainLimitReached}>
                 {addDomainPending ? (
                   <>
                     <Loader className="h-3 w-3 animate-spin" />
@@ -395,9 +398,15 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                 )}
               </Button>
             </div>
-            {plan?.isFree && (
+            {isCustomDomainLimitReached && (
               <div className="space-y-2 mt-4 text-sm text-muted-foreground border bg-muted p-4 rounded-md">
-                <div>Please upgrade to add custom domains</div>
+                {customDomainLimit === 0 ? (
+                  <div>Please upgrade to add custom domains</div>
+                ) : (
+                  <div>
+                    You have reached the limit of {customDomainLimit} custom domains. Please upgrade to add more.
+                  </div>
+                )}
                 <UpgradeModalButton />
               </div>
             )}

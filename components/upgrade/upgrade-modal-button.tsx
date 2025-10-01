@@ -11,7 +11,7 @@ export default function UpgradeModalButton({ children }: { children?: React.Reac
   if (children) return <div onClick={() => showUpgradeDialog()}>{children}</div>;
 
   return (
-    <Button size="sm" onClick={() => showUpgradeDialog()}>
+    <Button type="button" size="sm" onClick={() => showUpgradeDialog()}>
       <Crown className="h-4 w-4" />
       Upgrade to Pro
     </Button>
