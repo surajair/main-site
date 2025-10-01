@@ -31,10 +31,13 @@ const StartingLoader = ({ logo, progress }: { logo: any; progress: number }) => 
   const loader = useMemo(
     () => (
       <div className="w-screen h-screen flex flex-col gap-4 items-center justify-center transition-all">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        {logo ? <img src={logo} className="w-8 h-8 rounded" alt="" /> : <div className="w-8 h-8" />}
-        <div
-          className={`w-[200px] rounded-full h-3 border border-border overflow-hidden ${localProgress === 100 ? "hidden" : ""}`}>
+        {logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logo} className="w-8 h-8 rounded" alt="" />
+        ) : (
+          <div className="w-8 h-8" />
+        )}
+        <div style={{ width: "200px" }} className={`w-[200px] rounded-full h-3 border border-border overflow-hidden`}>
           <div
             className={`h-full rounded-full bg-primary transition-all duration-300`}
             style={{
@@ -50,7 +53,13 @@ const StartingLoader = ({ logo, progress }: { logo: any; progress: number }) => 
   return loader;
 };
 
-function FeatureFlagProviderComponent({ children }: { children: React.ReactNode }) {
+function FeatureFlagProviderComponent({
+  children,
+  fromDashboard,
+}: {
+  children: React.ReactNode;
+  fromDashboard?: boolean;
+}) {
   useWebsites();
   const [loading, setLoading] = useState(true);
   const { data: clientSettings } = useClientSettings();
@@ -75,14 +84,17 @@ function FeatureFlagProviderComponent({ children }: { children: React.ReactNode 
     }
   }, [clientSettings, plan, role]);
 
-  const showEditor = clientSettings && data?.isLoggedIn;
-  const isLoading = loading || !isBuilderReady || !showEditor;
-  const progress = [plan ? 20 : 0, clientSettings ? 25 : 0, setupProgress].reduce((a, b) => a + b, 5);
+  const showChildren = clientSettings && data?.isLoggedIn;
+  const isLoading = loading || !showChildren || (fromDashboard ? false : !isBuilderReady);
+  const progress = [plan ? 20 : 0, clientSettings ? 25 : 0, fromDashboard ? 40 : setupProgress].reduce(
+    (a, b) => a + b,
+    5,
+  );
 
   return (
     <>
       {isLoading && <StartingLoader logo={clientSettings?.logo} progress={progress} />}
-      {showEditor && (
+      {showChildren && (
         <div className={`${isLoading ? "sr-only" : ""}`}>
           <OpenFeatureProvider>{children}</OpenFeatureProvider>
         </div>
@@ -92,10 +104,16 @@ function FeatureFlagProviderComponent({ children }: { children: React.ReactNode 
   );
 }
 
-export const FeatureFlagProvider = ({ children }: { children: React.ReactNode }) => {
+export const FeatureFlagProvider = ({
+  children,
+  fromDashboard = false,
+}: {
+  children: React.ReactNode;
+  fromDashboard?: boolean;
+}) => {
   return (
     <QueryClientProviderWrapper>
-      <FeatureFlagProviderComponent>{children}</FeatureFlagProviderComponent>
+      <FeatureFlagProviderComponent fromDashboard={fromDashboard}>{children}</FeatureFlagProviderComponent>
     </QueryClientProviderWrapper>
   );
 };

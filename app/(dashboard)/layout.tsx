@@ -31,7 +31,7 @@ export default async function RootLayout({
         <link rel="stylesheet" href={`/${process.env.APP_DOMAIN?.replace(":", ".")}.css`} />
       </head>
       <body className={`${geist.className} flex h-screen flex-col`}>
-        <FeatureFlagProvider>
+        <FeatureFlagProvider fromDashboard={true}>
           <Toaster richColors theme="light" />
           <main className="flex-1 bg-primary container h-[calc(100vh-4rem)] pb-2 overflow-hidden">{children}</main>
         </FeatureFlagProvider>
