@@ -4,7 +4,10 @@ import { createClient } from "@/chai/supabase.auth.server";
 import { AuthError } from "@supabase/supabase-js";
 import { checkBotId } from "botid/server";
 
-export async function loginWithEmail(email: string, password: string): Promise<{ success: boolean; message: string; data?: any }> {
+export async function loginWithEmail(
+  email: string,
+  password: string,
+): Promise<{ success: boolean; message: string; data?: any }> {
   // Check for bot
   const verification = await checkBotId();
   if (verification.isBot) {
@@ -28,7 +31,10 @@ export async function loginWithEmail(email: string, password: string): Promise<{
   return { success: true, message: "Login successful", data };
 }
 
-export async function signupWithEmail(email: string, password: string): Promise<{ success: boolean; message: string; data?: any }> {
+export async function signupWithEmail(
+  email: string,
+  password: string,
+): Promise<{ success: boolean; message: string; data?: any }> {
   // Check for bot
   const verification = await checkBotId();
   if (verification.isBot) {
@@ -55,16 +61,14 @@ export async function signupWithEmail(email: string, password: string): Promise<
     return { success: false, message: "An error occurred during signup" };
   }
 
-  return { success: true, message: "Account created successfully! Please check your email to verify your account.", data };
+  return {
+    success: true,
+    message: "Account created successfully! Please check your email to verify your account.",
+    data,
+  };
 }
 
 export async function updatePassword(newPassword: string): Promise<{ success: boolean; message: string; data?: any }> {
-  // Check for bot
-  const verification = await checkBotId();
-  if (verification.isBot) {
-    return { success: false, message: "Access denied" };
-  }
-
   const supabaseServer = await createClient();
 
   const { data, error } = await supabaseServer.auth.updateUser({
