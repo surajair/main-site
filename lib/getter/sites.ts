@@ -121,3 +121,12 @@ export async function getSite(websiteId: string): Promise<Site> {
     hosting: data.app_domains?.[0]?.hosting,
   };
 }
+
+export async function getDomainsCount(websiteIds: string[]): Promise<number> {
+  const supabaseServer = await getSupabaseAdmin();
+  const { data, error }: any = await supabaseServer.from("app_domains").select("domain").in("app", websiteIds);
+
+  if (error) throw error;
+
+  return data?.filter((domain: any) => domain?.domain)?.length;
+}

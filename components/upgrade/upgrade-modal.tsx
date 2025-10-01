@@ -10,7 +10,7 @@ import { useChaiAuth } from "chai-next";
 import { get } from "lodash";
 import { Check, Crown, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 function UpgradeModalContent() {
   const { user } = useChaiAuth();
@@ -208,7 +208,7 @@ function UpgradeModalContent() {
                       ) : (
                         <>
                           <Crown className="h-4 w-4 mr-2" />
-                          Upgrade to Pro
+                          Upgrade now
                         </>
                       )}
                     </Button>
@@ -222,29 +222,19 @@ function UpgradeModalContent() {
     </>
   );
 }
+const UpgradeDialog = ({ onClose }: { onClose: () => void }) => {
+  return (
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-[700px]">
+        <DialogHeader>
+          <DialogTitle>Upgrade to Pro</DialogTitle>
+        </DialogHeader>
+        <div className="py-4">
+          <UpgradeModalContent />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
-export default function UpgradeModal({ withTrigger = false }: { withTrigger?: boolean }) {
-  const [open, setOpen] = useState(false);
-  if (withTrigger) {
-    return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button size="sm">
-            <Crown className="h-4 w-4" />
-            Upgrade to Pro
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-[700px]">
-          <DialogHeader>
-            <DialogTitle>Upgrade to Pro</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <UpgradeModalContent />
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  return <UpgradeModalContent />;
-}
+export default UpgradeDialog;

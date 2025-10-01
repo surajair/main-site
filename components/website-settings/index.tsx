@@ -3,9 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { getClientSettings, getSite, getSites } from "@/lib/getter";
+import { useClientSettings } from "@/hooks/use-client-settings";
+import { useWebsites } from "@/hooks/use-websites";
+import { getSite } from "@/lib/getter";
 import { SiteData } from "@/utils/types";
-import { useFlag } from "@openfeature/react-sdk";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Popover, PopoverContent, PopoverTrigger, useSavePage } from "chai-next";
 import { omit } from "lodash";
@@ -243,7 +244,6 @@ function WebsiteSettingsContent({
 const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | undefined; isLoading: boolean }) => {
   const [showModal, setShowModal] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const { value: showWebsiteSettings } = useFlag("website_settings", false);
   const { savePageAsync } = useSavePage();
   const [isDataChange, setIsDataChange] = useState(false);
   const [initData, setInitData] = useState<any>(null);
@@ -266,7 +266,7 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
     setShowConfirmDialog(false);
   };
 
-  if (!websiteId || !showWebsiteSettings) return null;
+  if (!websiteId) return null;
   if (isLoading) {
     return (
       <Button variant="ghost" size="icon" className="p-0 w-8 h-8" disabled={true}>
@@ -328,9 +328,6 @@ const WebsitesPopoverContent = ({
   websites: any;
   isLoading: boolean;
 }) => {
-  const router = useRouter();
-  const { value: canCreateSite } = useFlag("create_site", false);
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-4 h-80 w-96">
@@ -351,21 +348,19 @@ const WebsitesPopoverContent = ({
       <CardContent className="flex-1 max-h-96 overflow-y-auto space-y-2 rounded-lg p-2">
         {websites?.map((site: any) => (
           <div key={site.id} className="group relative overflow-hidden cursor-pointer">
-            {canCreateSite && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-200">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" side="right">
-                  <DeleteWebsite websiteId={site.id} websiteName={site.name} />
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-200">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" side="right">
+                <DeleteWebsite websiteId={site.id} websiteName={site.name} />
+              </DropdownMenuContent>
+            </DropdownMenu>
             <div
               onClick={() => (window.location.href = `/${site?.id}/editor`)}
               className="px-3 py-1 group-hover:bg-muted rounded">
@@ -377,16 +372,14 @@ const WebsitesPopoverContent = ({
       </CardContent>
 
       {/* Fixed Footer */}
-      {canCreateSite && (
-        <CardFooter className="flex-shrink-0 p-3 border-t bg-white">
-          <CreateNewWebsite totalSites={websites?.length || 0}>
-            <Button className="w-full" size="sm">
-              <Plus className="h-4 w-4" />
-              Add New Website
-            </Button>
-          </CreateNewWebsite>
-        </CardFooter>
-      )}
+      <CardFooter className="flex-shrink-0 p-3 border-t bg-white">
+        <CreateNewWebsite totalSites={websites?.length || 0}>
+          <Button className="w-full" size="sm">
+            <Plus className="h-4 w-4" />
+            Add New Website
+          </Button>
+        </CreateNewWebsite>
+      </CardFooter>
     </Card>
   );
 };
@@ -451,28 +444,28 @@ const WebsitesListPopover = ({
  * @param params websiteId, websites, isLoading
  */
 function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
-  const { data: clientSettings, isFetching } = useQuery({ queryKey: ["client-settings"], queryFn: getClientSettings });
-  const { data: websites, isLoading } = useQuery({ queryKey: ["websites-list"], queryFn: getSites });
+  const { data: clientSettings, isFetching: isFetchingClientSettings } = useClientSettings();
+  const { data: websites, isFetching: isFetchingWebsites } = useWebsites();
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isFetchingClientSettings || isFetchingWebsites) return;
     const isActiveWebsite = websites?.find((site) => site?.id === websiteId);
     if (!isActiveWebsite) router.push(`/`);
-  }, [websiteId, websites, isLoading, router]);
+  }, [websiteId, websites, isFetchingClientSettings, isFetchingWebsites, router]);
 
   return (
     <div className="flex items-center gap-x-2">
-      {!isFetching && clientSettings?.logo ? (
+      {!isFetchingClientSettings && clientSettings?.logo ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={clientSettings?.logo} width={32} height={32} alt="brand-logo" className="rounded-md" />
       ) : (
         <div className="w-8 h-8 rounded-md" />
       )}
-      {!isLoading && (
+      {!isFetchingWebsites && (
         <div className="flex items-center border rounded-md p-0 h-9 px-px">
-          <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
-          <WebsiteSettingsModal websiteId={websiteId} isLoading={isLoading} />
+          <WebsitesListPopover websiteId={websiteId} isLoading={isFetchingWebsites} websites={websites} />
+          <WebsiteSettingsModal websiteId={websiteId} isLoading={isFetchingWebsites} />
         </div>
       )}
     </div>

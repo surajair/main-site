@@ -4,11 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LANGUAGE_CODES } from "@/lib/language-config";
+import { usePlanLimits } from "@/lib/openfeature/helper";
 import { SiteData } from "@/utils/types";
 import { X } from "lucide-react";
 import { useState } from "react";
-
-const MAX_ADDITIONAL_LANGUAGES = 2;
 
 interface AdditionalLanguageSelectorProps {
   data: SiteData;
@@ -22,6 +21,8 @@ export default function AdditionalLanguageSelector({ data, onChange }: Additiona
   const selectableLanguages = Object.entries(availableLanguages).filter(
     ([code]) => code !== defaultLanguage && !addLangs.includes(code),
   );
+  const planLimit = usePlanLimits();
+  const maxAdditionalLanguages = planLimit.getLimit("no_of_additional_languages");
 
   const handleLanguageAdd = (languageCode: string) => {
     setAddLangs((prev) => [...(prev || []), languageCode]);
@@ -38,10 +39,10 @@ export default function AdditionalLanguageSelector({ data, onChange }: Additiona
     <div className="space-y-3">
       <div className="space-y-1">
         <Label className="text-xs">
-          Additional Languages <small className="text-muted-foreground">(Maximum {MAX_ADDITIONAL_LANGUAGES})</small>
+          Additional Languages <small className="text-muted-foreground">(Maximum {maxAdditionalLanguages})</small>
         </Label>
 
-        {addLangs.length < MAX_ADDITIONAL_LANGUAGES && selectableLanguages.length > 0 ? (
+        {addLangs.length < maxAdditionalLanguages && selectableLanguages.length > 0 ? (
           <Select value="" onValueChange={handleLanguageAdd}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select additional language from here..." />
@@ -54,12 +55,14 @@ export default function AdditionalLanguageSelector({ data, onChange }: Additiona
               ))}
             </SelectContent>
           </Select>
-        ) : addLangs.length >= MAX_ADDITIONAL_LANGUAGES ? (
-          <div className="text-sm text-muted-foreground bg-gray-50 p-3 rounded-md">
-            Maximum of {MAX_ADDITIONAL_LANGUAGES} additional languages reached
+        ) : addLangs.length >= maxAdditionalLanguages ? (
+          <div className="text-sm text-muted-foreground  p-2 bg-muted border border-border rounded-md">
+            Maximum of {maxAdditionalLanguages} additional languages limit reached
           </div>
         ) : (
-          <div className="text-sm text-muted-foreground bg-gray-50 p-3 rounded-md">No more languages available</div>
+          <div className="text-sm text-muted-foreground  p-2 bg-muted border border-border rounded-md">
+            No more languages available
+          </div>
         )}
       </div>
 
@@ -68,12 +71,15 @@ export default function AdditionalLanguageSelector({ data, onChange }: Additiona
         <div className="space-y-1">
           <div className="flex flex-wrap gap-2">
             {addLangs.map((langCode) => (
-              <Badge key={langCode} variant="secondary" className="flex items-center gap-1 px-3 py-1">
+              <Badge
+                key={langCode}
+                variant="secondary"
+                className="border border-border flex items-center gap-1 pl-3 pr-1 py-1">
                 {availableLanguages[langCode]}
                 <button
                   type="button"
                   onClick={() => handleLanguageRemove(langCode)}
-                  className="ml-1 hover:bg-gray-200 rounded-full p-0.5 transition-colors"
+                  className="ml-1 hover:text-destructive hover:bg-destructive/10 rounded-full p-0.5 transition-colors"
                   aria-label={`Remove ${availableLanguages[langCode]}`}>
                   <X className="h-3 w-3" />
                 </button>

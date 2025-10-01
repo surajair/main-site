@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LANGUAGE_CODES } from "@/lib/language-config";
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useFeatureFlag } from "@/lib/openfeature/helper";
 import { SiteData } from "@/utils/types";
 import { useState } from "react";
 import AdditionalLanguageSelector from "./additional-language-selector";
@@ -13,9 +13,8 @@ interface GeneralProps {
   onChange: (updates: any) => void;
 }
 
-// const timeZones = Intl.supportedValuesOf("timeZone");
-
 export default function General({ data, onChange }: GeneralProps) {
+  const { value: multilingualEnabled } = useFeatureFlag("multilingual");
   const [baseline, setBaseline] = useState(data);
 
   const handleChange = (updates: any) => {
@@ -72,7 +71,9 @@ export default function General({ data, onChange }: GeneralProps) {
             readOnly
           />
         </div>
-        {Object.keys(LANGUAGE_CODES).length > 1 && <AdditionalLanguageSelector data={data} onChange={onChange} />}
+        {multilingualEnabled && Object.keys(LANGUAGE_CODES).length > 1 && (
+          <AdditionalLanguageSelector data={data} onChange={onChange} />
+        )}
       </div>
     </section>
   );

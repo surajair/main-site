@@ -4,24 +4,13 @@ import { formSubmit } from "@/actions/form-submit";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { getUser } from "@/lib/getter/users";
-import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@/hooks/use-user";
 import { get } from "lodash";
 import { Loader, Mail, MessageCircle, Send } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 const FEEDBACK_DOMAIN = "chaibuilder.com";
-
-const useUser = () => {
-  return useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const user = await getUser();
-      return { user };
-    },
-  });
-};
 
 export const SupportPanel = () => {
   const [feedback, setFeedback] = useState("");
