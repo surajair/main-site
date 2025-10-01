@@ -1,15 +1,25 @@
+import { OpenFeature, useFlag } from "@openfeature/react-sdk";
 import { find, get } from "lodash";
+import { useCallback } from "react";
 
-/**
- *
- * @param input
- * @param role
- * @param plan
- * @returns flags
- */
+interface PlanLimits {
+  id: string;
+  name: string;
+  isFree?: boolean;
+  limits: Record<string, any>;
+}
+
+interface UserPermissions {
+  permissions: {
+    [key: string]: boolean;
+  };
+}
+
+// * Transforming into Open Feature Dev Format
 export function convertToOpenFeatureDevFormat(input: Record<string, any>, role: string, plan: string) {
   const features = input?.features || {};
-  const planData = find(input?.plans, { id: plan }) || {};
+  let planData = find(input?.plans, { id: plan });
+  if (!planData) planData = find(input?.plans, { isFree: true }) || {};
   const roleData = get(input?.roles, role, {}) || {};
 
   const flags: Record<string, any> = {
@@ -38,23 +48,6 @@ export function convertToOpenFeatureDevFormat(input: Record<string, any>, role: 
   });
 
   return flags;
-}
-
-// hooks/useFeatureFlags.ts
-import { OpenFeature, useFlag } from "@openfeature/react-sdk";
-import { useCallback } from "react";
-
-export interface PlanLimits {
-  id: string;
-  name: string;
-  isFree?: boolean;
-  limits: Record<string, any>;
-}
-
-export interface UserPermissions {
-  permissions: {
-    [key: string]: boolean;
-  };
 }
 
 // Hook for boolean feature flags
