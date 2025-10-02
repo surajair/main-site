@@ -1,10 +1,9 @@
-import { getChaiBuilderTheme } from "chai-next/utils";
 import aspectRatio from "@tailwindcss/aspect-ratio";
 import containerQueries from "@tailwindcss/container-queries";
 import forms from "@tailwindcss/forms";
 import typography from "@tailwindcss/typography";
+import { getChaiBuilderTheme } from "chai-next/utils";
 import type { Config } from "tailwindcss";
-import animate from "tailwindcss-animate";
 import plugin from "tailwindcss/plugin";
 import { CustomThemeConfig } from "tailwindcss/types/config";
 
@@ -60,7 +59,6 @@ const config: Config = {
         },
       });
     }),
-    animate,
     containerQueries,
   ],
 };
