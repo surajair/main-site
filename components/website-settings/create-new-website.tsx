@@ -11,7 +11,7 @@ import { getLanguagesArray } from "@/lib/language-config";
 import { usePlanLimits } from "@/lib/openfeature/helper";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import UpgradeModalButton from "../upgrade/upgrade-modal-button";
 import { useClientSettings } from "@/hooks/use-client-settings";
@@ -45,18 +45,13 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
   const [websiteName, setWebsiteName] = useState("");
   const [subdomain, setSubdomain] = useState("");
   const [isSubdomainModified, setIsSubdomainModified] = useState(false);
-  const [defaultLanguage, setDefaultLanguage] = useState("");
+  const { data: clientSettings } = useClientSettings();
+  const [defaultLanguage, setDefaultLanguage] = useState(clientSettings?.defaultSiteLang || "");
   const [isCreating, setIsCreating] = useState(false);
   const planLimits = usePlanLimits();
   const queryClient = useQueryClient();
-  const { data: clientSettings } = useClientSettings();
   const isSiteLimitReached = planLimits?.hasReached("no_of_sites", totalSites);
   
-  useEffect(() => {
-    if (clientSettings?.defaultSiteLang) {
-      setDefaultLanguage(clientSettings.defaultSiteLang);
-    }
-  }, [clientSettings]);
 
   const handleWebsiteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
