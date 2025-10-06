@@ -96,10 +96,14 @@ function FeatureFlagProviderComponent({
       {isLoading && <StartingLoader logo={clientSettings?.logo} progress={progress} />}
       {showChildren && (
         <div className={`${isLoading ? "sr-only" : ""}`}>
-          <OpenFeatureProvider>{children}</OpenFeatureProvider>
+          <OpenFeatureProvider>
+            <>
+              {children}
+              {showUpgradeDialog && <UpgradeDialog onClose={() => setShowUpgradeDialog(false)} />}
+            </>
+          </OpenFeatureProvider>
         </div>
       )}
-      {showUpgradeDialog && <UpgradeDialog onClose={() => setShowUpgradeDialog(false)} />}
     </>
   );
 }

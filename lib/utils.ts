@@ -21,11 +21,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatPrice(price: string | undefined): string {
-  if (!price) return "";
-  return price.replace(/\.00$/, "");
-}
-
 // CSV utility functions
 export function convertToCSV(data: any[]): string {
   if (isEmpty(data)) return "";

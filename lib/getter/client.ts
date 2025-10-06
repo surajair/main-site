@@ -17,7 +17,7 @@ export const getClientSettings = cache(async (): Promise<ClientSettings> => {
   const supabaseServer = await getSupabaseAdmin();
   const { data, error } = await supabaseServer
     .from("clients")
-    .select("settings, loginHtml, features")
+    .select("settings, loginHtml, features, paymentConfig")
     .eq("id", process.env.CHAIBUILDER_CLIENT_ID)
     .single();
   if (error) throw error;
@@ -30,5 +30,6 @@ export const getClientSettings = cache(async (): Promise<ClientSettings> => {
     feedbackSubmissions: data?.settings?.feedbackSubmissions || "",
     loginProviders: data?.settings?.loginProviders || [],
     features: data?.features || {},
+    paymentConfig: data?.paymentConfig || {},
   };
 });
