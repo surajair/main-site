@@ -11,9 +11,10 @@ import { getLanguagesArray } from "@/lib/language-config";
 import { usePlanLimits } from "@/lib/openfeature/helper";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import UpgradeModalButton from "../upgrade/upgrade-modal-button";
+import { useClientSettings } from "@/hooks/use-client-settings";
 
 const allLanguages = getLanguagesArray();
 
@@ -48,7 +49,14 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
   const [isCreating, setIsCreating] = useState(false);
   const planLimits = usePlanLimits();
   const queryClient = useQueryClient();
+  const { data: clientSettings } = useClientSettings();
   const isSiteLimitReached = planLimits?.hasReached("no_of_sites", totalSites);
+  
+  useEffect(() => {
+    if (clientSettings?.defaultSiteLang) {
+      setDefaultLanguage(clientSettings.defaultSiteLang);
+    }
+  }, [clientSettings]);
 
   const handleWebsiteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -86,7 +94,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
         setOpen(false);
         // Reset form
         setWebsiteName("");
-        setDefaultLanguage("");
+        setDefaultLanguage(clientSettings?.defaultSiteLang || "");
         queryClient.invalidateQueries({ queryKey: ["websites-list"] });
         window.location.href = `/${result.data.id}/editor`;
       } else {
@@ -106,7 +114,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
         setWebsiteName("");
         setSubdomain("");
         setIsSubdomainModified(false);
-        setDefaultLanguage("");
+        setDefaultLanguage(clientSettings?.defaultSiteLang || "");
         setIsCreating(false);
       }
     }
