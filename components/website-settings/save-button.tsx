@@ -40,11 +40,15 @@ export default function SaveButton({ websiteId, hasChanges, data, showSave = tru
           socialLinks: socialLinks,
         },
       };
+      const isLanguageUpdate = (data as any)?.isLanguageUpdate;
 
       const result = await updateWebsiteData({ id: websiteId, updates: updates });
       if (result.success) {
         toast.success("Website settings updated successfully!");
         await queryClient.invalidateQueries({ queryKey: ["website-settings"] });
+        if (isLanguageUpdate) {
+          await queryClient.invalidateQueries({ queryKey: ["GET_WEBSITE_DRAFT_SETTINGS"] });
+        }
         reloadPage();
       } else {
         toast.error(result.error || "Failed to update website settings");
