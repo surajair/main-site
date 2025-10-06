@@ -193,10 +193,7 @@ const ProfileForm = ({ data }: { data: any }) => {
           planName && (
             <div className="border rounded-md p-3 bg-muted">
               <p className="text-sm text-gray-600">
-                You current plan:{" "}
-                <span className="font-semibold text-amber-600">
-                  {planName} <Crown className="inline w-4 h-4" />
-                </span>
+                You current plan: <span className="font-semibold text-amber-600">{planName}</span>
               </p>
             </div>
           )
