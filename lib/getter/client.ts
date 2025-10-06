@@ -31,5 +31,6 @@ export const getClientSettings = cache(async (): Promise<ClientSettings> => {
     loginProviders: data?.settings?.loginProviders || [],
     features: data?.features || {},
     paymentConfig: data?.paymentConfig || {},
+    defaultSiteLang : data?.settings?.defaultSiteLang || "en",
   };
 });
