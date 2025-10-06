@@ -3,7 +3,8 @@
   "version": "0.1.20",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css --watch\" \"next dev --port 3000 --turbopack\"",
+    "dev": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css --watch\" \"next dev --port 3000\"",
+    "dev:turbo": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css --watch\" \"next dev --port 3000 --turbopack\"",
     "build": "npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css && next build",
     "start": "next start",
     "lint": "next lint & tsc --noEmit",
