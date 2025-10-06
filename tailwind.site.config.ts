@@ -8,7 +8,9 @@ import { CustomThemeConfig } from "tailwindcss/types/config";
 
 const config: Config = {
   darkMode: "class",
-  content: ["./blocks/**/*.{js,ts,jsx,tsx,mdx}", "./node_modules/chai-next/dist/blocks/**/*.{js,cjs}"],
+  content: ["./blocks/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/chai-next/dist/blocks/**/*.{js,cjs}"],
   safelist: ["w-[inherit]", "h-[inherit]"],
   theme: {
     extend: {
