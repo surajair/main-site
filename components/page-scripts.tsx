@@ -1,9 +1,8 @@
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
-import ChaiBuilder, { getSupabaseAdmin } from "chai-next/server";
+import ChaiBuilder from "chai-next/server";
 import Script from "next/script";
 
 export const PageScripts = async () => {
-  const websiteId = ChaiBuilder.getSiteId();
   const data = await ChaiBuilder.getSiteSettings();
   const settings = data?.settings;
   if (!settings) {
