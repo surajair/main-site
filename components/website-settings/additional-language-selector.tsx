@@ -18,6 +18,7 @@ export default function AdditionalLanguageSelector({ data, onChange }: Additiona
   const defaultLanguage = data?.fallbackLang;
   const availableLanguages: Record<string, string> = LANGUAGE_CODES;
   const [addLangs, setAddLangs] = useState(data?.languages);
+  const [initialLangs] = useState(data?.languages || []);
   const selectableLanguages = Object.entries(availableLanguages).filter(
     ([code]) => code !== defaultLanguage && !addLangs.includes(code),
   );
@@ -25,14 +26,23 @@ export default function AdditionalLanguageSelector({ data, onChange }: Additiona
   const maxAdditionalLanguages = planLimit.getLimit("no_of_additional_languages");
 
   const handleLanguageAdd = (languageCode: string) => {
-    setAddLangs((prev) => [...(prev || []), languageCode]);
-    onChange({ languages: addLangs });
+    const updatedLangs = [...addLangs, languageCode];
+    const hasLanguageChanged = JSON.stringify(updatedLangs) !== JSON.stringify(initialLangs);
+    setAddLangs(updatedLangs);
+    onChange({
+      languages: updatedLangs,
+      ...(hasLanguageChanged && { isLanguageUpdate: true })
+    });
   };
 
   const handleLanguageRemove = (languageCode: string) => {
     const updated = addLangs?.filter((lang) => lang !== languageCode);
+    const hasLanguageChanged = JSON.stringify(updated || []) !== JSON.stringify(initialLangs);
     setAddLangs(updated);
-    onChange({ languages: updated || [] });
+    onChange({
+      languages: updated || [],
+      ...(hasLanguageChanged && { isLanguageUpdate: true })
+    });
   };
 
   return (

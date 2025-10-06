@@ -18,7 +18,7 @@ export default function General({ data, onChange }: GeneralProps) {
   const [baseline, setBaseline] = useState(data);
 
   const handleChange = (updates: any) => {
-    setBaseline(updates);
+    setBaseline((prev) => ({ ...(prev || data), ...updates }));
     onChange(updates);
   };
 
