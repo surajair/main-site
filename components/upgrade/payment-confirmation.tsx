@@ -3,6 +3,8 @@
 import { updateUserPayment } from "@/actions/update-user-payment";
 import { Button } from "chai-next";
 import { useEffect } from "react";
+import PlaceholderBuilderUI from "../providers/placeholder-builder-ui";
+import { Card } from "../ui/card";
 
 export default function PaymentConfirmation({ provider, paymentId }: { provider: string; paymentId: string }) {
   useEffect(() => {
@@ -18,8 +20,8 @@ export default function PaymentConfirmation({ provider, paymentId }: { provider:
   }, [provider, paymentId]);
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center">
-      <div className={`max-w-5xl min-h-[500px] mx-auto py-20 flex items-center justify-center`}>
+    <PlaceholderBuilderUI>
+      <Card className="w-full max-w-md mx-auto p-6 bg-white">
         <div className="p-8 text-center max-w-md w-full">
           <div className="flex justify-center mb-4">
             <svg
@@ -33,11 +35,8 @@ export default function PaymentConfirmation({ provider, paymentId }: { provider:
             </svg>
           </div>
           <h2 className="text-2xl font-bold mb-2 text-gray-800">Payment Successful!</h2>
-          <p className="text-gray-600 mb-6">
-            Thank you for upgrading! Your subscription has been activated. To start using it,{" "}
-            <span className="font-semibold">please reload the page.</span>
-          </p>
-
+          <p className="text-gray-600 mb-6">Thank you for upgrading! Your subscription has been activated.</p>
+          <br />
           <Button
             size="lg"
             onClick={() => {
@@ -48,10 +47,10 @@ export default function PaymentConfirmation({ provider, paymentId }: { provider:
               url.searchParams.delete("transaction_id");
               window.location.replace(url.toString());
             }}>
-            Continue to editor
+            Continue
           </Button>
         </div>
-      </div>
-    </div>
+      </Card>
+    </PlaceholderBuilderUI>
   );
 }
