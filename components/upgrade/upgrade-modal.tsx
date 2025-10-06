@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePaymentProvider } from "@/payments";
 import { useChaiAuth } from "chai-next";
-import { includes, map } from "lodash";
 import { Check, Crown, Loader } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
@@ -115,7 +114,7 @@ function UpgradeModalContent() {
               const id = plan.id;
               const currentPrice = billingCycle === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
               const period = id === "free" ? "" : billingCycle === "yearly" ? "/year" : "/month";
-              const isCurrentPlan = includes(map(plan?.items, "priceId"), currentPlanId);
+              const isCurrentPlan = provider.isCurrentPlan(currentPlanId, plan);
 
               return (
                 <Card
@@ -144,7 +143,7 @@ function UpgradeModalContent() {
 
                     <Button
                       className="w-[80%] mx-auto absolute right-1/2 bottom-5 transform translate-x-1/2"
-                      variant={plan?.isFree ? "outline" : "default"}
+                      variant={plan?.isFree || isCurrentPlan ? "outline" : "default"}
                       onClick={() => handleUpgrade(plan?.items)}
                       disabled={!plans || plan?.isFree || isCurrentPlan}>
                       {isCurrentPlan ? (

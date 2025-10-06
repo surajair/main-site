@@ -12,6 +12,7 @@ export type TPaymentProviderInitializeOptions = {
 } & Record<string, any>;
 
 export interface PaymentProviderInterface {
+  isCurrentPlan(currentPlanId: string, plan: any): boolean;
   initialize(options?: TPaymentProviderInitializeOptions): Promise<any>;
   getPricingPlans(): Promise<any[]>;
   openCheckout(options: any): Promise<any>;

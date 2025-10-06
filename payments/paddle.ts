@@ -50,7 +50,7 @@ export class PaddleAdapter implements PaymentProviderInterface {
       const yearlyItem = find(items, { id: yearlyProduct?.id });
 
       return {
-        id: monthlyProduct?.id,
+        id: monthlyItem?.product?.id,
         name: get(monthlyProduct, "product.name", ""),
         monthlyPrice: priceWithCurrency(
           get(monthlyItem, "unitPrice.amount", 0),
@@ -69,6 +69,10 @@ export class PaddleAdapter implements PaymentProviderInterface {
       };
     });
     return plans;
+  }
+
+  isCurrentPlan(currentPlanId: string, plan: any): boolean {
+    return plan?.id === currentPlanId;
   }
 
   async openCheckout(options: any): Promise<any> {
