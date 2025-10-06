@@ -1,8 +1,9 @@
-import { getAndUpdateSubscriptionDetails } from "@/actions/update-user-plan";
-import { formatPrice } from "@/lib/utils";
+import { updateUserPayment } from "@/actions/update-user-payment";
+import { getProductList } from "@/lib/getter/payment";
 import { initializePaddle, Paddle } from "@paddle/paddle-js";
-import { chunk, get } from "lodash";
+import { find, get } from "lodash";
 import { PaymentProviderInterface, TPaymentProviderInitializeOptions } from ".";
+import { getReturnURL, priceWithCurrency } from "./helper";
 
 export class PaddleAdapter implements PaymentProviderInterface {
   private paddle: Paddle | any;
@@ -28,10 +29,10 @@ export class PaddleAdapter implements PaymentProviderInterface {
         if (event.name === "checkout.completed") {
           const transactionId = get(event, "data.transaction_id") as string;
           this.options?.onStatusChange("processing");
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          this.closeCheckout();
-          await getAndUpdateSubscriptionDetails(transactionId);
-          this.options?.onStatusChange("success");
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          updateUserPayment("PADDLE", transactionId);
+          const returnUrl = getReturnURL("PADDLE", { transaction_id: transactionId, status: "active" });
+          window.location.href = returnUrl;
         } else if (event.name === "checkout.error") {
           this.options?.onStatusChange("error");
         }
@@ -41,42 +42,32 @@ export class PaddleAdapter implements PaymentProviderInterface {
   }
 
   async getPricingPlans(): Promise<any[]> {
-    const configPlans = this.paymentConfig?.plans;
-    if (!configPlans || configPlans?.length === 0) return [];
+    const items = await getProductList("PADDLE");
+    const plans = this.paymentConfig?.plans?.map((subPlans: any) => {
+      const monthlyProduct = find(subPlans, { period: "monthly" });
+      const yearlyProduct = find(subPlans, { period: "yearly" });
+      const monthlyItem = find(items, { id: monthlyProduct?.id });
+      const yearlyItem = find(items, { id: yearlyProduct?.id });
 
-    const paddleItems: any[] = [];
-    configPlans?.forEach((plans: any) =>
-      plans?.forEach((plan: any) => paddleItems.push({ priceId: plan.id, quantity: 1 })),
-    );
-    if (paddleItems?.length === 0) return [];
-
-    const response = await this.paddle?.PricePreview({ items: paddleItems });
-    const items = response?.data?.details?.lineItems;
-    const plans = chunk(items, 2);
-    if (plans?.length === 0) return [];
-
-    return plans
-      ?.map((plan: any) => {
-        if (plan?.length === 0) return null;
-        const monthlyItem = plan?.find((item: any) => item?.price?.billingCycle?.interval === "month");
-        const isFree = monthlyItem?.totals?.total === "0";
-        const yearlyItem = plan?.find(
-          (item: any) => item?.price?.billingCycle?.interval === (isFree ? "month" : "year"),
-        );
-
-        return {
-          id: plan?.id,
-          name: monthlyItem?.product?.name,
-          monthlyPrice: formatPrice(monthlyItem?.formattedUnitTotals?.total),
-          yearlyPrice: formatPrice(yearlyItem?.formattedUnitTotals?.total),
-          features: JSON.parse((monthlyItem?.product?.customData?.plans as any) || "[]"),
-          items: [
-            { billingCycle: "monthly", priceId: monthlyItem?.price?.id, quantity: 1 },
-            { billingCycle: "yearly", priceId: yearlyItem?.price?.id, quantity: 1 },
-          ],
-        };
-      })
-      .filter((plan: any) => plan);
+      return {
+        id: monthlyProduct?.id,
+        name: get(monthlyProduct, "product.name", ""),
+        monthlyPrice: priceWithCurrency(
+          get(monthlyItem, "unitPrice.amount", 0),
+          get(monthlyItem, "unitPrice.currencyCode", ""),
+        ),
+        yearlyPrice: priceWithCurrency(
+          get(yearlyItem, "unitPrice.amount", 0),
+          get(yearlyItem, "unitPrice.currencyCode", ""),
+        ),
+        features: JSON.parse(get(monthlyItem, "product.customData.plans", "[]")),
+        items: [
+          { billingCycle: "monthly", priceId: monthlyProduct?.id, quantity: 1 },
+          { billingCycle: "yearly", priceId: yearlyProduct?.id, quantity: 1 },
+        ],
+      };
+    });
+    return plans;
   }
 
   async openCheckout(options: any): Promise<any> {
