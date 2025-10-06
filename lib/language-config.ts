@@ -1,8 +1,7 @@
 // Default language codes with only English as base
 const BASE_LANGUAGE_CODES = {
   en: "English",
-  fr: "French",
-  zn: "Zinc",
+  fr: "French"
 };
 const envLanguages = process.env.NEXT_PUBLIC_SUPPORTED_LANGUAGES;
 
