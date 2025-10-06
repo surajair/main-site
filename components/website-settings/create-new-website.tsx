@@ -44,7 +44,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
   const [websiteName, setWebsiteName] = useState("");
   const [subdomain, setSubdomain] = useState("");
   const [isSubdomainModified, setIsSubdomainModified] = useState(false);
-  const [defaultLanguage, setDefaultLanguage] = useState("en");
+  const [defaultLanguage, setDefaultLanguage] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const planLimits = usePlanLimits();
   const queryClient = useQueryClient();
@@ -86,7 +86,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
         setOpen(false);
         // Reset form
         setWebsiteName("");
-        setDefaultLanguage("en");
+        setDefaultLanguage("");
         queryClient.invalidateQueries({ queryKey: ["websites-list"] });
         window.location.href = `/${result.data.id}/editor`;
       } else {
@@ -106,7 +106,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
         setWebsiteName("");
         setSubdomain("");
         setIsSubdomainModified(false);
-        setDefaultLanguage("en");
+        setDefaultLanguage("");
         setIsCreating(false);
       }
     }
@@ -159,9 +159,9 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
                 <Label className="text-xs">Default Language</Label>
                 {allLanguages.length > 1 ? (
                   <>
-                    <Select value={defaultLanguage} onValueChange={setDefaultLanguage}>
+                    <Select value={defaultLanguage} onValueChange={setDefaultLanguage} required>
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder="Select a language" />
                       </SelectTrigger>
                       <SelectContent>
                         {allLanguages.map((lang) => (
@@ -183,7 +183,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
                 <Button
                   className="w-full"
                   onClick={handleCreateWebsite}
-                  disabled={!websiteName.trim() || !subdomain.trim() || isCreating}>
+                  disabled={!websiteName.trim() || !subdomain.trim() || !defaultLanguage || isCreating}>
                   {isCreating ? (
                     <>
                       <Loader className="h-3 w-3 animate-spin" />
