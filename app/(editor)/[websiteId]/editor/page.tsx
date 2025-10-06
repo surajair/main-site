@@ -1,9 +1,11 @@
-import PaymentConfirmation from "@/components/upgrade/payment-confirmation";
 import { FeatureFlagProvider } from "@/lib/openfeature/feature-flag-provider";
 import "chai-next/builder-styles";
 import { getSupabaseAdmin } from "chai-next/server";
 import { get } from "lodash";
+import dynamic from "next/dynamic";
 import Editor from "./editor";
+
+const PaymentConfirmation = dynamic(() => import("@/components/upgrade/payment-confirmation"), { ssr: true });
 
 export default async function Page({
   params,
