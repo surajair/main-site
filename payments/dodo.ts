@@ -1,6 +1,6 @@
 import { getDodoCheckoutSession, getProductList } from "@/lib/getter/payment";
 import { DodoPayments } from "dodopayments-checkout";
-import { find } from "lodash";
+import { find, includes, map } from "lodash";
 import { PaymentProviderInterface, TPaymentProviderInitializeOptions } from ".";
 import { getReturnURL, priceWithCurrency } from "./helper";
 
@@ -48,6 +48,10 @@ export class DodoAdapter implements PaymentProviderInterface {
       };
     });
     return plans;
+  }
+
+  isCurrentPlan(currentPlanId: string, plan: any): boolean {
+    return includes(map(plan?.items, "priceId"), currentPlanId);
   }
 
   async openCheckout(options: any = {}): Promise<any> {
