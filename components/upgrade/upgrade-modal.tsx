@@ -169,7 +169,7 @@ const UpgradeDialog = ({ onClose }: { onClose: () => void }) => {
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="max-w-[700px]">
         <DialogHeader>
-          <DialogTitle>Upgrade to Pro</DialogTitle>
+          <DialogTitle>Upgrade now</DialogTitle>
         </DialogHeader>
         <div className="py-4">
           <UpgradeModalContent />

@@ -132,8 +132,8 @@ const ProfileAvatarTrigger = ({ data }: { data: any }) => {
           </AvatarFallback>
         </Avatar>
         {!plan?.isFree && (
-          <span className="absolute w-9 bottom-px text-center right-0 z-50 text-[10px] bg-amber-100 font-bold text-amber-600 border border-amber-600 rounded-full px-1 py-px leading-none">
-            PRO
+          <span className="absolute w-max -bottom-px text-center right-1/2 translate-x-1/2 z-50 bg-amber-100 font-bold text-amber-600 border border-amber-600 rounded-full px-1 py-px leading-none">
+            <Crown className="h-3.5 w-3.5" />
           </span>
         )}
       </div>
@@ -161,18 +161,25 @@ const ProfileForm = ({ data }: { data: any }) => {
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-3">
-            <Avatar className="h-12 w-12 border-2">
-              <AvatarImage
-                src={user.user_metadata?.avatar_url || "https://avatar.iran.liara.run/public/boy"}
-                alt={user.user_metadata?.full_name || ""}
-              />
-              <AvatarFallback className="bg-primary/30 text-primary font-bold">
-                <User className="h-5 w-5" />
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative">
+              <Avatar className={`h-12 w-12 border-2 ${plan?.isFree ? "border-border" : "border-amber-600"}`}>
+                <AvatarImage
+                  src={user.user_metadata?.avatar_url || "https://avatar.iran.liara.run/public/boy"}
+                  alt={user.user_metadata?.full_name || ""}
+                />
+                <AvatarFallback className="bg-primary/30 text-primary font-bold">
+                  <User className="h-5 w-5" />
+                </AvatarFallback>
+              </Avatar>
+              {!plan?.isFree && (
+                <span className="absolute w-max -bottom-1 text-center right-1/2 translate-x-1/2 z-50 bg-amber-100 font-bold text-amber-600 border border-amber-600 rounded-full px-1 py-px leading-none">
+                  <Crown className="h-3.5 w-3.5" />
+                </span>
+              )}
+            </div>
             <div>
-              <h2 className="text-xl font-semibold">{displayName || "User Profile"}</h2>
-              <p className="text-sm text-gray-600">{email}</p>
+              <h2 className="text-xl font-semibold leading-none">{displayName || "User Profile"}</h2>
+              <p className="text-sm text-muted-foreground font-normal">{email}</p>
             </div>
           </DialogTitle>
         </DialogHeader>
@@ -183,14 +190,16 @@ const ProfileForm = ({ data }: { data: any }) => {
             <UpgradeModalButton />
           </div>
         ) : (
-          <div className="border rounded-md p-3 bg-muted">
-            <p className="text-sm text-gray-600">
-              You current plan:{" "}
-              <span className="font-semibold text-amber-600">
-                {planName} <Crown className="inline w-4 h-4" />
-              </span>
-            </p>
-          </div>
+          planName && (
+            <div className="border rounded-md p-3 bg-muted">
+              <p className="text-sm text-gray-600">
+                You current plan:{" "}
+                <span className="font-semibold text-amber-600">
+                  {planName} <Crown className="inline w-4 h-4" />
+                </span>
+              </p>
+            </div>
+          )
         )}
 
         <div className="space-y-6 py-4 overflow-y-auto">
