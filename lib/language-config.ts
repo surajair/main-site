@@ -2,7 +2,7 @@
 const BASE_LANGUAGE_CODES = {
   en: "English",
   fr: "French",
-  zn: "Zinc",
+  sl: "Slovenian",
 };
 const envLanguages = process.env.NEXT_PUBLIC_SUPPORTED_LANGUAGES;
 
