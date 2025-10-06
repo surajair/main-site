@@ -3,8 +3,8 @@
   "version": "0.1.20",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css --watch\" \"next dev --port 3000\"",
-    "dev:turbo": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css --watch\" \"next dev --port 3000 --turbopack\"",
+    "dev": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css --watch\" \"next dev --turbopack --port 3000\"",
+    "dev:turbo": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css --watch\" \"next dev --turbopack --port 3000\"",
     "build": "npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css && next build",
     "start": "next start",
     "lint": "next lint & tsc --noEmit",
@@ -66,7 +66,11 @@
   "pnpm": {
     "overrides": {
       "@types/react": "19.0.8",
-      "@types/react-dom": "19.0.3"
+      "@types/react-dom": "19.0.3",
+      "sharp": "$sharp"
     }
+  },
+  "overrides": {
+    "sharp": "$sharp"
   }
 }
