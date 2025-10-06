@@ -60,6 +60,7 @@ export class PaddleAdapter implements PaymentProviderInterface {
           get(yearlyItem, "unitPrice.amount", 0),
           get(yearlyItem, "unitPrice.currencyCode", ""),
         ),
+        isFree: monthlyItem?.unitPrice.amount === 0,
         features: JSON.parse(get(monthlyItem, "product.customData.plans", "[]")),
         items: [
           { billingCycle: "monthly", priceId: monthlyProduct?.id, quantity: 1 },

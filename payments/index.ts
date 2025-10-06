@@ -1,4 +1,5 @@
 import { useClientSettings } from "@/hooks/use-client-settings";
+import { useUserPlan } from "@/lib/openfeature/helper";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { DodoAdapter } from "./dodo";
@@ -22,6 +23,7 @@ export type TPaymentProvider = {
   plans: any[];
   isLoading: boolean;
   status: TStatus;
+  currentPlanId: string;
 };
 
 // * Factories
@@ -42,6 +44,8 @@ export class PaymentProviderFactory {
 export const usePaymentProvider = (options: Record<string, any> = {}): TPaymentProvider => {
   const [status, setStatus] = useState<TStatus>("idle");
   const { data: clientSettings } = useClientSettings();
+  const value = useUserPlan();
+  const currentPlanId = value?.id;
 
   const optionsWithState = {
     ...(options || {}),
@@ -65,5 +69,5 @@ export const usePaymentProvider = (options: Record<string, any> = {}): TPaymentP
     staleTime: Infinity,
   });
 
-  return { provider: data?.provider, plans: data?.plans, isLoading, status };
+  return { provider: data?.provider, plans: data?.plans, currentPlanId, isLoading, status };
 };
