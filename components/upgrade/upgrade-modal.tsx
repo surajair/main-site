@@ -113,15 +113,15 @@ function UpgradeModalContent() {
             plans?.map((plan: any) => {
               const id = plan.id;
               const currentPrice = billingCycle === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
-              const period = id === "free" ? "" : billingCycle === "yearly" ? "/year" : "/month";
+              const period = plan?.isFree ? "" : billingCycle === "yearly" ? "/year" : "/month";
               const isCurrentPlan = provider.isCurrentPlan(currentPlanId, plan);
 
               return (
                 <Card
                   key={id}
-                  className={`relative min-h-[360px] transition-all ease-linear duration-300 hover:shadow-lg border-border ${id === "free" ? "" : "border-primary/50"}`}>
+                  className={`relative min-h-[360px] transition-all ease-linear duration-300 hover:shadow-lg border-border ${plan?.isFree ? "" : "border-primary/50"}`}>
                   <CardHeader className="text-start pb-4">
-                    <CardTitle className={`font-semibold ${id === "free" ? "text-muted-foreground" : "text-primary"}`}>
+                    <CardTitle className={`font-semibold ${plan?.isFree ? "text-muted-foreground" : "text-primary"}`}>
                       {plan?.name}
                     </CardTitle>
                     <div className="flex items-baseline justify-start mt-2">
