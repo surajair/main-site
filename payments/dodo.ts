@@ -8,15 +8,19 @@ export class DodoAdapter implements PaymentProviderInterface {
   private dodo: any;
   private paymentConfig: any;
   private options: TPaymentProviderInitializeOptions | undefined;
+  private provider: "DODO";
+  public isTestMode: boolean;
 
   constructor(paymentConfig: any) {
+    this.provider = "DODO";
     this.paymentConfig = paymentConfig;
+    this.isTestMode = this.paymentConfig?.environment === "sandbox";
   }
 
   async initialize(options?: TPaymentProviderInitializeOptions) {
     this.options = options;
     this.dodo = DodoPayments.Initialize({
-      mode: process.env.NODE_ENV === "development" ? "test" : "live",
+      mode: this.isTestMode ? "test" : "live",
       onEvent: (event) => {
         if (event.event_type === "checkout.error") {
           this.options?.onStatusChange("error");
@@ -27,7 +31,7 @@ export class DodoAdapter implements PaymentProviderInterface {
   }
 
   async getPricingPlans(): Promise<any[]> {
-    const items = await getProductList("DODO");
+    const items = await getProductList(this.provider, this.isTestMode);
     const plans = this.paymentConfig?.plans?.map((subPlans: any) => {
       const monthlyProduct = find(subPlans, { period: "monthly" });
       const yearlyProduct = find(subPlans, { period: "yearly" });
@@ -55,8 +59,8 @@ export class DodoAdapter implements PaymentProviderInterface {
   }
 
   async openCheckout(options: any = {}): Promise<any> {
-    const returnUrl = getReturnURL("DODO");
-    const checkout = await getDodoCheckoutSession({ ...options, returnUrl });
+    const returnUrl = getReturnURL(this.provider);
+    const checkout = await getDodoCheckoutSession({ ...options, returnUrl }, this.isTestMode);
     DodoPayments.Checkout.open({
       checkoutUrl: checkout?.checkout_url,
     });

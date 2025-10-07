@@ -9,16 +9,20 @@ export class PaddleAdapter implements PaymentProviderInterface {
   private paddle: Paddle | any;
   private paymentConfig: any;
   private options: TPaymentProviderInitializeOptions | undefined;
+  private provider: "PADDLE";
+  public isTestMode: boolean;
 
   constructor(paymentConfig: any) {
+    this.provider = "PADDLE";
     this.paymentConfig = paymentConfig;
+    this.isTestMode = this.paymentConfig?.environment === "sandbox";
   }
 
   async initialize(options?: TPaymentProviderInitializeOptions) {
     this.options = options;
     this.paddle = (await initializePaddle({
       token: this.paymentConfig.token,
-      environment: process.env.NODE_ENV === "development" ? "sandbox" : "production",
+      environment: this.isTestMode ? "sandbox" : "production",
       checkout: {
         settings: {
           displayMode: "overlay",
@@ -42,7 +46,7 @@ export class PaddleAdapter implements PaymentProviderInterface {
   }
 
   async getPricingPlans(): Promise<any[]> {
-    const items = await getProductList("PADDLE");
+    const items = await getProductList(this.provider, this.isTestMode);
     const plans = this.paymentConfig?.plans?.map((subPlans: any) => {
       const monthlyProduct = find(subPlans, { period: "monthly" });
       const yearlyProduct = find(subPlans, { period: "yearly" });
@@ -77,15 +81,8 @@ export class PaddleAdapter implements PaymentProviderInterface {
 
   async openCheckout(options: any): Promise<any> {
     await this.paddle?.Checkout?.open({
-      customer: {
-        email: options?.user?.email || "",
-      },
-      items: [
-        {
-          priceId: options?.planItem?.priceId,
-          quantity: 1,
-        },
-      ],
+      customer: { email: options?.user?.email || "" },
+      items: [{ priceId: options?.planItem?.priceId, quantity: 1 }],
     });
     return null;
   }

@@ -6,18 +6,17 @@ import { forEach, get, omit } from "lodash";
 
 const PAYMENT_API_KEY = process.env.PAYMENT_API_KEY!;
 
-const getEnvironment = (provider: string): any => {
-  const isDevMode = process.env.NODE_ENV === "development";
+const getEnvironment = (provider: "PADDLE" | "DODO", isTestMode: boolean): any => {
   switch (provider) {
     case "PADDLE":
-      return isDevMode ? "sandbox" : "production";
+      return isTestMode ? "sandbox" : "production";
     case "DODO":
-      return isDevMode ? "test_mode" : "live_mode";
+      return isTestMode ? "test_mode" : "live_mode";
   }
 };
 
-export const getProductList = async (provider: string) => {
-  const environment = getEnvironment(provider);
+export const getProductList = async (provider: "PADDLE" | "DODO", isTestMode: boolean) => {
+  const environment = getEnvironment(provider, isTestMode);
   try {
     switch (provider) {
       case "PADDLE": {
@@ -45,8 +44,8 @@ export const getProductList = async (provider: string) => {
   }
 };
 
-export const getDodoCheckoutSession = async (payload: any) => {
-  const dodo = new DodoPayments({ bearerToken: PAYMENT_API_KEY, environment: getEnvironment("DODO") });
+export const getDodoCheckoutSession = async (payload: any, isTestMode: boolean) => {
+  const dodo = new DodoPayments({ bearerToken: PAYMENT_API_KEY, environment: getEnvironment("DODO", isTestMode) });
   const checkoutSession = await dodo.checkoutSessions.create({
     product_cart: [{ product_id: payload?.planItem?.priceId, quantity: 1 }],
     customer: { email: payload?.user?.email || "", ...(payload?.user?.name && { name: payload?.user?.name }) },

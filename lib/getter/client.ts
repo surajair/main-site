@@ -11,6 +11,12 @@ export type ClientSettings = {
   loginProviders: string[];
   loginHtml: string;
   features: Record<string, any>;
+  paymentConfig: {
+    token: string;
+    provider: string;
+    environment: "sandbox" | "live";
+    plans: Array<Array<{ id: string; period: "monthly" | "yearly" }>>;
+  };
 } & Record<string, any>;
 
 export const getClientSettings = cache(async (): Promise<ClientSettings> => {
@@ -31,6 +37,6 @@ export const getClientSettings = cache(async (): Promise<ClientSettings> => {
     loginProviders: data?.settings?.loginProviders || [],
     features: data?.features || {},
     paymentConfig: data?.paymentConfig || {},
-    defaultSiteLang : data?.settings?.defaultSiteLang || "en",
+    defaultSiteLang: data?.settings?.defaultSiteLang || "en",
   };
 });
