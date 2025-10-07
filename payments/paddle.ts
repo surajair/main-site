@@ -15,7 +15,7 @@ export class PaddleAdapter implements PaymentProviderInterface {
   constructor(paymentConfig: any) {
     this.provider = "PADDLE";
     this.paymentConfig = paymentConfig;
-    this.isTestMode = this.paymentConfig?.environment === "development";
+    this.isTestMode = this.paymentConfig?.environment === "sandbox";
   }
 
   async initialize(options?: TPaymentProviderInitializeOptions) {

@@ -14,7 +14,7 @@ export class DodoAdapter implements PaymentProviderInterface {
   constructor(paymentConfig: any) {
     this.provider = "DODO";
     this.paymentConfig = paymentConfig;
-    this.isTestMode = this.paymentConfig?.environment === "development";
+    this.isTestMode = this.paymentConfig?.environment === "sandbox";
   }
 
   async initialize(options?: TPaymentProviderInitializeOptions) {

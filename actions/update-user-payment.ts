@@ -11,7 +11,7 @@ const PAYMENT_API_KEY = process.env.PAYMENT_API_KEY!;
 export const updateUserPayment = async (provider: string, paymentId: string) => {
   if (!provider || !paymentId) return { success: false, error: "Invalid provider or payment ID" };
   const clientSettings = await getClientSettings();
-  const isTestMode = clientSettings?.paymentConfig?.environment === "development";
+  const isTestMode = clientSettings?.paymentConfig?.environment === "sandbox";
 
   let payload: any = {};
   switch ((provider || "").toUpperCase()) {

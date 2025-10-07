@@ -14,7 +14,7 @@ export type ClientSettings = {
   paymentConfig: {
     token: string;
     provider: string;
-    environment: "development" | "production";
+    environment: "sandbox" | "live";
     plans: Array<Array<{ id: string; period: "monthly" | "yearly" }>>;
   };
 } & Record<string, any>;
