@@ -18,6 +18,7 @@ const UpgradeDialog = dynamic(() => import("@/components/upgrade/upgrade-modal")
 import React from "react";
 
 const StartingLoader = ({ logo, progress }: { logo: any; progress: number }) => {
+  const [localLogo] = useState(window.localStorage.getItem("client-logo"));
   const [localProgress, setLocalProgress] = useState(0);
 
   useEffect(() => {
@@ -31,13 +32,13 @@ const StartingLoader = ({ logo, progress }: { logo: any; progress: number }) => 
   const loader = useMemo(
     () => (
       <div className="w-screen h-screen flex flex-col gap-4 items-center justify-center transition-all">
-        {logo ? (
+        {localLogo || logo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={logo} className="w-8 h-8 rounded" alt="" />
+          <img src={logo || localLogo} className="w-8 h-8 rounded" alt="" />
         ) : (
           <div className="w-8 h-8" />
         )}
-        <div style={{ width: "200px" }} className={`w-[200px] rounded-full h-3 border border-border overflow-hidden`}>
+        <div style={{ width: "200px" }} className={`w-[200px] rounded-full h-2.5 border border-border overflow-hidden`}>
           <div
             className={`h-full rounded-full bg-primary transition-all duration-300`}
             style={{
@@ -47,7 +48,7 @@ const StartingLoader = ({ logo, progress }: { logo: any; progress: number }) => 
         </div>
       </div>
     ),
-    [localProgress, logo],
+    [localProgress, localLogo, logo],
   );
 
   return loader;

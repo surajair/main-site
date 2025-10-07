@@ -6,6 +6,11 @@ export const useClientSettings = () => {
     staleTime: Infinity,
     gcTime: Infinity,
     queryKey: ["client-settings"],
-    queryFn: getClientSettings,
+    queryFn: async () => {
+      const clientSettings = await getClientSettings();
+      const logo = clientSettings?.logo;
+      window.localStorage.setItem("client-logo", logo);
+      return clientSettings;
+    },
   });
 };
