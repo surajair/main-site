@@ -1,3 +1,5 @@
+import { filter, find, map } from "lodash";
+
 export function formatPrice(price: string | undefined): string {
   if (!price) return "";
   return price.replace(/\.00$/, "");
@@ -19,4 +21,21 @@ export const getReturnURL = (provider: string, params: any = {}) => {
           .join("&")}`
       : ""
   }`;
+};
+
+export const getSavePercentage = (plans: any): null | string => {
+  try {
+    const paidPlans = map(filter(plans, { isFree: false }), ({ items }) => {
+      const monthlyPrice = find(items, { billingCycle: "monthly" })?.price;
+      const yearlyPrice = find(items, { billingCycle: "yearly" })?.price;
+      const totalPriceByMonth = monthlyPrice * 12;
+      const percentage = ((totalPriceByMonth - yearlyPrice) / totalPriceByMonth) * 100;
+      return percentage;
+    });
+    const savePercentage = formatPrice(Math.max(...paidPlans).toFixed(2));
+    if (!savePercentage || isNaN(Number(savePercentage))) return null;
+    return `${savePercentage}%`;
+  } catch (error) {
+    return null;
+  }
 };

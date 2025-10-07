@@ -40,14 +40,14 @@ export class DodoAdapter implements PaymentProviderInterface {
 
       return {
         id: monthlyProduct?.id,
-        name: monthlyProduct?.name,
+        name: monthlyItem?.name,
         monthlyPrice: priceWithCurrency(monthlyItem?.price || 0, "USD"),
         yearlyPrice: priceWithCurrency(yearlyItem?.price || 0, "USD"),
         isFree: monthlyItem?.price === 0,
         features: JSON.parse((monthlyItem?.metadata?.plans as any) || "[]"),
         items: [
-          { billingCycle: "monthly", priceId: monthlyProduct?.id, quantity: 1 },
-          { billingCycle: "yearly", priceId: yearlyProduct?.id, quantity: 1 },
+          { billingCycle: "monthly", priceId: monthlyProduct?.id, quantity: 1, price: monthlyItem?.price || 0 },
+          { billingCycle: "yearly", priceId: yearlyProduct?.id, quantity: 1, price: yearlyItem?.price || 0 },
         ],
       };
     });

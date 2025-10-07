@@ -3,6 +3,7 @@ import { useUserPlan } from "@/lib/openfeature/helper";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { DodoAdapter } from "./dodo";
+import { getSavePercentage } from "./helper";
 import { PaddleAdapter } from "./paddle";
 
 // * Types
@@ -25,6 +26,7 @@ export type TPaymentProvider = {
   isLoading: boolean;
   status: TStatus;
   currentPlanId: string;
+  savePercentage: string | null;
 };
 
 // * Factories
@@ -61,7 +63,8 @@ export const usePaymentProvider = (options: Record<string, any> = {}): TPaymentP
       const provider = PaymentProviderFactory.createPaymentProvider(clientSettings?.paymentConfig);
       await provider.initialize(optionsWithState);
       const plans = await provider.getPricingPlans();
-      return { provider, plans };
+      const savePercentage = getSavePercentage(plans);
+      return { provider, plans, savePercentage };
     },
     enabled: !!clientSettings?.paymentConfig,
     refetchOnWindowFocus: false,
@@ -70,5 +73,12 @@ export const usePaymentProvider = (options: Record<string, any> = {}): TPaymentP
     staleTime: Infinity,
   });
 
-  return { provider: data?.provider, plans: data?.plans, currentPlanId, isLoading, status };
+  return {
+    status,
+    isLoading,
+    currentPlanId,
+    plans: data?.plans,
+    provider: data?.provider,
+    savePercentage: data?.savePercentage,
+  };
 };

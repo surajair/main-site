@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 function UpgradeModalContent() {
   const { user } = useChaiAuth();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const { plans, status, provider, isLoading, currentPlanId } = usePaymentProvider();
+  const { plans, status, provider, isLoading, currentPlanId, savePercentage } = usePaymentProvider();
 
   const handleUpgrade = async (planItems: any[]) => {
     if (planItems.length === 0) return;
@@ -89,9 +89,9 @@ function UpgradeModalContent() {
                     : "text-muted-foreground hover:text-foreground border-transparent"
                 } ${plans?.length > 0 ? "" : "opacity-50 pointer-events-none cursor-not-allowed"}`}>
                 Yearly
-                {plans?.length > 0 && (
+                {savePercentage && (
                   <span className="ml-2 text-[11px] text-green-600 font-normal px-1 bg-green-100 rounded-full">
-                    Save 16.67%
+                    Save {savePercentage}
                   </span>
                 )}
               </button>

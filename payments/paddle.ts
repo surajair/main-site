@@ -55,7 +55,7 @@ export class PaddleAdapter implements PaymentProviderInterface {
 
       return {
         id: monthlyItem?.product?.id,
-        name: get(monthlyProduct, "product.name", ""),
+        name: get(monthlyItem, "product.name", ""),
         monthlyPrice: priceWithCurrency(
           get(monthlyItem, "unitPrice.amount", 0),
           get(monthlyItem, "unitPrice.currencyCode", ""),
@@ -67,8 +67,18 @@ export class PaddleAdapter implements PaymentProviderInterface {
         isFree: monthlyItem?.unitPrice.amount === 0,
         features: JSON.parse(get(monthlyItem, "product.customData.plans", "[]")),
         items: [
-          { billingCycle: "monthly", priceId: monthlyProduct?.id, quantity: 1 },
-          { billingCycle: "yearly", priceId: yearlyProduct?.id, quantity: 1 },
+          {
+            billingCycle: "monthly",
+            priceId: monthlyProduct?.id,
+            quantity: 1,
+            price: get(monthlyItem, "unitPrice.amount", 0),
+          },
+          {
+            billingCycle: "yearly",
+            priceId: yearlyProduct?.id,
+            quantity: 1,
+            price: get(yearlyItem, "unitPrice.amount", 0),
+          },
         ],
       };
     });
