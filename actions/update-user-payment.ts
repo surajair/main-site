@@ -1,5 +1,6 @@
 "use server";
 
+import { getClientSettings } from "@/lib/getter";
 import { Paddle } from "@paddle/paddle-node-sdk";
 import DodoPayments from "dodopayments";
 import { get, set } from "lodash";
@@ -9,6 +10,8 @@ const PAYMENT_API_KEY = process.env.PAYMENT_API_KEY!;
 
 export const updateUserPayment = async (provider: string, paymentId: string) => {
   if (!provider || !paymentId) return { success: false, error: "Invalid provider or payment ID" };
+  const clientSettings = await getClientSettings();
+  const isTestMode = clientSettings?.paymentConfig?.environment === "development";
 
   let payload: any = {};
   switch ((provider || "").toUpperCase()) {
@@ -18,15 +21,14 @@ export const updateUserPayment = async (provider: string, paymentId: string) => 
        * PAYMENT REDIRECTION FROM @PADDLE
        *
        */
-      const paddle = new Paddle(PAYMENT_API_KEY, {
-        environment: (process.env.NODE_ENV === "development" ? "sandbox" : "production") as any,
-      });
+      const paddle = new Paddle(PAYMENT_API_KEY, { environment: (isTestMode ? "sandbox" : "production") as any });
       const transaction = await paddle.transactions.get(paymentId as string);
       const subscriptionId = transaction.subscriptionId;
       if (!subscriptionId) return { success: false, error: "No subscription found for this transaction" };
       const subscription = await paddle.subscriptions.get(subscriptionId);
       const data = get(subscription, "items[0]");
       set(data, "provider", provider);
+      set(data, "client", process.env.CHAIBUILDER_CLIENT_ID);
       const nextBilledAt = get(data, "nextBilledAt");
       const planId = get(data, "product.id");
       const priceId = get(data, "price.id");
@@ -42,12 +44,13 @@ export const updateUserPayment = async (provider: string, paymentId: string) => 
        */
       const dodo = new DodoPayments({
         bearerToken: PAYMENT_API_KEY,
-        environment: process.env.NODE_ENV === "development" ? "test_mode" : "live_mode",
+        environment: isTestMode ? "test_mode" : "live_mode",
       });
       const subscriptionId = paymentId as string;
       const subscription = await dodo.subscriptions.retrieve(subscriptionId);
       const data = subscription;
       set(data, "provider", provider);
+      set(data, "client", process.env.CHAIBUILDER_CLIENT_ID);
       const nextBilledAt = get(data, "next_billing_date");
       const planId = get(data, "product_id");
       const priceId = get(data, "product_id");
