@@ -23,7 +23,7 @@ export default async function LoginPage() {
 
       {isGoogleLoginEnabled && (
         <>
-          <div className="my-6 text-center text-xs text-muted-foreground"> OR</div>
+          <div className="my-4 text-center text-xs text-muted-foreground"> OR</div>
           <LoginButton />
         </>
       )}

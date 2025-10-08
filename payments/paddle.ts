@@ -52,33 +52,20 @@ export class PaddleAdapter implements PaymentProviderInterface {
       const yearlyProduct = find(subPlans, { period: "yearly" });
       const monthlyItem = find(items, { id: monthlyProduct?.id });
       const yearlyItem = find(items, { id: yearlyProduct?.id });
+      const currencyCode = get(monthlyItem, "unitPrice.currencyCode", "USD");
+      const monthlyPrice = get(monthlyItem, "unitPrice.amount", 0);
+      const yearlyPrice = get(yearlyItem, "unitPrice.amount", 0);
 
       return {
         id: monthlyItem?.product?.id,
         name: get(monthlyItem, "product.name", ""),
-        monthlyPrice: priceWithCurrency(
-          get(monthlyItem, "unitPrice.amount", 0),
-          get(monthlyItem, "unitPrice.currencyCode", ""),
-        ),
-        yearlyPrice: priceWithCurrency(
-          get(yearlyItem, "unitPrice.amount", 0),
-          get(yearlyItem, "unitPrice.currencyCode", ""),
-        ),
-        isFree: monthlyItem?.unitPrice.amount === 0,
+        monthlyPrice: priceWithCurrency(monthlyPrice, currencyCode),
+        yearlyPrice: priceWithCurrency(yearlyPrice, currencyCode),
+        isFree: monthlyPrice === 0,
         features: JSON.parse(get(monthlyItem, "product.customData.plans", "[]")),
         items: [
-          {
-            billingCycle: "monthly",
-            priceId: monthlyProduct?.id,
-            quantity: 1,
-            price: get(monthlyItem, "unitPrice.amount", 0),
-          },
-          {
-            billingCycle: "yearly",
-            priceId: yearlyProduct?.id,
-            quantity: 1,
-            price: get(yearlyItem, "unitPrice.amount", 0),
-          },
+          { billingCycle: "monthly", priceId: monthlyProduct?.id, quantity: 1, price: monthlyPrice },
+          { billingCycle: "yearly", priceId: yearlyProduct?.id, quantity: 1, price: yearlyPrice },
         ],
       };
     });
