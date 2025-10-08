@@ -60,7 +60,7 @@ export default function LoginButton() {
         onClick={handleGoogleSignIn}
         disabled={loading}
         variant="outline"
-        className="w-full h-12 text-base font-medium border-2 hover:bg-accent mb-6 rounded-xl">
+        className="w-full h-9 text-sm font-medium border-2 hover:bg-accent mb-6 rounded-xl">
         {loading ? (
           <div className="animate-spin w-5 h-5 border-2 border-dashed rounded-full border-primary" />
         ) : (

@@ -1,33 +1,32 @@
 import LoginButton from "@/components/auth/login-button";
 import SignupForm from "@/components/auth/signup-form";
+import { getClientSettings } from "@/lib/getter";
 import Link from "next/link";
 
 export default async function SignupPage() {
+  const clientSettings = await getClientSettings();
+  const isGoogleLoginEnabled = clientSettings.loginProviders?.includes("google");
   return (
     <>
-      <h2 className="text-2xl font-bold text-center text-foreground mb-2">
-        Create Account
-      </h2>
-      <p className="text-center text-muted-foreground mb-8">
-        Sign up to create your account
-      </p>
+      <h2 className="text-2xl font-bold text-center text-foreground mb-2">Create Account</h2>
+      <p className="text-center text-muted-foreground mb-8">Sign up to create your account</p>
       <SignupForm />
 
       <div className="my-6 text-center">
         <p className="text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link
-            href="/login"
-            className="text-primary hover:underline font-medium"
-          >
+          <Link href="/login" className="text-primary hover:underline font-medium">
             Sign in
           </Link>
         </p>
       </div>
 
-      <div className="my-6 text-center text-xs text-muted-foreground"> OR</div>
-
-      <LoginButton />
+      {isGoogleLoginEnabled && (
+        <>
+          <div className="my-4 text-center text-xs text-muted-foreground">OR</div>
+          <LoginButton />
+        </>
+      )}
     </>
   );
 }
