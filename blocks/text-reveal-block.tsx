@@ -20,7 +20,7 @@ const TextRevealConfig = {
   group: "typography",
   ...registerChaiBlockSchema({
     properties: {
-      styles: StylesProp("text-4xl font-bold"),
+      styles: StylesProp("text-4xl font-bold justify-center"),
       text: {
         type: "string",
         title: "Text to Reveal",

@@ -18,7 +18,8 @@ const UpgradeDialog = dynamic(() => import("@/components/upgrade/upgrade-modal")
 import React from "react";
 
 const StartingLoader = ({ logo, progress }: { logo: any; progress: number }) => {
-  const [localLogo] = useState(window?.localStorage?.getItem("client-logo"));
+  // @ts-expect-error window is not defined
+  const [localLogo] = useState(window ?? window?.localStorage?.getItem("client-logo"));
   const [localProgress, setLocalProgress] = useState(0);
 
   useEffect(() => {

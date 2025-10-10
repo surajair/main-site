@@ -12,7 +12,6 @@ type TextRevealComponentProps = {
 
 const TextRevealComponent = ({ text, duration, staggerDelay, blockProps, styles }: TextRevealComponentProps) => {
   const words = text.split(" ");
-  console.log(words);
 
   const durationInSeconds = duration / 1000;
   const staggerDelayInSeconds = staggerDelay / 1000;
