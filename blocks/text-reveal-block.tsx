@@ -25,6 +25,10 @@ const TextRevealConfig = {
         type: "string",
         title: "Text to Reveal",
         default: "Beautiful text reveal animation with smooth transitions",
+        ui: {
+          "ui:widget": "textarea",
+          "ui:rows": 3,
+        },
       },
       duration: {
         type: "number",
