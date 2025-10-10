@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "chai-next";
 import { Loader, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ interface DeleteDomainModalProps {
 }
 
 function DeleteDomainModal({ websiteId, domain }: DeleteDomainModalProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const queryClient = useQueryClient();
@@ -35,13 +37,13 @@ function DeleteDomainModal({ websiteId, domain }: DeleteDomainModalProps) {
 
       if (result.success) {
         queryClient.invalidateQueries({ queryKey: ["website-settings"] });
-        toast.success("Domain deleted successfully!");
+        toast.success(t("Domain deleted successfully!"));
         setIsOpen(false);
       } else {
-        toast.error(result.error || "Failed to delete domain");
+        toast.error(result.error || t("Failed to delete domain"));
       }
     } catch (error) {
-      toast.error("Failed to delete domain");
+      toast.error(t("Failed to delete domain"));
     } finally {
       setIsDeleting(false);
     }
@@ -56,13 +58,13 @@ function DeleteDomainModal({ websiteId, domain }: DeleteDomainModalProps) {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Remove Domain</AlertDialogTitle>
+          <AlertDialogTitle>{t("Remove Domain")}</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to remove &lsquo;{domain}&rsquo; from this website? This action cannot be undone.
+            {t("Are you sure you want to remove '{{domain}}' from this website? This action cannot be undone.", { domain })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>{t("Cancel")}</AlertDialogCancel>
           <AlertDialogAction
             disabled={isDeleting}
             onClick={(e) => {
@@ -73,10 +75,10 @@ function DeleteDomainModal({ websiteId, domain }: DeleteDomainModalProps) {
             {isDeleting ? (
               <>
                 <Loader className="h-3 w-3 animate-spin mr-2" />
-                Removing
+                {t("Removing")}
               </>
             ) : (
-              "Remove Domain"
+              t("Remove Domain")
             )}
           </AlertDialogAction>
         </AlertDialogFooter>

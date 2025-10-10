@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SiteData } from "@/utils/types";
+import { useTranslation } from "chai-next";
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
@@ -32,6 +33,7 @@ interface SocialLinksProps {
 }
 
 function SocialLinks({ data, onChange }: SocialLinksProps) {
+  const { t } = useTranslation();
   const [selectedPlatform] = useState("");
   const [newValue, setNewValue] = useState("");
   const [socialLinks, setSocialLinks] = useState(data?.settings?.socialLinks ?? {});
@@ -54,7 +56,7 @@ function SocialLinks({ data, onChange }: SocialLinksProps) {
 
   return (
     <div className="space-y-4">
-      <Label className="text-sm font-medium">Social Links</Label>
+      <Label className="text-sm font-medium">{t("Social Links")}</Label>
       <div className="space-y-2">
         {Object.keys(socialLinks || {}).map((key, index) => {
           const platformInfo = getPlatformInfo(key);
@@ -73,7 +75,7 @@ function SocialLinks({ data, onChange }: SocialLinksProps) {
                   onChange(updatedSocialLinks);
                 }}>
                 <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Select platform" />
+                  <SelectValue placeholder={t("Select platform")} />
                 </SelectTrigger>
                 <SelectContent>
                   {availableForEdit.map((platform) => (
@@ -93,7 +95,7 @@ function SocialLinks({ data, onChange }: SocialLinksProps) {
                   });
                   onChange({ ...data.settings.socialLinks, [item.key]: val });
                 }}
-                placeholder={platformInfo?.placeholder || "Enter URL"}
+                placeholder={platformInfo?.placeholder || t("Enter URL")}
                 className="flex-1"
               />
               <Button type="button" variant="ghost" size="icon" onClick={() => removeSocialLink(key)}>
@@ -117,7 +119,7 @@ function SocialLinks({ data, onChange }: SocialLinksProps) {
                   setCanAddNew(false);
                 }}>
                 <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Add platform" />
+                  <SelectValue placeholder={t("Add platform")} />
                 </SelectTrigger>
                 <SelectContent>
                   {availablePlatforms.map((platform) => (
@@ -128,7 +130,7 @@ function SocialLinks({ data, onChange }: SocialLinksProps) {
                 </SelectContent>
               </Select>
               <Input
-                placeholder={"Enter URL"}
+                placeholder={t("Enter URL")}
                 value={newValue}
                 onChange={(e) => setNewValue(e.target.value)}
                 disabled={true}
@@ -145,7 +147,7 @@ function SocialLinks({ data, onChange }: SocialLinksProps) {
             onClick={() => setCanAddNew(true)}
             disabled={!isAddEnabled || canAddNew}
             className="mt-1">
-            <Plus /> Add Link
+            <Plus /> {t("Add Link")}
           </Button>
         )}
       </div>
@@ -159,6 +161,7 @@ interface ContactSocialProps {
 }
 
 export default function ContactSocial({ data, onChange }: ContactSocialProps) {
+  const { t } = useTranslation();
   const [baseline, setBaseline] = useState<SiteData>(data);
 
   const handleInputChange = (field: "email" | "phone" | "address", value: string) => {
@@ -191,7 +194,7 @@ export default function ContactSocial({ data, onChange }: ContactSocialProps) {
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email" className="text-sm font-medium">
-            Email
+            {t("Email")}
           </Label>
           <Input
             id="email"
@@ -204,7 +207,7 @@ export default function ContactSocial({ data, onChange }: ContactSocialProps) {
 
         <div className="space-y-2">
           <Label htmlFor="phone" className="text-sm font-medium">
-            Phone
+            {t("Phone")}
           </Label>
           <Input
             id="phone"
@@ -217,7 +220,7 @@ export default function ContactSocial({ data, onChange }: ContactSocialProps) {
 
         <div className="space-y-2">
           <Label htmlFor="address" className="text-sm font-medium">
-            Address
+            {t("Address")}
           </Label>
           <Input
             id="address"

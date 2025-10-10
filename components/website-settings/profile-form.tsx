@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useUserPlan } from "@/lib/openfeature/helper";
 import { useQueryClient } from "@tanstack/react-query";
-import { useSavePage } from "chai-next";
+import { useTranslation, useSavePage } from "chai-next";
 import { get } from "lodash";
 import { Crown, Loader, User } from "lucide-react";
 import { useState } from "react";
@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import UpgradeModalButton from "../upgrade/upgrade-modal-button";
 
 function ProfileName({ initialName }: { initialName: string }) {
+  const { t } = useTranslation();
   const [fullName, setFullName] = useState(initialName || "");
   const [isUpdating, setIsUpdating] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -51,7 +52,7 @@ function ProfileName({ initialName }: { initialName: string }) {
         toast.error(result.message);
       }
     } catch (error) {
-      toast.error("An unexpected error occurred. Please try again.");
+      toast.error(t("An unexpected error occurred. Please try again."));
       console.error("Profile update error:", error);
     } finally {
       setIsUpdating(false);
@@ -61,12 +62,12 @@ function ProfileName({ initialName }: { initialName: string }) {
   return (
     <form onSubmit={handleSubmit} className="flex items-end gap-4">
       <div className="flex flex-col w-full">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t("Name")}</label>
         <Input
           type="text"
           value={fullName}
           onChange={handleNameChange}
-          placeholder="Enter your full name"
+          placeholder={t("Enter your full name")}
           className="w-full"
           autoFocus={false}
         />
@@ -77,10 +78,10 @@ function ProfileName({ initialName }: { initialName: string }) {
           {isUpdating ? (
             <>
               <Loader className="h-4 w-4 animate-spin" />
-              Updating
+              {t("Updating")}
             </>
           ) : (
-            "Update Name"
+            t("Update Name")
           )}
         </Button>
       </div>
@@ -90,20 +91,21 @@ function ProfileName({ initialName }: { initialName: string }) {
 
 // Change Password Modal Component
 const ChangePasswordModal = () => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="px-4 py-2 bg-primary/80 text-white rounded-md hover:bg-primary transition-colors">
-          Change Password
+          {t("Change Password")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
-          <DialogTitle>Change Password</DialogTitle>
+          <DialogTitle>{t("Change Password")}</DialogTitle>
           <DialogDescription>
-            Enter your new password below. Make sure it&apos;s at least 8 characters long.
+            {t("Enter your new password below. Make sure it's at least 8 characters long.")}
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
@@ -143,6 +145,7 @@ const ProfileAvatarTrigger = ({ data }: { data: any }) => {
 
 // Main profile dialog component
 const ProfileForm = ({ data }: { data: any }) => {
+  const { t } = useTranslation();
   const user = get(data, "user");
   const plan = useUserPlan();
   const planName = plan?.name;
@@ -178,7 +181,7 @@ const ProfileForm = ({ data }: { data: any }) => {
               )}
             </div>
             <div>
-              <h2 className="text-xl font-semibold leading-none">{displayName || "User Profile"}</h2>
+              <h2 className="text-xl font-semibold leading-none">{displayName || t("User Profile")}</h2>
               <p className="text-sm text-muted-foreground font-normal">{email}</p>
             </div>
           </DialogTitle>
@@ -186,14 +189,14 @@ const ProfileForm = ({ data }: { data: any }) => {
 
         {plan?.isFree ? (
           <div className="border rounded-md p-3 bg-muted">
-            <p className="text-sm text-gray-600 pb-2">You are currently on Free plan</p>
+            <p className="text-sm text-gray-600 pb-2">{t("You are currently on Free plan")}</p>
             <UpgradeModalButton />
           </div>
         ) : (
           planName && (
             <div className="border rounded-md p-3 bg-muted">
               <p className="text-sm text-gray-600">
-                You current plan: <span className="font-semibold text-amber-600">{planName}</span>
+                {t("You current plan:")}{" "}<span className="font-semibold text-amber-600">{planName}</span>
               </p>
             </div>
           )
@@ -202,11 +205,11 @@ const ProfileForm = ({ data }: { data: any }) => {
         <div className="space-y-6 py-4 overflow-y-auto">
           {/* Account Details Section */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Details</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t("Account Details")}</h3>
             <div className="space-y-4">
               <ProfileName initialName={displayName || ""} />
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("Email")}</label>
                 <Input type="email" value={email} readOnly className="bg-gray-50 text-gray-500 cursor-not-allowed" />
               </div>
             </div>
@@ -216,8 +219,8 @@ const ProfileForm = ({ data }: { data: any }) => {
           <div>
             <div className="p-4 border border-gray-200 rounded-lg">
               <div className="mb-4">
-                <h4 className="font-medium text-gray-900">Password</h4>
-                <p className="text-sm text-gray-600">Update your password to keep your account secure</p>
+                <h4 className="font-medium text-gray-900">{t("Password")}</h4>
+                <p className="text-sm text-gray-600">{t("Update your password to keep your account secure")}</p>
               </div>
               <ChangePasswordModal />
             </div>

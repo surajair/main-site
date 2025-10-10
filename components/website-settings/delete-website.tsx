@@ -16,11 +16,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "chai-next";
 import { Loader, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 function DeleteWebsite({ websiteId, websiteName }: { websiteId: string; websiteName: string }) {
+  const { t } = useTranslation();
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -39,7 +41,7 @@ function DeleteWebsite({ websiteId, websiteName }: { websiteId: string; websiteN
         toast.error(result.message);
       }
     } catch (error: any) {
-      toast.error("An unexpected error occurred. Please try again.");
+      toast.error(t("An unexpected error occurred. Please try again."));
     } finally {
       setIsDeleting(false);
     }
@@ -64,29 +66,28 @@ function DeleteWebsite({ websiteId, websiteName }: { websiteId: string; websiteN
           onClick={(e) => e.stopPropagation()}
           className="w-full justify-start text-destructive hover:opacity-90">
           <Trash2 className="h-3.5 w-3.5" />
-          Delete <span className="opacity-85 font-light">{websiteName}</span>
+          {t("Delete")} <span className="opacity-85 font-light">{websiteName}</span>
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete &quot;{websiteName}&quot;?</AlertDialogTitle>
+          <AlertDialogTitle>{t("Delete")} &quot;{websiteName}&quot;?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your website and remove all data from our
-            servers.
+            {t("This action cannot be undone. This will permanently delete your website and remove all data from our servers.")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="space-y-2 mt-4">
-          <Label htmlFor="delete-confirm">Type &apos;DELETE&apos; to confirm</Label>
+          <Label htmlFor="delete-confirm">{t("Type 'DELETE' to confirm")}</Label>
           <Input
             id="delete-confirm"
             value={deleteConfirmation}
             onChange={(e) => setDeleteConfirmation(e.target.value)}
-            placeholder="DELETE"
+            placeholder={t("DELETE")}
             disabled={isDeleting}
           />
         </div>
         <AlertDialogFooter className="pt-4">
-          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>{t("Cancel")}</AlertDialogCancel>
           <AlertDialogAction
             onClick={(e) => {
               e.preventDefault();
@@ -97,10 +98,10 @@ function DeleteWebsite({ websiteId, websiteName }: { websiteId: string; websiteN
             {isDeleting ? (
               <>
                 <Loader className="h-3 w-3 animate-spin mr-2" />
-                Deleting
+                {t("Deleting")}
               </>
             ) : (
-              "Delete Website"
+              t("Delete Website")
             )}
           </AlertDialogAction>
         </AlertDialogFooter>

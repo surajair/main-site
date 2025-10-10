@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getLanguagesArray } from "@/lib/language-config";
 import { usePlanLimits } from "@/lib/openfeature/helper";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "chai-next";
 import { Loader } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -41,6 +42,7 @@ function subdomainFormat(str = "") {
 }
 
 export default function CreateNewWebsite({ children, totalSites }: CreateNewWebsiteProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [websiteName, setWebsiteName] = useState("");
   const [subdomain, setSubdomain] = useState("");
@@ -85,7 +87,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
       const result = await createSite(formData);
 
       if (result.success && result.data) {
-        toast.success("Website created successfully!");
+        toast.success(t("Website created successfully!"));
         setOpen(false);
         // Reset form
         setWebsiteName("");
@@ -93,11 +95,11 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
         queryClient.invalidateQueries({ queryKey: ["websites-list"] });
         window.location.href = `/${result.data.id}/editor`;
       } else {
-        toast.error(result.error || "Failed to create website");
+        toast.error(result.error || t("Failed to create website"));
         setIsCreating(false);
       }
     } catch (error) {
-      toast.error("An error occurred while creating the website");
+      toast.error(t("An error occurred while creating the website"));
       setIsCreating(false);
     }
   };
@@ -120,7 +122,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-lg font-playfair font-bold">Add New Website</DialogTitle>
+          <DialogTitle className="text-lg font-playfair font-bold">{t("Add New Website")}</DialogTitle>
         </DialogHeader>
 
         <Card className="border-0 p-0 shadow-none">
@@ -128,13 +130,13 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
             <CardContent className="space-y-4 p-0">
               {/* Input Field */}
               <div className="space-y-2">
-                <Label htmlFor="websiteName">Website Name</Label>
+                <Label htmlFor="websiteName">{t("Website Name")}</Label>
                 <div className="flex items-center gap-2 border border-border rounded">
                   <Input
                     id="websiteName"
                     value={websiteName}
                     onChange={handleWebsiteNameChange}
-                    placeholder="My Awesome Website"
+                    placeholder={t("My Awesome Website")}
                     className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                 </div>
@@ -142,13 +144,13 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
 
               {/* Subdomain Input Field */}
               <div className="space-y-2">
-                <Label htmlFor="subdomain">Subdomain</Label>
+                <Label htmlFor="subdomain">{t("Subdomain")}</Label>
                 <div className="flex items-center gap-2 border border-border rounded pr-2">
                   <Input
                     id="subdomain"
                     value={subdomain}
                     onChange={handleSubdomainChange}
-                    placeholder="my-awesome-website"
+                    placeholder={t("my-awesome-website")}
                     className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                   <span className="text-sm text-muted-foreground pr-3">
@@ -159,12 +161,12 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
 
               {/* Default Language */}
               <div className="space-y-1">
-                <Label className="text-xs">Default Language</Label>
+                <Label className="text-xs">{t("Default Language")}</Label>
                 {allLanguages.length > 1 ? (
                   <>
                     <Select value={defaultLanguage} onValueChange={setDefaultLanguage} required>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a language" />
+                        <SelectValue placeholder={t("Select a language")} />
                       </SelectTrigger>
                       <SelectContent>
                         {allLanguages.map((lang) => (
@@ -174,7 +176,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
                         ))}
                       </SelectContent>
                     </Select>
-                    <div className="text-xs text-muted-foreground">Cannot be changed after creating website</div>
+                    <div className="text-xs text-muted-foreground">{t("Cannot be changed after creating website")}</div>
                   </>
                 ) : (
                   <Input className="bg-gray-100" value={allLanguages[0]?.name} readOnly />
@@ -190,11 +192,11 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
                   {isCreating ? (
                     <>
                       <Loader className="h-3 w-3 animate-spin" />
-                      Creating Website
+                      {t("Creating Website")}
                     </>
                   ) : (
                     <>
-                      <span className="leading-tight">Create Website</span>
+                      <span className="leading-tight">{t("Create Website")}</span>
                     </>
                   )}
                 </Button>
@@ -202,7 +204,7 @@ export default function CreateNewWebsite({ children, totalSites }: CreateNewWebs
             </CardContent>
           ) : (
             <CardContent className="px-0 py-2 flex flex-col items-center justify-center gap-4">
-              <div>You have reached the limit of websites you can create.</div>
+              <div>{t("You have reached the limit of websites you can create.")}</div>
               <UpgradeModalButton />
             </CardContent>
           )}

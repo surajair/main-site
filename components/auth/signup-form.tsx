@@ -4,12 +4,14 @@ import { signupWithEmail } from "@/actions/user-auth-action";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "chai-next";
 import { EyeClosed, EyeIcon, Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export default function SignupForm() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,7 +25,7 @@ export default function SignupForm() {
 
     // Validate passwords match
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match", {
+      toast.error(t("Passwords do not match"), {
         position: "top-right",
       });
       return;
@@ -31,7 +33,7 @@ export default function SignupForm() {
 
     // Validate password length
     if (password.length < 8) {
-      toast.error("Password must be at least 8 characters long", {
+      toast.error(t("Password must be at least 8 characters long"), {
         position: "top-right",
       });
       return;
@@ -53,7 +55,7 @@ export default function SignupForm() {
         });
       }
     } catch (error) {
-      toast.error("An unexpected error occurred. Please try again.", {
+      toast.error(t("An unexpected error occurred. Please try again."), {
         position: "top-right",
       });
     } finally {
@@ -65,11 +67,11 @@ export default function SignupForm() {
     <>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("Email")}</Label>
           <Input
             id="email"
             type="email"
-            placeholder="name@example.com"
+            placeholder={t("name@example.com")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -77,7 +79,7 @@ export default function SignupForm() {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t("Password")}</Label>
           <div className="relative">
             <Input
               id="password"
@@ -85,7 +87,7 @@ export default function SignupForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder="Password"
+              placeholder={t("Password")}
               disabled={isLoading}
             />
             <Button
@@ -100,10 +102,10 @@ export default function SignupForm() {
               {!showPassword ? <EyeIcon /> : <EyeClosed />}
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">Password must be at least 8 characters long</p>
+          <p className="text-xs text-muted-foreground">{t("Password must be at least 8 characters long")}</p>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="confirm-password">Confirm Password</Label>
+          <Label htmlFor="confirm-password">{t("Confirm Password")}</Label>
           <div className="relative">
             <Input
               id="confirm-password"
@@ -111,7 +113,7 @@ export default function SignupForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              placeholder="Confirm Password"
+              placeholder={t("Confirm Password")}
               disabled={isLoading}
             />
             <Button
@@ -131,10 +133,10 @@ export default function SignupForm() {
           {isLoading ? (
             <>
               <Loader className="h-4 w-4 animate-spin" />
-              Creating account
+              {t("Creating account")}
             </>
           ) : (
-            "Create account"
+            t("Create account")
           )}
         </Button>
       </form>

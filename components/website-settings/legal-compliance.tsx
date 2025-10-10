@@ -3,6 +3,7 @@
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { SiteData } from "@/utils/types";
+import { useTranslation } from "chai-next";
 
 interface LegalComplianceProps {
   data: SiteData;
@@ -10,6 +11,7 @@ interface LegalComplianceProps {
 }
 
 export default function LegalCompliance({ data, onChange }: LegalComplianceProps) {
+  const { t } = useTranslation();
   return (
     <section id="legal-compliance" className="space-y-4">
       <div className="flex items-center gap-4">
@@ -26,7 +28,7 @@ export default function LegalCompliance({ data, onChange }: LegalComplianceProps
         />
         <div>
           <Label htmlFor="cookieConsentEnabled" className="cursor-pointer text-xs">
-            Enable cookie consent panel
+            {t("Enable cookie consent panel")}
           </Label>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { loginWithEmail } from "@/actions/user-auth-action";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "chai-next";
 import { EyeClosed, EyeIcon, Loader } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,6 +12,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export default function LoginForm() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +36,7 @@ export default function LoginForm() {
         setIsLoading(false);
       }
     } catch (error) {
-      toast.error("An unexpected error occurred. Please try again.", {
+      toast.error(t("An unexpected error occurred. Please try again."), {
         position: "top-right",
       });
       setIsLoading(false);
@@ -45,11 +47,11 @@ export default function LoginForm() {
     <>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("Email")}</Label>
           <Input
             id="email"
             type="email"
-            placeholder="name@example.com"
+            placeholder={t("name@example.com")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -57,9 +59,9 @@ export default function LoginForm() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("Password")}</Label>
             <Link href="/forgot-password" className="text-xs text-primary hover:underline">
-              Forgot password?
+              {t("Forgot password?")}
             </Link>
           </div>
           <div className="relative">
@@ -69,7 +71,7 @@ export default function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder="Password"
+              placeholder={t("Password")}
             />
             <Button
               type="button"
@@ -88,10 +90,10 @@ export default function LoginForm() {
           {isLoading ? (
             <>
               <Loader className="h-4 w-4 animate-spin" />
-              Signing in
+              {t("Signing in")}
             </>
           ) : (
-            "Sign in"
+            t("Sign in")
           )}
         </Button>
       </form>

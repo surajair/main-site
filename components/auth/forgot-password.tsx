@@ -4,12 +4,14 @@ import { supabase } from "@/chai/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "chai-next";
 import { CheckCircle, Loader } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export default function ForgetPassword() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -23,11 +25,11 @@ export default function ForgetPassword() {
         redirectTo: `${window.location.origin}/auth/callback?type=reset`,
       });
       setIsSubmitted(true);
-      toast.success("Password reset link sent! Please check your email.", {
+      toast.success(t("Password reset link sent! Please check your email."), {
         position: "top-right",
       });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to send reset link", {
+      toast.error(error instanceof Error ? error.message : t("Failed to send reset link"), {
         position: "top-right",
       });
     } finally {
@@ -41,15 +43,15 @@ export default function ForgetPassword() {
         <div className="flex justify-center">
           <CheckCircle className="h-12 w-12 text-green-500" />
         </div>
-        <h3 className="text-xl font-semibold">Password Reset Link Sent</h3>
+        <h3 className="text-xl font-semibold">{t("Password Reset Link Sent")}</h3>
         <p className="text-muted-foreground text-sm">
-          Please check your email and follow the instructions to reset your password.
+          {t("Please check your email and follow the instructions to reset your password.")}
         </p>
         <br />
         <Link
           href="/login"
           className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-20 py-3 rounded">
-          Go to login
+          {t("Go to login")}
         </Link>
       </div>
     );
@@ -59,11 +61,11 @@ export default function ForgetPassword() {
     <>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("Email")}</Label>
           <Input
             id="email"
             type="email"
-            placeholder="name@example.com"
+            placeholder={t("name@example.com")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -74,10 +76,10 @@ export default function ForgetPassword() {
           {isLoading ? (
             <>
               <Loader className="h-4 w-4 animate-spin" />
-              Sending
+              {t("Sending")}
             </>
           ) : (
-            "Send reset link"
+            t("Send reset link")
           )}
         </Button>
       </form>

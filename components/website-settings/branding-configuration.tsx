@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SiteData } from "@/utils/types";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "chai-next";
 import { Check, Loader, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -17,6 +18,7 @@ interface BrandingProps {
 }
 
 export default function BrandingConfiguration({ data, websiteId }: BrandingProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const isValidImageUrl = (val?: string) => {
@@ -51,7 +53,7 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
       queryClient.invalidateQueries({ queryKey: ["website-settings"] });
       return true;
     } catch (e: any) {
-      toast.error(e?.message || "Failed to update branding");
+      toast.error(e?.message || t("Failed to update branding"));
       return false;
     } finally {
       if ('logoURL' in updates) setUpdatingLogoUrl(false);
@@ -87,10 +89,10 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
         } else {
           setFaviconURL(newUrl);
         }
-        toast.success(`${type === "logo" ? "Logo" : "Favicon"} uploaded successfully`);
+        toast.success(type === "logo" ? t("Logo uploaded successfully") : t("Favicon uploaded successfully"));
       }
     } catch (error: any) {
-      toast.error(error?.message || `Failed to upload ${type}`);
+      toast.error(error?.message || (type === "logo" ? t("Failed to upload logo") : t("Failed to upload favicon")));
     } finally {
       if (type === "logo") {
         setLogoUploading(false);
@@ -127,10 +129,10 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
         } else {
           setFaviconURL("");
         }
-        toast.success(`${type === "logo" ? "Logo" : "Favicon"} removed successfully`);
+        toast.success(type === "logo" ? t("Logo removed successfully") : t("Favicon removed successfully"));
       }
     } catch (error: any) {
-      toast.error(error?.message || `Failed to remove ${type}`);
+      toast.error(error?.message || (type === "logo" ? t("Failed to remove logo") : t("Failed to remove favicon")));
     } finally {
       if (type === "logo") {
         setLogoRemoving(false);
@@ -158,7 +160,7 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
     <section id="branding">
       <div className="space-y-4">
         <div className="space-y-1">
-          <Label className="text-xs">Logo</Label>
+          <Label className="text-xs">{t("Logo")}</Label>
           {isValidImageUrl(data?.settings?.logoURL) ? (
             <div className="flex items-center gap-x-4 border p-4 rounded-md">
               <div className="h-10 min-w-10">
@@ -173,7 +175,7 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
                 disabled={logoRemoving}
                 className="flex items-center gap-2 hover:border-red-500 hover:text-red-500">
                 {logoRemoving ? <Loader className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4" />}
-                {logoRemoving ? "Removing" : "Remove Logo"}
+                {logoRemoving ? t("Removing") : t("Remove Logo")}
               </Button>
             </div>
           ) : (
@@ -187,7 +189,7 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
                   disabled={logoUploading}
                   className="flex items-center gap-2 w-full">
                   {logoUploading ? <Loader className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                  {logoUploading ? "Uploading" : "Upload Logo"}
+                  {logoUploading ? t("Uploading") : t("Upload Logo")}
                 </Button>
                 <input
                   ref={logoFileRef}
@@ -197,10 +199,10 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
                   className="hidden"
                 />
               </div>
-              <span className="text-xs text-muted-foreground">or</span>
+              <span className="text-xs text-muted-foreground">{t("or")}</span>
               <div className="flex items-center gap-2 relative w-full">
                 <Input
-                  placeholder="eg: https://example.com/logo.png"
+                  placeholder={t("eg: https://example.com/logo.png")}
                   value={logoURL}
                   onChange={(e) => setLogoURL(e.target.value)}
                   className="flex-1"
@@ -234,7 +236,7 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
         </div>
 
         <div className="space-y-1">
-          <Label className="text-xs">Favicon</Label>
+          <Label className="text-xs">{t("Favicon")}</Label>
           {isValidImageUrl(data?.settings?.faviconURL) ? (
             <div className=" flex items-center gap-x-4 border p-4 rounded-md">
               <div className="min-w-10 h-6 flex justify-center">
@@ -249,7 +251,7 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
                 disabled={faviconRemoving}
                 className="flex items-center gap-2 hover:border-red-500 hover:text-red-500">
                 {faviconRemoving ? <Loader className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4" />}
-                {faviconRemoving ? "Removing" : "Remove Favicon"}
+                {faviconRemoving ? t("Removing") : t("Remove Favicon")}
               </Button>
             </div>
           ) : (
@@ -263,7 +265,7 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
                   disabled={faviconUploading}
                   className="flex items-center gap-2 w-full">
                   {faviconUploading ? <Loader className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                  {faviconUploading ? "Uploading" : "Upload Favicon"}
+                  {faviconUploading ? t("Uploading") : t("Upload Favicon")}
                 </Button>
                 <input
                   ref={faviconFileRef}
@@ -273,10 +275,10 @@ export default function BrandingConfiguration({ data, websiteId }: BrandingProps
                   className="hidden"
                 />
               </div>
-              <span className="text-xs text-muted-foreground">or</span>
+              <span className="text-xs text-muted-foreground">{t("or")}</span>
               <div className="flex items-center gap-2 relative w-full">
                 <Input
-                  placeholder="eg: https://example.com/favicon.ico"
+                  placeholder={t("eg: https://example.com/favicon.ico")}
                   value={faviconURL}
                   onChange={(e) => setFaviconURL(e.target.value)}
                   className="flex-1"

@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "chai-next";
 import { isEmpty } from "lodash";
 import { Calendar, Download, Loader, X } from "lucide-react";
 import { useState } from "react";
@@ -24,6 +25,7 @@ interface CsvDownloadModalProps {
 }
 
 export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubmissions = 0 }: CsvDownloadModalProps) {
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -58,7 +60,7 @@ export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubm
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to download CSV");
+        throw new Error(errorData.error || t("Failed to download CSV"));
       }
 
       const blob = await response.blob();
@@ -81,7 +83,7 @@ export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubm
       window.URL.revokeObjectURL(downloadUrl);
       document.body.removeChild(a);
 
-      toast.success("CSV downloaded successfully!", {
+      toast.success(t("CSV downloaded successfully!"), {
         position: "bottom-right",
       });
 
@@ -89,7 +91,7 @@ export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubm
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error downloading CSV:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to download CSV", {
+      toast.error(error instanceof Error ? error.message : t("Failed to download CSV"), {
         position: "bottom-right",
       });
     } finally {
@@ -105,14 +107,14 @@ export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubm
   // Handle download with date range
   const handleDateRangeDownload = async () => {
     if (isEmpty(startDate) && isEmpty(endDate)) {
-      toast.error("Please select at least one date", {
+      toast.error(t("Please select at least one date"), {
         position: "bottom-right",
       });
       return;
     }
 
     if (!isEmpty(startDate) && !isEmpty(endDate) && new Date(startDate) > new Date(endDate)) {
-      toast.error("Start date must be before end date", {
+      toast.error(t("Start date must be before end date"), {
         position: "bottom-right",
       });
       return;
@@ -140,13 +142,13 @@ export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubm
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" disabled={totalSubmissions === 0}>
           <Download className="h-4 w-4 mr-2" />
-          Download CSV
+          {t("Download CSV")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Download Form Submissions</DialogTitle>
-          <DialogDescription>Choose how you want to download your form submissions as CSV.</DialogDescription>
+          <DialogTitle>{t("Download Form Submissions")}</DialogTitle>
+          <DialogDescription>{t("Choose how you want to download your form submissions as CSV.")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-3">
@@ -155,14 +157,14 @@ export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubm
             <div className="flex items-start justify-center  flex-col">
               <h4 className="font-medium flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                Select Date Range
+                {t("Select Date Range")}
               </h4>
-              <p className="text-sm text-muted-foreground">Choose specific start and end dates to filter submissions</p>
+              <p className="text-sm text-muted-foreground">{t("Choose specific start and end dates to filter submissions")}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <Label htmlFor="startDate">Start Date</Label>
+                <Label htmlFor="startDate">{t("Start Date")}</Label>
                 <Input
                   id="startDate"
                   type="date"
@@ -172,7 +174,7 @@ export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubm
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="endDate">End Date</Label>
+                <Label htmlFor="endDate">{t("End Date")}</Label>
                 <Input
                   id="endDate"
                   type="date"
@@ -188,10 +190,10 @@ export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubm
               <div className="flex items-center justify-between text-sm text-muted-foreground bg-muted p-3 rounded-md">
                 <span>
                   {!isEmpty(startDate) && !isEmpty(endDate)
-                    ? `From ${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}`
+                    ? t("From {{start}} to {{end}}", { start: new Date(startDate).toLocaleDateString(), end: new Date(endDate).toLocaleDateString() })
                     : !isEmpty(startDate)
-                      ? `From ${new Date(startDate).toLocaleDateString()}`
-                      : `Until ${new Date(endDate).toLocaleDateString()}`}
+                      ? t("From {{start}}", { start: new Date(startDate).toLocaleDateString() })
+                      : t("Until {{end}}", { end: new Date(endDate).toLocaleDateString() })}
                 </span>
                 <Button variant="ghost" size="sm" onClick={resetDateRange} className="p-1 h-auto">
                   <X className="h-3 w-3" />
@@ -208,12 +210,12 @@ export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubm
               {isDownloading ? (
                 <>
                   <Loader className="h-4 w-4 animate-spin" />
-                  Downloading
+                  {t("Downloading")}
                 </>
               ) : (
                 <>
                   <Download className="h-4 w-4" />
-                  Download with Date Filter
+                  {t("Download with Date Filter")}
                 </>
               )}
             </Button>
@@ -223,17 +225,17 @@ export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubm
           <div className="relative">
             <Separator />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="bg-background px-2 text-xs text-muted-foreground uppercase tracking-wide">OR</span>
+              <span className="bg-background px-2 text-xs text-muted-foreground uppercase tracking-wide">{t("OR")}</span>
             </div>
           </div>
           {/* Download All Option */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex flex-col justify-center items-start w-full gap-2">
-                <p className="text-sm text-muted-foreground">Download all form submissions without any date filter</p>
+                <p className="text-sm text-muted-foreground">{t("Download all form submissions without any date filter")}</p>
                 <Button onClick={handleDownloadAll} disabled={isDownloading} size="sm" className="w-full">
                   {isDownloading ? <Loader className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                  Download All
+                  {t("Download All")}
                 </Button>
               </div>
             </div>
@@ -242,7 +244,7 @@ export default function CsvDownloadModal({ websiteId, searchTerm = "", totalSubm
 
         <div className="flex justify-end">
           <Button variant="outline" onClick={() => setIsModalOpen(false)} disabled={isDownloading}>
-            Cancel
+            {t("Cancel")}
           </Button>
         </div>
       </DialogContent>
