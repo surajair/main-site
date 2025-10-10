@@ -1,6 +1,5 @@
-import TextRevealComponent from "@/components/ui/text-reveal-component";
 import { ChaiBlockComponentProps, ChaiStyles, registerChaiBlockSchema, StylesProp } from "chai-next/blocks";
-import * as React from "react";
+import TextRevealComponent from "./text-reveal-component";
 
 type TextRevealProps = {
   text: string;
