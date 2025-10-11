@@ -2,13 +2,17 @@ import { ChaiBlockComponentProps, ChaiStyles, registerChaiBlockSchema, StylesPro
 import FlipWordsComponent from "./flip-words-component";
 
 type FlipWordsProps = {
-  words: string[];
+  words: string;
   duration: number;
   styles: ChaiStyles;
 };
 
 const FlipWordsBlock = (props: ChaiBlockComponentProps<FlipWordsProps>) => {
-  return <FlipWordsComponent {...props} />;
+  const splitWords = props.words
+    .split(",")
+    .map((word) => word.trim())
+    .filter((word) => word !== "");
+  return <FlipWordsComponent {...props} words={splitWords} />;
 };
 
 const FlipWordsConfig = {
@@ -20,27 +24,21 @@ const FlipWordsConfig = {
     properties: {
       styles: StylesProp("text-4xl font-bold"),
       words: {
-        type: "array",
+        type: "string",
         title: "Words to Flip",
-        default: ["Amazing", "Beautiful", "Creative", "Dynamic"],
-        items: {
-          type: "string",
-        },
-        ui: {
-          "ui:options": {
-            orderable: true,
-          },
-        },
+        default: "Lorem,Ipsum,Dolor,Sit,Amet",
+        ui: { "ui:placeholder": "Enter comma separated words" },
       },
       duration: {
         type: "number",
         title: "Duration per Word (ms)",
-        default: 3000,
+        default: 2000,
         minimum: 1000,
         maximum: 10000,
       },
     },
   }),
+  i18nProps: ["words"],
 };
 
 export { FlipWordsConfig };
