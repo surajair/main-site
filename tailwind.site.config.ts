@@ -3,7 +3,6 @@ import containerQueries from "@tailwindcss/container-queries";
 import forms from "@tailwindcss/forms";
 import { getChaiBuilderTheme } from "chai-next/utils";
 import type { Config } from "tailwindcss";
-import animate from "tailwindcss-animate";
 import plugin from "tailwindcss/plugin";
 import { CustomThemeConfig } from "tailwindcss/types/config";
 
@@ -11,10 +10,10 @@ const config: Config = {
   darkMode: "class",
   content: [
     "./blocks/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/chai-next/dist/blocks/**/*.{js,cjs}",
+    "./components/chai-builder-badge.tsx",
+    "./node_modules/chai-next/dist/blocks/**/*.{js,cjs}"
   ],
-  safelist: ["w-[inherit]", "h-[inherit]", "prose"],
+  safelist: ["w-[inherit]", "h-[inherit]"],
   theme: {
     extend: {
       ...(getChaiBuilderTheme() as Partial<CustomThemeConfig>),
@@ -58,7 +57,6 @@ const config: Config = {
         },
       });
     }),
-    animate,
     containerQueries,
   ],
 };

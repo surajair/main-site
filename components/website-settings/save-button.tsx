@@ -5,7 +5,7 @@ import { updateWebsiteData } from "@/actions/update-website-setting";
 import { Button } from "@/components/ui/button";
 import { SiteData } from "@/utils/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { useReloadPage } from "chai-next";
+import { useTranslation, useReloadPage } from "chai-next";
 import { Loader, Rocket, Save } from "lucide-react";
 import { useActionState } from "react";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ interface SaveButtonProps {
 }
 
 export default function SaveButton({ websiteId, hasChanges, data, showSave = true }: SaveButtonProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const reloadPage = useReloadPage();
 
@@ -40,18 +41,22 @@ export default function SaveButton({ websiteId, hasChanges, data, showSave = tru
           socialLinks: socialLinks,
         },
       };
+      const isLanguageUpdate = (data as any)?.isLanguageUpdate;
 
       const result = await updateWebsiteData({ id: websiteId, updates: updates });
       if (result.success) {
-        toast.success("Website settings updated successfully!");
+        toast.success(t("Website settings updated successfully!"));
         await queryClient.invalidateQueries({ queryKey: ["website-settings"] });
+        if (isLanguageUpdate) {
+          await queryClient.invalidateQueries({ queryKey: ["GET_WEBSITE_DRAFT_SETTINGS"] });
+        }
         reloadPage();
       } else {
-        toast.error(result.error || "Failed to update website settings");
+        toast.error(result.error || t("Failed to update website settings"));
       }
       return result;
     } catch (error: any) {
-      toast.error(error?.message || "Failed to update website settings");
+      toast.error(error?.message || t("Failed to update website settings"));
       return { success: false, error: error?.message };
     }
   }, null);
@@ -64,13 +69,13 @@ export default function SaveButton({ websiteId, hasChanges, data, showSave = tru
       }
       const result = await publishWebsiteSettings(websiteId);
       if (result.success) {
-        toast.success("Website settings published successfully!");
+        toast.success(t("Website settings published successfully!"));
       } else {
-        toast.error(result.error || "Failed to publish website settings");
+        toast.error(result.error || t("Failed to publish website settings"));
       }
       return result;
     } catch (error: any) {
-      toast.error(error?.message || "Failed to publish website settings");
+      toast.error(error?.message || t("Failed to publish website settings"));
       return { success: false, error: error?.message };
     }
   }, null);
@@ -83,12 +88,12 @@ export default function SaveButton({ websiteId, hasChanges, data, showSave = tru
             {isSaving ? (
               <>
                 <Loader className="h-3 w-3 animate-spin" />
-                Saving
+                {t("Saving")}
               </>
             ) : (
               <>
                 <Save className="h-3 w-3" />
-                Save Draft
+                {t("Save Draft")}
               </>
             )}
           </Button>
@@ -104,12 +109,12 @@ export default function SaveButton({ websiteId, hasChanges, data, showSave = tru
           {isPublishing ? (
             <>
               <Loader className="h-3 w-3 animate-spin" />
-              Publishing
+              {t("Publishing")}
             </>
           ) : (
             <>
               <Rocket className="h-3 w-3" />
-              Publish Settings
+              {t("Publish Settings")}
             </>
           )}
         </Button>

@@ -3,6 +3,7 @@
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SiteData } from "@/utils/types";
+import { useTranslation } from "chai-next";
 import { useState } from "react";
 
 interface CustomHtmlProps {
@@ -11,6 +12,7 @@ interface CustomHtmlProps {
 }
 
 export default function CustomHtmlCode({ data, onChange }: CustomHtmlProps) {
+  const { t } = useTranslation();
   const [baseline, setBaseline] = useState(data);
 
   const handleChange = (updates: any) => {
@@ -22,10 +24,10 @@ export default function CustomHtmlCode({ data, onChange }: CustomHtmlProps) {
     <section id="custom-html" className="space-y-4">
       <div className="space-y-1">
         <Label htmlFor="headHTML" className="text-xs">
-          Head HTML
+          {t("Head HTML")}
         </Label>
         <p className="text-xs text-muted-foreground mb-2">
-          Add custom HTML that will be inserted into the &lt;head&gt; section of your website
+          {t("Add custom HTML that will be inserted into the <head> section of your website")}
         </p>
         <Textarea
           id="headHTML"
@@ -44,10 +46,10 @@ export default function CustomHtmlCode({ data, onChange }: CustomHtmlProps) {
 
       <div className="space-y-1">
         <Label htmlFor="footerHTML" className="text-xs">
-          Footer HTML
+          {t("Footer HTML")}
         </Label>
         <p className="text-xs text-muted-foreground mb-2">
-          Add custom HTML that will be inserted before the closing &lt;/body&gt; tag
+          {t("Add custom HTML that will be inserted before the closing </body> tag")}
         </p>
         <Textarea
           id="footerHTML"

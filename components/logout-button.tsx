@@ -2,6 +2,7 @@
 
 import { supabase } from "@/chai/supabase";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "chai-next";
 import { Loader, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -20,6 +21,7 @@ export default function LogoutButton({
   showText = true,
   fullWidth = false,
 }: LogoutButtonProps) {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -30,7 +32,7 @@ export default function LogoutButton({
       localStorage.removeItem("__logged_in_user");
       router.push("/login");
     } catch (error) {
-      toast.error("Failed to sign out");
+      toast.error(t("Failed to sign out"));
       console.error("Sign out error:", error);
     } finally {
       setIsLoading(false);
@@ -44,12 +46,12 @@ export default function LogoutButton({
       {isLoading ? (
         <>
           <Loader className="h-4 w-4 animate-spin" />
-          {showText && "Signing out"}
+          {showText && t("Signing out")}
         </>
       ) : (
         <>
           <LogOut className="h-4 w-4" />
-          {showText && "Sign Out"}
+          {showText && t("Sign Out")}
         </>
       )}
     </Button>

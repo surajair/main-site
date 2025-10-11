@@ -1,6 +1,8 @@
 // Default language codes with only English as base
 const BASE_LANGUAGE_CODES = {
   en: "English",
+  fr: "French",
+  sl: "Slovenian",
 };
 const envLanguages = process.env.NEXT_PUBLIC_SUPPORTED_LANGUAGES;
 

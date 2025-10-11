@@ -5,26 +5,40 @@ import { getSupabaseAdmin } from "chai-next/server";
 
 export const updateUserPlan = async (payload: any) => {
   try {
-    if (!payload) throw Error("Something went wrong");
+    if (!payload) return false;
 
     const supabaseServer = await getSupabaseAdmin();
     const user = await getUser();
-    if (!user) return;
+    if (!user) return false;
 
-    const { data: existingPlans, error } = await supabaseServer.from("app_user_plans").select("*").eq("user", user.id);
-    if (error) return false;
+    const updatedPayload = { ...payload, user: user.id };
 
+    /**
+     * Check if user already has a plan
+     */
+    const { data: existingPlans, error: existingPlansError } = await supabaseServer
+      .from("app_user_plans")
+      .select("*")
+      .eq("user", user.id);
+    if (existingPlansError) return false;
+
+    /**
+     * Update plan if user already has a plan
+     */
     if (existingPlans?.length > 0) {
-      const { error } = await supabaseServer
+      const { error: updateError } = await supabaseServer
         .from("app_user_plans")
-        .update({ ...payload })
+        .update(updatedPayload)
         .eq("user", user.id);
-      if (error) return false;
-    } else {
-      const { error } = await supabaseServer.from("app_user_plans").insert({ user: user.id, ...payload });
-      if (error) return false;
+      if (updateError) return false;
+      return true;
     }
 
+    /**
+     * Insert plan if user does not have a plan
+     */
+    const { error: insertError } = await supabaseServer.from("app_user_plans").insert(updatedPayload);
+    if (insertError) return false;
     return true;
   } catch (error) {
     return false;

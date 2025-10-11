@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormSubmission, getFormSubmissions, GetFormSubmissionsResponse } from "@/lib/getter/forms";
+import { useTranslation } from "chai-next";
 import { debounce, isEmpty } from "lodash";
 import { ChevronLeft, ChevronRight, FileText, Loader, RefreshCw, Search } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -37,6 +38,7 @@ function formatDate(dateString: string): string {
 }
 
 export default function FormSubmissions() {
+  const { t } = useTranslation();
   const params = useParams();
   const websiteId = params.websiteId as string;
   const [currentPage, setCurrentPage] = useState(1);
@@ -99,7 +101,7 @@ export default function FormSubmissions() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by form name"
+            placeholder={t("Search by form name")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ paddingLeft: "35px" }}
@@ -108,7 +110,7 @@ export default function FormSubmissions() {
         <div className="flex gap-4 text-sm text-muted-foreground items-center">
           {!isLoading && submissionsData?.total && submissionsData?.total > 0 ? (
             <>
-              <span>Total: {submissionsData?.total || 0}</span>
+              <span>{t("Total: {{count}}", { count: submissionsData?.total || 0 })}</span>
               <CsvDownloadModal
                 websiteId={websiteId}
                 searchTerm={debouncedSearchTerm}
@@ -119,7 +121,7 @@ export default function FormSubmissions() {
           {
             <Button variant="outline" size="sm" onClick={fetchSubmissions} disabled={isLoading}>
               <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
-              Refresh
+              {t("Refresh")}
             </Button>
           }
         </div>
@@ -140,9 +142,9 @@ export default function FormSubmissions() {
                   <div className="flex items-center gap-4">
                     <FileText className="h-5 w-5 text-muted-foreground" />
                     <div>
-                      <p className="font-medium text-foreground">{submission.formData?.formName || "Unknown Form"}</p>
+                      <p className="font-medium text-foreground">{submission.formData?.formName || t("Unknown Form")}</p>
                       <p className="text-sm text-muted-foreground">
-                        {submission.formData.email || "No email provided"}
+                        {submission.formData.email || t("No email provided")}
                       </p>
                     </div>
                   </div>
@@ -154,20 +156,20 @@ export default function FormSubmissions() {
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button variant="ghost" size="sm">
-                          View Details
+                          {t("View Details")}
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="max-w-2xl">
                         <DialogHeader>
-                          <DialogTitle>Form Submission</DialogTitle>
+                          <DialogTitle>{t("Form Submission")}</DialogTitle>
                           <DialogDescription>
-                            Submitted by <span className="text-gray-700">{submission.formData.email || "Unknown"}</span>{" "}
-                            on <span className="text-gray-700">{formatDate(submission.createdAt)}</span>
+                            {t("Submitted by")} <span className="text-gray-700">{submission.formData.email || t("Unknown")}</span>{" "}
+                            {t("on")} <span className="text-gray-700">{formatDate(submission.createdAt)}</span>
                           </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4 text-sm">
                           <div className="space-y-2">
-                            <h4 className="font-medium">Form Data</h4>
+                            <h4 className="font-medium">{t("Form Data")}</h4>
                             <div className="bg-muted px-4 py-2 rounded-lg space-y-2 max-h-96 overflow-y-auto">
                               {Object.entries(submission.formData).map(([key, value]) =>
                                 value ? (
@@ -180,7 +182,7 @@ export default function FormSubmissions() {
                                 ) : null,
                               )}
                             </div>
-                            <h4 className="font-medium pt-2">Additional Data</h4>
+                            <h4 className="font-medium pt-2">{t("Additional Data")}</h4>
                             <div className="bg-muted px-4 py-2 rounded-lg space-y-2 max-h-96 overflow-y-auto">
                               {Object.entries(submission.additionalData).map(([key, value]) =>
                                 value ? (
@@ -206,7 +208,7 @@ export default function FormSubmissions() {
             <div className="text-center  w-full flex flex-col min-h-[53vh] justify-center items-center ">
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
-                {debouncedSearchTerm ? "No submissions found matching your search." : "No submissions yet."}
+                {debouncedSearchTerm ? t("No submissions found matching your search.") : t("No submissions yet.")}
               </p>
             </div>
           )}
@@ -214,8 +216,11 @@ export default function FormSubmissions() {
           {!isLoading && filteredSubmissions.length > 0 && (
             <div className="flex items-center justify-between mt-6 pt-4 border-t">
               <p className="text-sm text-muted-foreground">
-                Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, submissionsData?.total || 0)} of{" "}
-                {submissionsData?.total || 0} submissions
+                {t("Showing {{start}}-{{end}} of {{total}} submissions", { 
+                  start: startIndex + 1, 
+                  end: Math.min(startIndex + itemsPerPage, submissionsData?.total || 0),
+                  total: submissionsData?.total || 0
+                })}
               </p>
               <div className="flex items-center gap-2">
                 <Button
@@ -224,17 +229,17 @@ export default function FormSubmissions() {
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={!submissionsData?.hasPrevPage}>
                   <ChevronLeft className="h-4 w-4" />
-                  Previous
+                  {t("Previous")}
                 </Button>
                 <span className="text-sm">
-                  Page {currentPage} of {totalPages}
+                  {t("Page {{current}} of {{total}}", { current: currentPage, total: totalPages })}
                 </span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={!submissionsData?.hasNextPage}>
-                  Next
+                  {t("Next")}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>

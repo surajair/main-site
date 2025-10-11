@@ -4,6 +4,7 @@ import { updatePasswordAction } from "@/actions/user-auth-action";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "chai-next";
 import { Eye, EyeOff, Loader } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,21 +17,23 @@ const initialState = {
 };
 
 function SubmitButton() {
+  const { t } = useTranslation();
   const { pending } = useFormStatus();
   return (
     <Button type="submit" className="w-full bg-primary/80 hover:bg-primary" disabled={pending}>
       {pending ? (
         <>
-          <Loader className="h-4 w-4 animate-spin" /> Updating
+          <Loader className="h-4 w-4 animate-spin" /> {t("Updating")}
         </>
       ) : (
-        "Update Password"
+        t("Update Password")
       )}
     </Button>
   );
 }
 
 export default function UpdatePassword({ close }: { close?: () => void }) {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const isResetPassword = pathname.includes("reset-password");
   const [state, formAction] = useFormState(updatePasswordAction, initialState);
@@ -41,7 +44,7 @@ export default function UpdatePassword({ close }: { close?: () => void }) {
   useEffect(() => {
     if (state.message) {
       if (state.success) {
-        toast.success(isResetPassword ? "Password reset successfully!" : "Password updated successfully!", {
+        toast.success(isResetPassword ? t("Password reset successfully!") : t("Password updated successfully!"), {
           position: "top-right",
         });
         if (isResetPassword) {
@@ -55,13 +58,13 @@ export default function UpdatePassword({ close }: { close?: () => void }) {
         });
       }
     }
-  }, [state, close, isResetPassword, router]);
+  }, [state, close, isResetPassword, router, t]);
 
   return (
     <>
       <form action={formAction} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="new-password">New Password</Label>
+          <Label htmlFor="new-password">{t("New Password")}</Label>
           <div className="relative">
             <Input
               id="new-password"
@@ -69,7 +72,7 @@ export default function UpdatePassword({ close }: { close?: () => void }) {
               type={showPassword ? "text" : "password"}
               required
               className="border-gray-300"
-              placeholder="New Password"
+              placeholder={t("New Password")}
             />
             <Button
               type="button"
@@ -85,7 +88,7 @@ export default function UpdatePassword({ close }: { close?: () => void }) {
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="confirm-password">Confirm New Password</Label>
+          <Label htmlFor="confirm-password">{t("Confirm New Password")}</Label>
           <div className="relative">
             <Input
               id="confirm-password"
@@ -93,7 +96,7 @@ export default function UpdatePassword({ close }: { close?: () => void }) {
               type={showConfirmPassword ? "text" : "password"}
               required
               className="border-gray-300"
-              placeholder="Confirm New Password"
+              placeholder={t("Confirm New Password")}
             />
             <Button
               type="button"

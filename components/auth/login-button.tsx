@@ -2,6 +2,7 @@
 
 import { supabase } from "@/chai/supabase";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "chai-next";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -25,11 +26,12 @@ const ErrorAndSuccessHandler = ({ showToast }: { showToast: () => void }) => {
 };
 
 export default function LoginButton() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const showToast = () => {
     setLoading(false);
-    toast.error("Failed to sign in. Please try again.", {
+    toast.error(t("Failed to sign in. Please try again."), {
       position: "top-left",
     });
   };
@@ -60,7 +62,7 @@ export default function LoginButton() {
         onClick={handleGoogleSignIn}
         disabled={loading}
         variant="outline"
-        className="w-full h-12 text-base font-medium border-2 hover:bg-accent mb-6 rounded-xl">
+        className="w-full h-9 text-sm font-medium border-2 hover:bg-accent mb-6 rounded-xl">
         {loading ? (
           <div className="animate-spin w-5 h-5 border-2 border-dashed rounded-full border-primary" />
         ) : (
@@ -84,7 +86,7 @@ export default function LoginButton() {
               />
               <path d="M1 1h22v22H1z" fill="none" />
             </svg>
-            Sign in with Google
+            {t("Sign in with Google")}
           </>
         )}
       </Button>

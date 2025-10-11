@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useTranslation } from "chai-next";
 
 // Reusable Unsaved Changes Dialog Component
 interface UnsavedChangesDialogProps {
@@ -27,21 +28,25 @@ export function UnsavedChangesDialog({
   onOpenChange,
   onCancel,
   onConfirm,
-  title = "Unsaved Changes",
-  description = "You have unsaved changes. Are you sure you want to continue without saving?",
-  confirmText = "Continue without saving",
+  title,
+  description,
+  confirmText,
 }: UnsavedChangesDialogProps) {
+  const { t } = useTranslation();
+  const dialogTitle = title || t("Unsaved Changes");
+  const dialogDescription = description || t("You have unsaved changes. Are you sure you want to continue without saving?");
+  const dialogConfirmText = confirmText || t("Continue without saving");
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogTitle>{dialogTitle}</AlertDialogTitle>
+          <AlertDialogDescription>{dialogDescription}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel onClick={onCancel}>{t("Cancel")}</AlertDialogCancel>
           <AlertDialogAction className="bg-red-500 hover:bg-red-600 text-white" onClick={onConfirm}>
-            {confirmText}
+            {dialogConfirmText}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

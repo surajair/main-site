@@ -45,4 +45,5 @@ const FormConfig = {
   }),
 };
 
-export { ChaiForm, FormConfig };
+export { FormConfig };
+export default ChaiForm;

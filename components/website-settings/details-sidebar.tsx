@@ -11,22 +11,23 @@ import {
   Shield,
   ShieldCheck,
 } from "lucide-react";
+import { useTranslation } from "chai-next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Separator } from "../ui/separator";
 
-const sidebarItems = [
-  { id: "form-submission", label: "Form submissions", icon: BookOpenText },
-  { id: "general", label: "General", icon: Settings },
-  // { id: "api-key", label: "API Key", icon: Key },
-  { id: "domain", label: "Domain", icon: Globe },
-  { id: "branding", label: "Branding", icon: ImageIcon },
-  { id: "contact-social", label: "Contact & Social", icon: Share2 },
-  { id: "legal-compliance", label: "Cookie Consent", icon: ShieldCheck },
-  { id: "spam-protection", label: "Spam Protection", icon: Shield },
-  { id: "seo-metadata", label: "SEO Metadata", icon: Search },
-  { id: "analytics-tracking", label: "Analytics Tracking", icon: Activity },
+const sidebarItems = (t: any) => [
+  { id: "form-submission", label: t("Form submissions"), icon: BookOpenText },
+  { id: "general", label: t("General"), icon: Settings },
+  // { id: "api-key", label: t("API Key"), icon: Key },
+  { id: "domain", label: t("Domain"), icon: Globe },
+  { id: "branding", label: t("Branding"), icon: ImageIcon },
+  { id: "contact-social", label: t("Contact & Social"), icon: Share2 },
+  { id: "legal-compliance", label: t("Cookie Consent"), icon: ShieldCheck },
+  { id: "spam-protection", label: t("Spam Protection"), icon: Shield },
+  { id: "seo-metadata", label: t("SEO Metadata"), icon: Search },
+  { id: "analytics-tracking", label: t("Analytics Tracking"), icon: Activity },
 ];
 
 interface DetailsSidebarProps {
@@ -34,6 +35,7 @@ interface DetailsSidebarProps {
 }
 
 function DetailsSidebar({ onNavigate }: DetailsSidebarProps) {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [activeHash, setActiveHash] = useState("");
 
@@ -80,12 +82,12 @@ function DetailsSidebar({ onNavigate }: DetailsSidebarProps) {
   return (
     <div className="w-64 h-full bg-sidebar border-r border-sidebar-border">
       <div className="p-6">
-        <h2 className="text-lg font-playfair font-semibold text-sidebar-foreground">Website Details</h2>
-        <p className="text-sm text-muted-foreground mt-1">Configure your website</p>
+        <h2 className="text-lg font-playfair font-semibold text-sidebar-foreground">{t("Website Details")}</h2>
+        <p className="text-sm text-muted-foreground mt-1">{t("Configure your website")}</p>
       </div>
 
       <nav className="px-3">
-        {sidebarItems.map((item) => {
+        {sidebarItems(t).map((item) => {
           const Icon = item.icon;
 
           const active = isActive(item.id);

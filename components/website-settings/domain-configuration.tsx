@@ -6,14 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useCanAddDomain } from "@/hooks/use-can-add-domain";
 import { Site } from "@/lib/getter/sites";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "chai-next";
 import { AlertCircle, Check, CheckCircle, Copy, ExternalLink, Loader, Pencil, RefreshCw } from "lucide-react";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import UpgradeModal from "../dashboard/upgrade-modal";
+import UpgradeModalButton from "../upgrade/upgrade-modal-button";
 import DeleteDomainModal from "./delete-domain-modal";
-import { useUser } from "./profile-panel";
 
 interface DomainConfigurationProps {
   websiteId: string;
@@ -21,8 +22,8 @@ interface DomainConfigurationProps {
 }
 
 function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
-  const { data: user } = useUser();
-  const isPaidPlan = user?.isPaidPlan;
+  const { t } = useTranslation();
+  const subdomainSuffix = process.env.NEXT_PUBLIC_SUBDOMAIN;
   const queryClient = useQueryClient();
   const [customDomain, setCustomDomain] = useState("");
   const [isDomainVerified, setIsDomainVerified] = useState(false);
@@ -30,7 +31,8 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
   const [domainConfig, setDomainConfig] = useState<any>({});
   const [editingSubdomain, setEditingSubdomain] = useState(false);
   const [copiedValue, setCopiedValue] = useState<string | null>(null);
-  const subdomainSuffix = process.env.NEXT_PUBLIC_SUBDOMAIN;
+
+  const { isCustomDomainLimitReached, customDomainLimit } = useCanAddDomain();
 
   const subdomainBase = useMemo(() => {
     if (!data.subdomain) return "";
@@ -42,7 +44,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
   const [_, saveSubdomain, savingSubdomain] = useActionState(async () => {
     let name = subdomainInput?.trim().toLowerCase();
     if (!name) {
-      toast.error("Subdomain is required");
+      toast.error(t("Subdomain is required"));
       return { success: false } as any;
     }
     const suffix = subdomainSuffix ? `.${subdomainSuffix}` : "";
@@ -57,16 +59,18 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9-]/g, "");
     if (!sanitized) {
-      toast.error("Enter a valid subdomain");
+      toast.error(t("Enter a valid subdomain"));
       return { success: false } as any;
     }
     const res = await updateSubdomain(data.id, sanitized);
     if (res.success) {
-      toast.success("Subdomain updated");
-      queryClient.invalidateQueries({ queryKey: ["website-settings"] });
+      toast.success(t("Subdomain updated"));
+      queryClient.invalidateQueries({ queryKey: ["website-settings"] }).then(() => {
+        queryClient.invalidateQueries({ queryKey: ["DOMAINS_COUNT"] });
+      });
       setEditingSubdomain(false);
     } else {
-      toast.error(res.error || "Failed to update subdomain");
+      toast.error(res.error || t("Failed to update subdomain"));
     }
     return res as any;
   }, null as any);
@@ -85,23 +89,23 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
 
   const [, addDomainAction, addDomainPending] = useActionState(
     async (prevState: any, formData: FormData) => {
-      if (!isPaidPlan) {
-        toast.error("Please upgrade to add custom domains", { position: "top-center" });
-        return { success: false, error: "Please upgrade to add custom domains" };
+      if (isCustomDomainLimitReached) {
+        toast.error(t("Please upgrade to add custom domains"), { position: "top-center" });
+        return { success: false, error: t("Please upgrade to add custom domains") };
       }
       const domain = formData.get("customDomain") as string;
       if (!domain) {
-        toast.error("Domain is required");
-        return { success: false, error: "Domain is required" };
+        toast.error(t("Domain is required"));
+        return { success: false, error: t("Domain is required") };
       }
 
       const result = await addDomain(websiteId, domain);
       if (result.success) {
         setCustomDomain("");
         queryClient.invalidateQueries({ queryKey: ["website-settings"] });
-        toast.success("Domain added successfully!");
+        toast.success(t("Domain added successfully!"));
       } else {
-        toast.error(result.error || "Failed to add domain");
+        toast.error(result.error || t("Failed to add domain"));
       }
       return result;
     },
@@ -117,7 +121,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
         setCopiedValue(null);
       }, 5000);
     } catch (error) {
-      toast.error("Failed to copy to clipboard");
+      toast.error(t("Failed to copy to clipboard"));
     }
   };
 
@@ -178,7 +182,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                 <span className="text-sm">{data.subdomain}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="outline">Subdomain</Badge>
+                <Badge variant="outline">{t("Subdomain")}</Badge>
                 <Button
                   size="sm"
                   variant="ghost"
@@ -186,7 +190,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                     setSubdomainInput(subdomainBase);
                     setEditingSubdomain(true);
                   }}
-                  title="Edit subdomain">
+                  title={t("Edit subdomain")}>
                   <Pencil className="h-4 w-4" />
                 </Button>
               </div>
@@ -209,7 +213,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                     const sanitized = withoutSuffix.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
                     setSubdomainInput(sanitized);
                   }}
-                  placeholder="subdomain"
+                  placeholder={t("subdomain")}
                   className="w-64 shrink-0 border-0 shadow-none rounded-none px-0"
                 />
                 {subdomainSuffix ? <span className="font-light text-gray-500 text-sm">.{subdomainSuffix}</span> : null}
@@ -219,14 +223,14 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                   {savingSubdomain ? (
                     <>
                       <Loader className="h-3 w-3 animate-spin" />
-                      Saving
+                      {t("Saving")}
                     </>
                   ) : (
-                    "Save"
+                    t("Save")
                   )}
                 </Button>
                 <Button type="button" size="sm" variant="outline" onClick={() => setEditingSubdomain(false)}>
-                  Cancel
+                  {t("Cancel")}
                 </Button>
               </div>
             </form>
@@ -249,7 +253,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
 
                 <div className="flex items-center gap-2">
                   <Badge variant={isDomainVerified ? "outline" : "secondary"}>
-                    {isDomainVerified ? "Configured" : "Not Configured"}
+                    {isDomainVerified ? t("Configured") : t("Not Configured")}
                   </Badge>
                   {!isDomainVerified && (
                     <Button
@@ -265,12 +269,12 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                       {isVerifying ? (
                         <>
                           <Loader className="h-3 w-3 animate-spin" />
-                          Checking
+                          {t("Checking")}
                         </>
                       ) : (
                         <>
                           <RefreshCw className="mr-1 h-3 w-3" />
-                          Refresh
+                          {t("Refresh")}
                         </>
                       )}
                     </Button>
@@ -287,8 +291,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                     <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                       <div className="space-y-3">
                         <p className="text-sm text-yellow-900 font-medium">
-                          The DNS records at your provider must match the following records to verify and connect your
-                          domain.
+                          {t("The DNS records at your provider must match the following records to verify and connect your domain.")}
                         </p>
 
                         {/* DNS Records Table */}
@@ -297,9 +300,9 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                             <table className="w-full text-sm">
                               <thead className="bg-gray-50">
                                 <tr>
-                                  <th className="px-4 py-3 text-left font-medium text-gray-900 border-b">Type</th>
-                                  <th className="px-4 py-3 text-left font-medium text-gray-900 border-b">Name</th>
-                                  <th className="px-4 py-3 text-left font-medium text-gray-900 border-b">Value</th>
+                                  <th className="px-4 py-3 text-left font-medium text-gray-900 border-b">{t("Type")}</th>
+                                  <th className="px-4 py-3 text-left font-medium text-gray-900 border-b">{t("Name")}</th>
+                                  <th className="px-4 py-3 text-left font-medium text-gray-900 border-b">{t("Value")}</th>
                                 </tr>
                               </thead>
                               <tbody className="bg-white divide-y divide-gray-200">
@@ -314,7 +317,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                                         <button
                                           onClick={() => handleCopyValue(domainConfig?.a, "A")}
                                           className="p-1 hover:bg-gray-100 rounded transition-colors"
-                                          title="Copy A record value">
+                                          title={t("Copy A record value")}>
                                           {copiedValue === domainConfig?.a ? (
                                             <Check className="h-4 w-4 text-green-500" />
                                           ) : (
@@ -337,7 +340,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                                         <button
                                           onClick={() => handleCopyValue(domainConfig?.txtValue, "TXT")}
                                           className="p-1 hover:bg-gray-100 rounded transition-colors flex-shrink-0"
-                                          title="Copy TXT record value">
+                                          title={t("Copy TXT record value")}>
                                           {copiedValue === domainConfig?.txtValue ? (
                                             <Check className="h-4 w-4 text-green-500" />
                                           ) : (
@@ -362,7 +365,7 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
           <form action={addDomainAction} className="space-y-1 pt-2">
             <input type="hidden" name="websiteId" value={websiteId} />
             <Label htmlFor="custom-domain" className="text-xs">
-              Add custom domain
+              {t("Add custom domain")}
             </Label>
             <div className={`flex gap-2`}>
               <Input
@@ -377,29 +380,35 @@ function DomainConfiguration({ websiteId, data }: DomainConfigurationProps) {
                       .replace(/[^a-z0-9.-]/g, ""),
                   )
                 }
-                placeholder="example.com"
+                placeholder={t("example.com")}
                 className=" "
-                disabled={addDomainPending || !isPaidPlan}
+                disabled={addDomainPending || isCustomDomainLimitReached}
               />
               <Button
                 variant={addDomainPending ? "ghost" : "default"}
                 type="submit"
                 className={addDomainPending ? "text-primary pointer-events-none" : ""}
-                disabled={addDomainPending || customDomain.length < 3 || !isPaidPlan}>
+                disabled={addDomainPending || customDomain.length < 3 || isCustomDomainLimitReached}>
                 {addDomainPending ? (
                   <>
                     <Loader className="h-3 w-3 animate-spin" />
-                    Adding
+                    {t("Adding")}
                   </>
                 ) : (
-                  "Add Domain"
+                  t("Add Domain")
                 )}
               </Button>
             </div>
-            {!isPaidPlan && (
+            {isCustomDomainLimitReached && (
               <div className="space-y-2 mt-4 text-sm text-muted-foreground border bg-muted p-4 rounded-md">
-                <div>Please upgrade to add custom domains</div>
-                <UpgradeModal withTrigger />
+                {customDomainLimit === 0 ? (
+                  <div>{t("Please upgrade to add custom domains")}</div>
+                ) : (
+                  <div>
+                    {t("You have reached the limit of {{count}} custom domains. Please upgrade to add more.", { count: customDomainLimit })}
+                  </div>
+                )}
+                <UpgradeModalButton />
               </div>
             )}
           </form>

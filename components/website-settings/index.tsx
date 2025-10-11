@@ -3,11 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { getClientSettings, getSite, getSites } from "@/lib/getter";
+import { useClientSettings } from "@/hooks/use-client-settings";
+import { useWebsites } from "@/hooks/use-websites";
+import { getSite } from "@/lib/getter";
 import { SiteData } from "@/utils/types";
-import { useFlag } from "@openfeature/react-sdk";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Popover, PopoverContent, PopoverTrigger, useSavePage } from "chai-next";
+import { Popover, PopoverContent, PopoverTrigger, useSavePage, useTranslation } from "chai-next";
 import { omit } from "lodash";
 import {
   Activity,
@@ -40,14 +41,14 @@ import LegalCompliance from "./legal-compliance";
 import SaveButton from "./save-button";
 import { UnsavedChangesDialog } from "./unsaved-changes-dialog";
 
-const SIDEBAR_ITEMS = [
-  { id: "general", label: "General", icon: Settings, component: General },
-  { id: "branding", label: "Branding", icon: ImageIcon, component: BrandingConfiguration },
-  { id: "contact-social", label: "Contact & Social", icon: Share2, component: ContactSocial },
-  { id: "legal-compliance", label: "Cookie Consent", icon: ShieldCheck, component: LegalCompliance },
-  { id: "analytics-tracking", label: "Analytics Tracking", icon: Activity, component: AnalyticsTracking },
-  { id: "custom-html", label: "Custom HTML", icon: Code, component: CustomHtml },
-  { id: "domain", label: "Domains", icon: Globe, component: DomainConfiguration },
+const getSidebarItems = (t: any) => [
+  { id: "general", label: t("General"), icon: Settings, component: General },
+  { id: "branding", label: t("Branding"), icon: ImageIcon, component: BrandingConfiguration },
+  { id: "contact-social", label: t("Contact & Social"), icon: Share2, component: ContactSocial },
+  { id: "legal-compliance", label: t("Cookie Consent"), icon: ShieldCheck, component: LegalCompliance },
+  { id: "analytics-tracking", label: t("Analytics Tracking"), icon: Activity, component: AnalyticsTracking },
+  { id: "custom-html", label: t("Custom HTML"), icon: Code, component: CustomHtml },
+  { id: "domain", label: t("Domains"), icon: Globe, component: DomainConfiguration },
 ];
 
 /**
@@ -67,10 +68,12 @@ function WebsiteSettingsContent({
   isDataChange: boolean;
   setIsDataChange: (value: boolean) => void;
 }) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("general");
   const [showTabChangeDialog, setShowTabChangeDialog] = useState(false);
   const [pendingTabChange, setPendingTabChange] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const SIDEBAR_ITEMS = getSidebarItems(t);
   const handleGetSiteData = async () => {
     const siteData = await getSite(websiteId);
     setInitData(siteData);
@@ -145,7 +148,7 @@ function WebsiteSettingsContent({
     <>
       <div className="flex overflow-hidden">
         <div className="w-52 h-full bg-sidebar border-r border-sidebar-border pr-2">
-          <h2 className="font-semibold text-sidebar-foreground px-2 pt-1">Website Settings</h2>
+          <h2 className="font-semibold text-sidebar-foreground px-2 pt-1">{t("Website Settings")}</h2>
           <div className="text-xs text-primary px-2">{siteData?.name}</div>
           {siteData?.domainConfigured && siteData?.domain && (
             <a
@@ -203,7 +206,7 @@ function WebsiteSettingsContent({
               className="h-full scroll-smooth overflow-y-auto px-6 no-scrollbar"
               style={{ scrollBehavior: "smooth" }}>
               <ErrorBoundary
-                fallback={<div className="text-center text-red-500 p-10">Something went wrong, Please try again</div>}>
+                fallback={<div className="text-center text-red-500 p-10">{t("Something went wrong, Please try again")}</div>}>
                 {Component && <Component data={siteData} websiteId={websiteId} onChange={updateSiteDataLocally} />}
               </ErrorBoundary>
               <div className="h-16" />
@@ -229,8 +232,8 @@ function WebsiteSettingsContent({
         onOpenChange={setShowTabChangeDialog}
         onCancel={handleCancelTabChange}
         onConfirm={handleConfirmTabChange}
-        description="You have unsaved changes. Are you sure you want to switch tabs without saving?"
-        confirmText="Switch without saving"
+        description={t("You have unsaved changes. Are you sure you want to switch tabs without saving?")}
+        confirmText={t("Switch without saving")}
       />
     </>
   );
@@ -241,9 +244,9 @@ function WebsiteSettingsContent({
  * @param params websiteId
  */
 const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | undefined; isLoading: boolean }) => {
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const { value: showWebsiteSettings } = useFlag("website_settings", false);
   const { savePageAsync } = useSavePage();
   const [isDataChange, setIsDataChange] = useState(false);
   const [initData, setInitData] = useState<any>(null);
@@ -266,7 +269,7 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
     setShowConfirmDialog(false);
   };
 
-  if (!websiteId || !showWebsiteSettings) return null;
+  if (!websiteId) return null;
   if (isLoading) {
     return (
       <Button variant="ghost" size="icon" className="p-0 w-8 h-8" disabled={true}>
@@ -282,7 +285,7 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
         <DialogTrigger asChild>
           <Button variant="ghost" size="icon" className="p-0 w-8 h-8">
             <Settings />
-            <span className="sr-only">Settings</span>
+            <span className="sr-only">{t("Settings")}</span>
           </Button>
         </DialogTrigger>
         <DialogContent
@@ -290,7 +293,7 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
           style={{ height: "60vh", maxHeight: "860px" }}
           onInteractOutside={(e) => e.preventDefault()}
           aria-describedby="website-settings-description">
-          <DialogTitle className="sr-only">Website Settings</DialogTitle>
+          <DialogTitle className="sr-only">{t("Website Settings")}</DialogTitle>
           {showModal && (
             <WebsiteSettingsContent
               initData={initData}
@@ -308,8 +311,8 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
         onOpenChange={setShowConfirmDialog}
         onCancel={handleCancelClose}
         onConfirm={handleConfirmClose}
-        description="You have unsaved changes. Are you sure you want to close without saving?"
-        confirmText="Close without saving"
+        description={t("You have unsaved changes. Are you sure you want to close without saving?")}
+        confirmText={t("Close without saving")}
       />
     </>
   );
@@ -328,9 +331,7 @@ const WebsitesPopoverContent = ({
   websites: any;
   isLoading: boolean;
 }) => {
-  const router = useRouter();
-  const { value: canCreateSite } = useFlag("create_site", false);
-
+  const { t } = useTranslation();
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-4 h-80 w-96">
@@ -344,28 +345,26 @@ const WebsitesPopoverContent = ({
       {/* Fixed Header */}
       <CardHeader className="p-2 px-4 border-b">
         <CardTitle className="text-sm flex items-center justify-between">
-          <span>Your Website</span>
-          <span className="text-muted-foreground font-light">{websites?.length} websites</span>
+          <span>{t("Your Website")}</span>
+          <span className="text-muted-foreground font-light">{t("{{count}} websites", { count: websites?.length })}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 max-h-96 overflow-y-auto space-y-2 rounded-lg p-2">
         {websites?.map((site: any) => (
           <div key={site.id} className="group relative overflow-hidden cursor-pointer">
-            {canCreateSite && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-200">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" side="right">
-                  <DeleteWebsite websiteId={site.id} websiteName={site.name} />
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-200">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" side="right">
+                <DeleteWebsite websiteId={site.id} websiteName={site.name} />
+              </DropdownMenuContent>
+            </DropdownMenu>
             <div
               onClick={() => (window.location.href = `/${site?.id}/editor`)}
               className="px-3 py-1 group-hover:bg-muted rounded">
@@ -377,16 +376,14 @@ const WebsitesPopoverContent = ({
       </CardContent>
 
       {/* Fixed Footer */}
-      {canCreateSite && (
-        <CardFooter className="flex-shrink-0 p-3 border-t bg-white">
-          <CreateNewWebsite totalSites={websites?.length || 0}>
-            <Button className="w-full" size="sm">
-              <Plus className="h-4 w-4" />
-              Add New Website
-            </Button>
-          </CreateNewWebsite>
-        </CardFooter>
-      )}
+      <CardFooter className="flex-shrink-0 p-3 border-t bg-white">
+        <CreateNewWebsite totalSites={websites?.length || 0}>
+          <Button className="w-full" size="sm">
+            <Plus className="h-4 w-4" />
+            {t("Add New Website")}
+          </Button>
+        </CreateNewWebsite>
+      </CardFooter>
     </Card>
   );
 };
@@ -404,6 +401,7 @@ const WebsitesListPopover = ({
   isLoading: boolean;
   websiteId: string | undefined;
 }) => {
+  const { t } = useTranslation();
   const { savePageAsync } = useSavePage();
   const [showWebsiteList, setShowWebsiteList] = useState(false);
   const open = showWebsiteList || !websiteId || (isLoading ? false : websites?.length === 0);
@@ -418,9 +416,9 @@ const WebsitesListPopover = ({
   if (isLoading) {
     return (
       <Button variant="ghost" size="sm" className="h-8" disabled={true}>
-        <span className="text-xs">Loading</span>
+        <span className="text-xs">{t("Loading")}</span>
         <ChevronDown />
-        <span className="sr-only">Website manager</span>
+        <span className="sr-only">{t("Website manager")}</span>
       </Button>
     );
   }
@@ -431,7 +429,7 @@ const WebsitesListPopover = ({
         <Button variant="ghost" size="sm" className="h-8">
           <span className="text-xs">{website?.name}</span>
           <ChevronDown />
-          <span className="sr-only">Website manager</span>
+          <span className="sr-only">{t("Website manager")}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -451,28 +449,28 @@ const WebsitesListPopover = ({
  * @param params websiteId, websites, isLoading
  */
 function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
-  const { data: clientSettings, isFetching } = useQuery({ queryKey: ["client-settings"], queryFn: getClientSettings });
-  const { data: websites, isLoading } = useQuery({ queryKey: ["websites-list"], queryFn: getSites });
+  const { data: clientSettings, isFetching: isFetchingClientSettings } = useClientSettings();
+  const { data: websites, isFetching: isFetchingWebsites } = useWebsites();
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isFetchingClientSettings || isFetchingWebsites) return;
     const isActiveWebsite = websites?.find((site) => site?.id === websiteId);
     if (!isActiveWebsite) router.push(`/`);
-  }, [websiteId, websites, isLoading, router]);
+  }, [websiteId, websites, isFetchingClientSettings, isFetchingWebsites, router]);
 
   return (
     <div className="flex items-center gap-x-2">
-      {!isFetching && clientSettings?.logo ? (
+      {!isFetchingClientSettings && clientSettings?.logo ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={clientSettings?.logo} width={32} height={32} alt="brand-logo" className="rounded-md" />
       ) : (
         <div className="w-8 h-8 rounded-md" />
       )}
-      {!isLoading && (
+      {!isFetchingWebsites && (
         <div className="flex items-center border rounded-md p-0 h-9 px-px">
-          <WebsitesListPopover websiteId={websiteId} isLoading={isLoading} websites={websites} />
-          <WebsiteSettingsModal websiteId={websiteId} isLoading={isLoading} />
+          <WebsitesListPopover websiteId={websiteId} isLoading={isFetchingWebsites} websites={websites} />
+          <WebsiteSettingsModal websiteId={websiteId} isLoading={isFetchingWebsites} />
         </div>
       )}
     </div>

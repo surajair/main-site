@@ -4,8 +4,8 @@ import { formSubmit } from "@/actions/form-submit";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { getUser } from "@/lib/getter/users";
-import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@/hooks/use-user";
+import { useTranslation } from "chai-next";
 import { get } from "lodash";
 import { Loader, Mail, MessageCircle, Send } from "lucide-react";
 import { useState } from "react";
@@ -13,17 +13,8 @@ import { toast } from "sonner";
 
 const FEEDBACK_DOMAIN = "chaibuilder.com";
 
-const useUser = () => {
-  return useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const user = await getUser();
-      return { user };
-    },
-  });
-};
-
 export const SupportPanel = () => {
+  const { t } = useTranslation();
   const [feedback, setFeedback] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -57,12 +48,12 @@ export const SupportPanel = () => {
       });
 
       if (result.success) {
-        toast.success("Feedback submitted successfully!");
+        toast.success(t("Feedback submitted successfully!"));
         // Reset form and close dialog
         setFeedback("");
         setDialogOpen(false);
       } else {
-        toast.error("Failed to submit feedback. Please try again.");
+        toast.error(t("Failed to submit feedback. Please try again."));
       }
     } catch (error) {
       console.error("Error submitting feedback:", error);
@@ -75,7 +66,7 @@ export const SupportPanel = () => {
   return (
     <div className="space-y-6 text-sm">
       <div className="text-start">
-        <p className="text-sm text-slate-500">We&apos;re here to support you every step of the way</p>
+        <p className="text-sm text-slate-500">{t("We're here to support you every step of the way")}</p>
       </div>
       <div className="space-y-2">
         {/* First Support Email */}
@@ -87,7 +78,7 @@ export const SupportPanel = () => {
               <Mail className="w-4 h-4 text-blue-600" />
             </div>
             <div className="ml-4 flex-1">
-              <h4 className="font-medium text-sm text-slate-800">Email support</h4>
+              <h4 className="font-medium text-sm text-slate-800">{t("Email support")}</h4>
               <p className="text-xs text-slate-600">support@chaibuilder.com</p>
             </div>
           </a>
@@ -104,7 +95,7 @@ export const SupportPanel = () => {
               <Mail className="w-4 h-4 text-blue-600" />
             </div>
             <div className="ml-4 flex-1">
-              <h4 className="font-medium text-sm text-slate-800">Founder email</h4>
+              <h4 className="font-medium text-sm text-slate-800">{t("Founder email")}</h4>
               <p className="text-xs text-slate-600">suraj@chaibuilder.com</p>
             </div>
           </a>
@@ -122,12 +113,12 @@ export const SupportPanel = () => {
                 <MessageCircle className="w-4 h-4 text-blue-600" />
               </div>
               <div className="ml-4 flex-1">
-                <h4 className="font-medium text-sm text-slate-800">Support on Discord</h4>
-                <p className="text-xs text-slate-600">Chat with our community</p>
+                <h4 className="font-medium text-sm text-slate-800">{t("Support on Discord")}</h4>
+                <p className="text-xs text-slate-600">{t("Chat with our community")}</p>
               </div>
             </div>
             <Button size="sm" variant="default" className="rounded-md w-full px-2 py-0">
-              Join
+              {t("Join")}
             </Button>
           </a>
         </div>
@@ -143,7 +134,7 @@ export const SupportPanel = () => {
                   dialogOpen ? "border-green-600 text-green-600 hover:bg-green-50" : "bg-green-600 hover:bg-green-700"
                 }>
                 <Send className="w-4 h-4 mr-2" />
-                Give Feedback
+                {t("Give Feedback")}
               </Button>
             </DialogTrigger>
 
@@ -151,18 +142,18 @@ export const SupportPanel = () => {
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <Send className="w-5 h-5 text-green-600" />
-                  Send Feedback
+                  {t("Send Feedback")}
                 </DialogTitle>
               </DialogHeader>
 
               <div className="space-y-4">
                 <div>
                   <label htmlFor="feedback" className="text-sm font-medium text-slate-700 mb-2 block">
-                    Your Feedback
+                    {t("Your Feedback")}
                   </label>
                   <Textarea
                     id="feedback"
-                    placeholder="Tell us what you think, report a bug, or suggest a feature..."
+                    placeholder={t("Tell us what you think, report a bug, or suggest a feature...")}
                     value={feedback}
                     onChange={(e) => setFeedback(e.target.value)}
                     className="max-h-[200px]"
@@ -173,7 +164,7 @@ export const SupportPanel = () => {
 
               <DialogFooter className="gap-2">
                 <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={isSubmitting}>
-                  Cancel
+                  {t("Cancel")}
                 </Button>
                 <Button
                   onClick={handleFeedbackSubmit}
@@ -182,10 +173,10 @@ export const SupportPanel = () => {
                   {isSubmitting ? (
                     <>
                       <Loader className="h-4 w-4 animate-spin" />
-                      Sending
+                      {t("Sending")}
                     </>
                   ) : (
-                    "Send Feedback"
+                    t("Send Feedback")
                   )}
                 </Button>
               </DialogFooter>

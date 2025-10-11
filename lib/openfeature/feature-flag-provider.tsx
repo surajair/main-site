@@ -1,54 +1,125 @@
 "use client";
 
 import QueryClientProviderWrapper from "@/components/providers/query-client-provider";
-import { getClientSettings, getSites } from "@/lib/getter";
+import { useClientSettings } from "@/hooks/use-client-settings";
+import { useIsBuilderSettingUp } from "@/hooks/use-is-builder-setting-up";
+import { useUser } from "@/hooks/use-user";
+import { useWebsites } from "@/hooks/use-websites";
 import { InMemoryProvider, OpenFeature, OpenFeatureProvider } from "@openfeature/react-sdk";
-import { useQueryClient } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
-import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useMemo, useState } from "react";
+import { convertToOpenFeatureDevFormat } from "./helper";
 
-function FeatureFlagProviderComponent({ children, featureFlags }: { children: React.ReactNode; featureFlags?: any }) {
-  const [loading, setLoading] = useState(true);
-  const [providerReady, setProviderReady] = useState(false);
-  const queryClient = useQueryClient();
+// Lazy load the UpgradeDialog component
+const UpgradeDialog = dynamic(() => import("@/components/upgrade/upgrade-modal"), {
+  ssr: false,
+});
 
-  queryClient.prefetchQuery({
-    staleTime: Infinity,
-    gcTime: Infinity,
-    queryKey: ["client-settings"],
-    queryFn: getClientSettings,
-  });
-  queryClient.prefetchQuery({ staleTime: Infinity, gcTime: Infinity, queryKey: ["websites-list"], queryFn: getSites });
+import React from "react";
+
+const StartingLoader = ({ logo, progress }: { logo: any; progress: number }) => {
+  // @ts-expect-error window is not defined
+  const [localLogo] = useState(window ?? window?.localStorage?.getItem("client-logo"));
+  const [localProgress, setLocalProgress] = useState(0);
 
   useEffect(() => {
-    try {
-      const provider = new InMemoryProvider(featureFlags);
+    setLocalProgress((prev) => Math.max(prev, progress));
+    let interval = setInterval(() => {
+      setLocalProgress((prev) => Math.min(prev + 2, 100));
+    }, 400);
+    return () => clearInterval(interval);
+  }, [progress]);
+
+  const loader = useMemo(
+    () => (
+      <div className="w-screen h-screen flex flex-col gap-4 items-center justify-center transition-all">
+        {localLogo || logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logo || localLogo} className="w-8 h-8 rounded" alt="" />
+        ) : (
+          <div className="w-8 h-8" />
+        )}
+        <div style={{ width: "200px" }} className={`w-[200px] rounded-full h-2.5 border border-border overflow-hidden`}>
+          <div
+            className={`h-full rounded-full bg-primary transition-all duration-300`}
+            style={{
+              width: `${Math.min(localProgress, 100)}%`,
+            }}
+          />
+        </div>
+      </div>
+    ),
+    [localProgress, localLogo, logo],
+  );
+
+  return loader;
+};
+
+function FeatureFlagProviderComponent({
+  children,
+  fromDashboard,
+}: {
+  children: React.ReactNode;
+  fromDashboard?: boolean;
+}) {
+  useWebsites();
+  const [loading, setLoading] = useState(true);
+  const { data: clientSettings } = useClientSettings();
+  const { isBuilderReady, setupProgress } = useIsBuilderSettingUp(loading);
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const { data } = useUser();
+
+  const role = data?.role;
+  const plan = data?.plan?.planId;
+
+  useEffect(() => {
+    if (clientSettings && plan && role) {
+      const flags = convertToOpenFeatureDevFormat(clientSettings?.features, role, plan);
+      const provider = new InMemoryProvider(flags);
       OpenFeature.setProvider(provider);
-      setProviderReady(true);
+      OpenFeature.setContext({
+        plan,
+        role,
+        showUpgrade: (() => setShowUpgradeDialog(true)) as any,
+      });
       setTimeout(() => setLoading(false), 1000);
-    } catch {}
-  }, [featureFlags]);
+    }
+  }, [clientSettings, plan, role]);
+
+  const showChildren = clientSettings && data?.isLoggedIn;
+  const isLoading = loading || !showChildren || (fromDashboard ? false : !isBuilderReady);
+  const progress = [plan ? 20 : 0, clientSettings ? 25 : 0, fromDashboard ? 40 : setupProgress].reduce(
+    (a, b) => a + b,
+    5,
+  );
 
   return (
     <>
-      {loading && (
-        <div className="w-screen h-screen flex items-center justify-center">
-          <Loader className="text-primary animate-spin w-6 h-6" />
-        </div>
-      )}
-      {providerReady && (
-        <div className={loading ? "sr-only" : ""}>
-          <OpenFeatureProvider>{children}</OpenFeatureProvider>
+      {isLoading && <StartingLoader logo={clientSettings?.logo} progress={progress} />}
+      {showChildren && (
+        <div className={`${isLoading ? "sr-only" : ""}`}>
+          <OpenFeatureProvider>
+            <>
+              {children}
+              {showUpgradeDialog && <UpgradeDialog onClose={() => setShowUpgradeDialog(false)} />}
+            </>
+          </OpenFeatureProvider>
         </div>
       )}
     </>
   );
 }
 
-export const FeatureFlagProvider = ({ children, featureFlags }: { children: React.ReactNode; featureFlags?: any }) => {
+export const FeatureFlagProvider = ({
+  children,
+  fromDashboard = false,
+}: {
+  children: React.ReactNode;
+  fromDashboard?: boolean;
+}) => {
   return (
     <QueryClientProviderWrapper>
-      <FeatureFlagProviderComponent featureFlags={featureFlags}>{children}</FeatureFlagProviderComponent>
+      <FeatureFlagProviderComponent fromDashboard={fromDashboard}>{children}</FeatureFlagProviderComponent>
     </QueryClientProviderWrapper>
   );
 };

@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SiteData } from "@/utils/types";
+import { useTranslation } from "chai-next";
 import { useState } from "react";
 
 interface AnalyticsTrackingProps {
@@ -12,6 +13,7 @@ interface AnalyticsTrackingProps {
 }
 
 export default function AnalyticsTracking({ data, onChange }: AnalyticsTrackingProps) {
+  const { t } = useTranslation();
   const [baseline, setBaseline] = useState(data);
 
   const handleChange = (updates: any) => {
@@ -23,7 +25,7 @@ export default function AnalyticsTracking({ data, onChange }: AnalyticsTrackingP
     <section id="analytics-tracking" className="space-y-4 pb-4">
       <div className="space-y-1">
         <Label htmlFor="googleAnalyticsId" className="text-xs">
-          Google Analytics ID
+          {t("Google Analytics ID")}
         </Label>
         <Input
           id="googleAnalyticsId"
@@ -40,7 +42,7 @@ export default function AnalyticsTracking({ data, onChange }: AnalyticsTrackingP
 
       <div className="space-y-1">
         <Label htmlFor="googleTagManagerId" className="text-xs">
-          Google Tag Manager ID
+          {t("Google Tag Manager ID")}
         </Label>
         <Input
           id="googleTagManagerId"
@@ -57,7 +59,7 @@ export default function AnalyticsTracking({ data, onChange }: AnalyticsTrackingP
 
       <div className="space-y-1">
         <Label htmlFor="metaPixelId" className="text-xs">
-          Meta Pixel ID
+          {t("Meta Pixel ID")}
         </Label>
         <Input
           id="metaPixelId"

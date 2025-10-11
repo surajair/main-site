@@ -15,6 +15,7 @@ const SuspenseConfig = {
   type: "SuspenseBlock",
   label: "Suspense Block",
   category: "core",
+  hidden: true,
   group: "layout",
   canAcceptBlock: () => true,
   ...registerChaiBlockSchema({

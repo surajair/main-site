@@ -1,95 +1,39 @@
 "use client";
 
-import { updateUserPlan } from "@/actions/update-user-plan";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getPaymentConfig, getPricingPlans } from "@/lib/payment";
-import { initializePaddle, Paddle } from "@paddle/paddle-js";
-import { useQuery } from "@tanstack/react-query";
+import { usePaymentProvider } from "@/payments";
 import { useChaiAuth } from "chai-next";
-import { get } from "lodash";
 import { Check, Crown, Loader } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 function UpgradeModalContent() {
   const { user } = useChaiAuth();
-  const [paddle, setPaddle] = useState<Paddle | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-
-  const { data: plans, isLoading } = useQuery<any>({
-    queryKey: ["pricing-plans", paddle],
-    queryFn: async () => await getPricingPlans(paddle as Paddle),
-    enabled: !!paddle,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    staleTime: Infinity,
-  });
-
-  useEffect(() => {
-    async function setupPaddle() {
-      const config = getPaymentConfig();
-      if (!config) return null;
-
-      const payload: any = { token: config.token };
-      if (config.isDev) payload.environment = "sandbox";
-      const paddle = await initializePaddle({
-        ...payload,
-        checkout: {
-          settings: {
-            displayMode: "overlay",
-            variant: "one-page",
-          },
-        },
-        eventCallback: async (event: any) => {
-          if (event.name === "checkout.completed") {
-            const transactionId = get(event, "data.transaction_id");
-            const response = await fetch(
-              `/api/subscription-details?transactionId=${encodeURIComponent(transactionId)}`,
-              {
-                method: "GET",
-                headers: { "Content-Type": "application/json" },
-              },
-            );
-            const payload = await response.json();
-            updateUserPlan(payload);
-            paddle?.Checkout?.close();
-            setShowSuccess(true);
-          }
-        },
-      });
-      setPaddle(paddle as Paddle);
-    }
-    setupPaddle();
-  }, []);
+  const { plans, status, provider, isLoading, currentPlanId, savePercentage } = usePaymentProvider();
 
   const handleUpgrade = async (planItems: any[]) => {
     if (planItems.length === 0) return;
     const planItem = planItems?.find((item: any) => item.billingCycle === billingCycle);
     if (!planItem) return;
-    setIsProcessing(true);
-    try {
-      await paddle?.Checkout?.open({
-        customer: {
-          email: user?.email || "",
-        },
-        items: [
-          {
-            priceId: planItem?.priceId,
-            quantity: 1,
-          },
-        ],
-      });
-    } catch {}
-    setIsProcessing(false);
+    await provider?.openCheckout({ user, planItem });
   };
 
-  if (showSuccess) {
+  if (status === "processing") {
     return (
-      <div className={`max-w-5xl mx-auto py-20 flex items-center justify-center`}>
+      <div className={`max-w-5xl min-h-[500px] mx-auto py-20 flex items-center justify-center`}>
+        <div className="flex flex-col items-center">
+          <Loader className="w-5 h-5 text-primary animate-spin" />
+          <p className="text-center text-sm text-muted-foreground mt-2">Confirming payment</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "success") {
+    return (
+      <div className={`max-w-5xl min-h-[500px] mx-auto py-20 flex items-center justify-center`}>
         <div className="p-8 text-center max-w-md w-full">
           <div className="flex justify-center mb-4">
             <svg
@@ -108,7 +52,9 @@ function UpgradeModalContent() {
             <span className="font-semibold">please reload the page.</span>
           </p>
 
-          <Button onClick={() => window.location.reload()}>Reload and Continue</Button>
+          <Button size="lg" onClick={() => window.location.reload()}>
+            Reload and Continue
+          </Button>
         </div>
       </div>
     );
@@ -141,11 +87,11 @@ function UpgradeModalContent() {
                   billingCycle === "yearly"
                     ? "bg-background text-foreground shadow-sm border-border"
                     : "text-muted-foreground hover:text-foreground border-transparent"
-                }`}>
+                } ${plans?.length > 0 ? "" : "opacity-50 pointer-events-none cursor-not-allowed"}`}>
                 Yearly
-                {plans?.length > 0 && (
+                {savePercentage && (
                   <span className="ml-2 text-[11px] text-green-600 font-normal px-1 bg-green-100 rounded-full">
-                    Save 16.67%
+                    Save {savePercentage}
                   </span>
                 )}
               </button>
@@ -154,7 +100,7 @@ function UpgradeModalContent() {
         </div>
 
         <div className="grid grid-cols-1 mx-auto max-w-xl md:grid-cols-2 gap-6">
-          {isLoading || !paddle ? (
+          {!plans || isLoading ? (
             <>
               <Card
                 className={`relative min-h-[360px] transition-all ease-linear duration-300 hover:shadow-lg border-border hover:border-primary/50 bg-muted animate-pulse`}
@@ -167,14 +113,15 @@ function UpgradeModalContent() {
             plans?.map((plan: any) => {
               const id = plan.id;
               const currentPrice = billingCycle === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
-              const period = id === "free" ? "" : billingCycle === "yearly" ? "/year" : "/month";
+              const period = plan?.isFree ? "" : billingCycle === "yearly" ? "/year" : "/month";
+              const isCurrentPlan = provider.isCurrentPlan(currentPlanId, plan);
 
               return (
                 <Card
                   key={id}
-                  className={`relative min-h-[360px] transition-all ease-linear duration-300 hover:shadow-lg border-border ${id === "free" ? "" : "border-primary/50"}`}>
+                  className={`relative min-h-[360px] transition-all ease-linear duration-300 hover:shadow-lg border-border ${plan?.isFree ? "" : "border-primary/50"}`}>
                   <CardHeader className="text-start pb-4">
-                    <CardTitle className={`font-semibold ${id === "free" ? "text-muted-foreground" : "text-primary"}`}>
+                    <CardTitle className={`font-semibold ${plan?.isFree ? "text-muted-foreground" : "text-primary"}`}>
                       {plan?.name}
                     </CardTitle>
                     <div className="flex items-baseline justify-start mt-2">
@@ -196,19 +143,17 @@ function UpgradeModalContent() {
 
                     <Button
                       className="w-[80%] mx-auto absolute right-1/2 bottom-5 transform translate-x-1/2"
-                      variant={id === "free" ? "outline" : "default"}
+                      variant={plan?.isFree || isCurrentPlan ? "outline" : "default"}
                       onClick={() => handleUpgrade(plan?.items)}
-                      disabled={isLoading || id === "free" || isProcessing}>
-                      {isProcessing && id !== "free" ? (
-                        <>
-                          <Loader className="animate-spin" /> Checking
-                        </>
-                      ) : id === "free" ? (
+                      disabled={!plans || plan?.isFree || isCurrentPlan}>
+                      {isCurrentPlan ? (
                         <>Current Plan</>
+                      ) : plan?.isFree ? (
+                        <>Free Plan</>
                       ) : (
                         <>
                           <Crown className="h-4 w-4 mr-2" />
-                          Upgrade to Pro
+                          Upgrade now
                         </>
                       )}
                     </Button>
@@ -222,29 +167,19 @@ function UpgradeModalContent() {
     </>
   );
 }
+const UpgradeDialog = ({ onClose }: { onClose: () => void }) => {
+  return (
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-[700px]">
+        <DialogHeader>
+          <DialogTitle>Upgrade now</DialogTitle>
+        </DialogHeader>
+        <div className="py-4">
+          <UpgradeModalContent />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
-export default function UpgradeModal({ withTrigger = false }: { withTrigger?: boolean }) {
-  const [open, setOpen] = useState(false);
-  if (withTrigger) {
-    return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button size="sm">
-            <Crown className="h-4 w-4" />
-            Upgrade to Pro
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-[700px]">
-          <DialogHeader>
-            <DialogTitle>Upgrade to Pro</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <UpgradeModalContent />
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  return <UpgradeModalContent />;
-}
+export default UpgradeDialog;
