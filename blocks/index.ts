@@ -3,14 +3,12 @@ import dynamic from "next/dynamic";
 import { FlipWordsConfig } from "./flip-words-block";
 import { FormConfig } from "./form-block-new";
 import { ResizeHandleConfig } from "./resize-handle-block";
-import { ShimmerButtonConfig } from "./shimmer-button-block";
 import { SuspenseBlock, SuspenseConfig } from "./suspense";
 import { TextRevealConfig } from "./text-reveal-block";
 
 const ChaiForm = dynamic(() => import("./form-block-new")) as any;
 const FlipWordsBlock = dynamic(() => import("./flip-words-block")) as any;
 const ResizeHandleBlock = dynamic(() => import("./resize-handle-block")) as any;
-const ShimmerButtonBlock = dynamic(() => import("./shimmer-button-block")) as any;
 const TextRevealBlock = dynamic(() => import("./text-reveal-block")) as any;
 
 export const registerBlocks = () => {
@@ -20,5 +18,4 @@ export const registerBlocks = () => {
   registerChaiBlock(ResizeHandleBlock, ResizeHandleConfig);
   registerChaiBlock(SuspenseBlock, SuspenseConfig);
   registerChaiBlock(TextRevealBlock, TextRevealConfig);
-  registerChaiBlock(ShimmerButtonBlock, ShimmerButtonConfig);
 };
