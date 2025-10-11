@@ -2,42 +2,43 @@ import { ChaiBlockComponentProps, ChaiStyles, registerChaiBlockSchema, StylesPro
 import ResizeHandleComponent from "./resize-handle-component";
 
 type ResizeHandleProps = {
-  phrases: string[];
+  words: string;
   duration: number;
-  styles: ChaiStyles;
   borderStyles: ChaiStyles;
+  handleStyles: ChaiStyles;
+  containerStyles: ChaiStyles;
+  wordStyles: ChaiStyles;
 };
 
 const ResizeHandleBlock = (props: ChaiBlockComponentProps<ResizeHandleProps>) => {
-  return <ResizeHandleComponent {...props} />;
+  const words = props.words
+    .split(",")
+    .map((word) => word.trim())
+    .filter((word) => word !== "");
+  return <ResizeHandleComponent {...props} words={words} />;
 };
 
 const ResizeHandleConfig = {
-  type: "ResizeHandle",
-  label: "Resize Handle Text",
+  type: "ResizeHandleFlipWords",
+  label: "Resize-Handle Flip Words",
   category: "core",
   group: "typography",
   ...registerChaiBlockSchema({
     properties: {
-      styles: StylesProp("text-4xl font-bold text-gray-800 dark:text-gray-200 border-2 "),
-      borderStyles: StylesProp("border-2 border-blue-500 dark:border-blue-400 rounded-lg"),
-      phrases: {
-        type: "array",
-        title: "Phrases",
-        default: ["AWESOME", "BEAUTIFUL", "STUNNING", "COOL", "ELEGANT", "AMAZING", "VIBRANT", "DYNAMIC"],
-        items: {
-          type: "string",
-        },
-        ui: {
-          "ui:options": {
-            orderable: true,
-          },
-        },
+      containerStyles: StylesProp("text-center inline-block"),
+      borderStyles: StylesProp("border-2 border-border"),
+      handleStyles: StylesProp("w-4 h-4 bg-background border-2 border-border rounded-md"),
+      wordStyles: StylesProp("inline-block text-4xl h-fit font-bold"),
+      words: {
+        type: "string",
+        title: "Words",
+        default: "AWESOME, BEAUTIFUL, STUNNING, COOL, ELEGANT, AMAZING, VIBRANT, DYNAMIC",
+        ui: { "ui:widget": "textarea", "ui:rows": 2, "ui:placeholder": "Enter comma separated words" },
       },
       duration: {
         type: "number",
         title: "Duration per Phrase (ms)",
-        default: 3000,
+        default: 2000,
         minimum: 1000,
         maximum: 10000,
       },

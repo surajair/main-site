@@ -1,30 +1,32 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+import { ChaiStyles } from "chai-next/blocks";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
 
 type ResizeHandleComponentProps = {
-  phrases: string[];
+  words: string[];
   duration?: number;
   blockProps: React.HTMLAttributes<HTMLDivElement>;
-  styles: any;
-  borderStyles: any;
+  borderStyles: ChaiStyles;
+  handleStyles: ChaiStyles;
+  containerStyles: ChaiStyles;
+  wordStyles: ChaiStyles;
 };
 
-const SelectionHandle = ({ position }: { position: string }) => {
-  return (
-    <div
-      className={`absolute w-4 h-4 bg-white dark:bg-gray-800 border-2 border-blue-500 dark:border-blue-400 rounded-sm ${position}`}
-    ></div>
-  );
+const SelectionHandle = ({ position, handleStyles }: { position: string; handleStyles?: ChaiStyles }) => {
+  return <div className={cn(`absolute ${position}`, handleStyles?.className)}></div>;
 };
 
 const FlipWordsInline = ({
   words,
   duration = 3000,
+  wordStyles,
 }: {
   words: string[];
   duration?: number;
+  wordStyles?: ChaiStyles;
 }) => {
   const [index, setIndex] = useState(0);
 
@@ -82,7 +84,7 @@ const FlipWordsInline = ({
   const currentWord = words[index];
 
   return (
-    <div className="inline-block align-middle overflow-hidden h-[1.2em] leading-none">
+    <div className="inline-block align-middle overflow-hidden h-fit leading-none">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentWord}
@@ -90,14 +92,9 @@ const FlipWordsInline = ({
           initial="hidden"
           animate="visible"
           exit="exit"
-          className="inline-block whitespace-nowrap"
-        >
+          {...wordStyles}>
           {currentWord.split("").map((char, i) => (
-            <motion.span
-              key={`${char}-${i}`}
-              variants={letterVariants}
-              className="inline-block"
-            >
+            <motion.span key={`${char}-${i}`} variants={letterVariants} className="inline-block">
               {char}
             </motion.span>
           ))}
@@ -108,47 +105,32 @@ const FlipWordsInline = ({
 };
 
 const ResizeHandleComponent = ({
-  phrases,
+  words,
   duration = 3000,
   blockProps,
-  styles,
   borderStyles,
+  handleStyles,
+  containerStyles,
+  wordStyles,
 }: ResizeHandleComponentProps) => {
   return (
     <>
-      <style>
-        {`
-          @import url('https://fonts.googleapis.com/css2?family=Phudu:wght@700&display=swap');
-          .font-phudu {
-            font-family: 'Phudu', cursive;
-          }
-        `}
-      </style>
-      <div
-        {...blockProps}
-        {...styles}
-        className={`${styles?.className || ""} flex flex-col items-center justify-center font-sans p-4 text-center overflow-hidden`}
-        style={{
-          ...styles?.style,
-        }}
-      >
+      <span {...blockProps} {...containerStyles}>
         <motion.div
           layout
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
-          className="relative inline-block my-2"
-        >
-          <div className="font-phudu font-bold tracking-tight  py-1 px-4 flex items-center justify-center uppercase relative">
-            <FlipWordsInline words={phrases} duration={duration} />
+          className="relative inline-block my-2">
+          <div className="tracking-tight  py-1 px-4 flex items-center justify-center uppercase relative">
+            <FlipWordsInline words={words} duration={duration} wordStyles={wordStyles} />
           </div>
 
-          <div className={`absolute inset-0 ${borderStyles?.className || ""} pointer-events-none`} style={{ ...borderStyles?.style }}></div>
-
-          <SelectionHandle position="-top-2 -left-2" />
-          <SelectionHandle position="-top-2 -right-2" />
-          <SelectionHandle position="-bottom-2 -left-2" />
-          <SelectionHandle position="-bottom-2 -right-2" />
+          <div className={`absolute inset-0 ${borderStyles?.className || ""} pointer-events-none`} />
+          <SelectionHandle position="-top-2 -left-2" handleStyles={handleStyles} />
+          <SelectionHandle position="-top-2 -right-2" handleStyles={handleStyles} />
+          <SelectionHandle position="-bottom-2 -left-2" handleStyles={handleStyles} />
+          <SelectionHandle position="-bottom-2 -right-2" handleStyles={handleStyles} />
         </motion.div>
-      </div>
+      </span>
     </>
   );
 };
