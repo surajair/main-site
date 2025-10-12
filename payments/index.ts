@@ -1,6 +1,7 @@
 import { useClientSettings } from "@/hooks/use-client-settings";
 import { useUserPlan } from "@/lib/openfeature/helper";
 import { useQuery } from "@tanstack/react-query";
+import { filter } from "lodash";
 import { useState } from "react";
 import { DodoAdapter } from "./dodo";
 import { getSavePercentage } from "./helper";
@@ -62,7 +63,8 @@ export const usePaymentProvider = (options: Record<string, any> = {}): TPaymentP
     queryFn: async () => {
       const provider = PaymentProviderFactory.createPaymentProvider(clientSettings?.paymentConfig);
       await provider.initialize(optionsWithState);
-      const plans = await provider.getPricingPlans();
+      const providerPlans = await provider.getPricingPlans();
+      const plans = filter(providerPlans, (plan: any) => plan?.id);
       const savePercentage = getSavePercentage(plans);
       return { provider, plans, savePercentage };
     },
