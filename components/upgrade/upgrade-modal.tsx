@@ -62,7 +62,7 @@ function UpgradeModalContent() {
 
   return (
     <>
-      <div className={`max-w-5xl mx-auto`}>
+      <div className={`w-max mx-auto`}>
         <div className="text-center mb-8">
           <h2 className="text-xl font-bold">Choose Your Plan</h2>
           <p className="text-muted-foreground text-sm font-light">
@@ -99,14 +99,19 @@ function UpgradeModalContent() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 mx-auto max-w-xl md:grid-cols-2 gap-6">
+        {plans?.length === 0 && (
+          <div className="flex items-center justify-center min-h-[360px] w-full border rounded-md text-xs">
+            <p className="text-muted-foreground text-center">No plans available</p>
+          </div>
+        )}
+        <div className="flex items-center gap-6 mx-auto">
           {!plans || isLoading ? (
             <>
               <Card
-                className={`relative min-h-[360px] transition-all ease-linear duration-300 hover:shadow-lg border-border hover:border-primary/50 bg-muted animate-pulse`}
+                className={`relative min-h-[360px] w-[260px] transition-all ease-linear duration-300 hover:shadow-lg border-border hover:border-primary/50 bg-muted animate-pulse`}
               />
               <Card
-                className={`relative min-h-[360px] transition-all ease-linear duration-300 hover:shadow-lg border-border hover:border-primary/50 bg-muted animate-pulse`}
+                className={`relative min-h-[360px] w-[260px] transition-all ease-linear duration-300 hover:shadow-lg border-border hover:border-primary/50 bg-muted animate-pulse`}
               />
             </>
           ) : (
@@ -119,8 +124,8 @@ function UpgradeModalContent() {
               return (
                 <Card
                   key={id}
-                  className={`relative min-h-[360px] transition-all ease-linear duration-300 hover:shadow-lg border-border ${plan?.isFree ? "" : "border-primary/50"}`}>
-                  <CardHeader className="text-start pb-4">
+                  className={`relative min-h-[360px] w-[260px] transition-all ease-linear duration-300 hover:shadow-lg border-border ${plan?.isFree ? "" : "border-primary/50"}`}>
+                  <CardHeader className="text-start p-4">
                     <CardTitle className={`font-semibold ${plan?.isFree ? "text-muted-foreground" : "text-primary"}`}>
                       {plan?.name}
                     </CardTitle>
@@ -130,7 +135,7 @@ function UpgradeModalContent() {
                     </div>
                   </CardHeader>
 
-                  <CardContent>
+                  <CardContent className="p-4">
                     <div className="flex justify-start text-sm font-semibold">Includes </div>
                     <ul className="space-y-1 mb-12 mt-2">
                       {plan?.features?.map((feature: string, index: number) => (
@@ -170,7 +175,7 @@ function UpgradeModalContent() {
 const UpgradeDialog = ({ onClose }: { onClose: () => void }) => {
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-[700px]">
+      <DialogContent className="max-w-max">
         <DialogHeader>
           <DialogTitle>Upgrade now</DialogTitle>
         </DialogHeader>

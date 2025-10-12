@@ -34,6 +34,7 @@ export const getSavePercentage = (plans: any): null | string => {
     });
     const savePercentage = formatPrice(Math.max(...paidPlans).toFixed(2));
     if (!savePercentage || isNaN(Number(savePercentage))) return null;
+    if (savePercentage?.includes("Infinity")) return null;
     return `${savePercentage}%`;
   } catch (error) {
     return null;
