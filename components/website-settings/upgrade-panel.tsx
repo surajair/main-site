@@ -22,6 +22,7 @@ export const upgradePanel = {
   panel: () => null,
   button: UpgradeButton,
   position: "bottom" as const,
+  // @ts-ignore
   width: "auto",
   view: "modal" as const,
 };
