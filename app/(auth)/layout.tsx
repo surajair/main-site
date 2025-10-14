@@ -27,17 +27,13 @@ export const generateMetadata = async () => {
  * @description Render auth UI Layout
  *
  */
-const WithAuthLayout = async ({ children }: { children: React.ReactNode }) => {
-  const clientSettings = await getClientSettings();
-
+const WithAuthLayout = async ({ children, clientSettings }: { children: React.ReactNode; clientSettings: any }) => {
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col-reverse lg:flex-row">
       {/* Left side - Link, Content */}
       <div
         className="hidden lg:flex w-1/2 h-screen flex-col justify-center items-center relative overflow-hidden"
-        dangerouslySetInnerHTML={{
-          __html: clientSettings?.loginHtml,
-        }}
+        dangerouslySetInnerHTML={{ __html: clientSettings?.loginHtml }}
       />
 
       {/* Right side - Login */}
@@ -82,15 +78,16 @@ const WithAuthLayout = async ({ children }: { children: React.ReactNode }) => {
  * @param param0
  * @returns
  */
-const LayoutContainer = ({ children }: { children: React.ReactNode }) => {
+const LayoutContainer = async ({ children }: { children: React.ReactNode }) => {
+  const clientSettings = await getClientSettings();
   return (
     <html dir="ltr" className="smooth-scroll">
       <head>
-        <link rel="stylesheet" href={`/${process.env.APP_DOMAIN?.replace(":", ".")}.css`} />
+        <style>{clientSettings?.theme}</style>
       </head>
       <body className={`${geist.className} antialiased`}>
         <Toaster richColors />
-        <WithAuthLayout>{children}</WithAuthLayout>
+        <WithAuthLayout clientSettings={clientSettings}>{children}</WithAuthLayout>
         {!isEmpty(process.env.NEXT_PUBLIC_CLARITY_ID) ? (
           <Script
             id="chaibuilder-app-clarity"
@@ -137,53 +134,3 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
 
   return <LayoutContainer>{children}</LayoutContainer>;
 }
-
-// Feature items with icons
-const features = [
-  {
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-      </svg>
-    ),
-    title: "Visual Builder",
-    description: "Build with drag & drop",
-  },
-  {
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
-    ),
-    title: "Instant Deploy",
-    description: "Publish with one click",
-  },
-  {
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
-        />
-      </svg>
-    ),
-    title: "Smart Features",
-    description: "AI-powered tools",
-  },
-  {
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-        />
-      </svg>
-    ),
-    title: "Version Control",
-    description: "Track all changes",
-  },
-];
