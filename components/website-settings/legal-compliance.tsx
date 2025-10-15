@@ -14,20 +14,24 @@ interface LegalComplianceProps {
 export default function LegalCompliance({ data, onChange }: LegalComplianceProps) {
   const { t } = useTranslation();
   const cookieConsentEnabled = data?.settings?.cookieConsentEnabled || false;
-  const cookieSettings = data?.settings?.cookieConsentSettings || {
+  
+  const defaultSettings = {
     consentModal: {
-      layout: "box",
-      position: "bottom right",
+      layout: "box" as const,
+      position: "bottom right" as const,
       equalWeightButtons: true,
       flipButtons: false,
     },
     preferencesModal: {
-      layout: "box",
-      position: "right",
+      layout: "box" as const,
+      position: "right" as const,
       equalWeightButtons: true,
       flipButtons: false,
     },
   };
+  
+  // Use existing settings or defaults only for display purposes
+  const cookieSettings = data?.settings?.cookieConsentSettings || defaultSettings;
 
   const updateCookieSettings = (path: string, value: any) => {
     const [modal, field] = path.split(".");
@@ -44,19 +48,28 @@ export default function LegalCompliance({ data, onChange }: LegalComplianceProps
     });
   };
 
+  const handleToggleCookieConsent = (checked: boolean) => {
+    const updates: any = {
+      settings: {
+        cookieConsentEnabled: checked,
+      },
+    };
+    
+    // Initialize settings with defaults when enabling for the first time
+    if (checked && !data?.settings?.cookieConsentSettings) {
+      updates.settings.cookieConsentSettings = defaultSettings;
+    }
+    
+    onChange?.(updates);
+  };
+
   return (
     <section id="legal-compliance" className="space-y-4">
       <div className="flex items-center gap-4">
         <Switch
           id="cookieConsentEnabled"
           checked={cookieConsentEnabled}
-          onCheckedChange={(checked) =>
-            onChange?.({
-              settings: {
-                cookieConsentEnabled: checked,
-              },
-            })
-          }
+          onCheckedChange={handleToggleCookieConsent}
         />
         <div>
           <Label htmlFor="cookieConsentEnabled" className="cursor-pointer text-xs font-semibold">
