@@ -80,8 +80,12 @@ export default function LegalCompliance({ data, onChange }: LegalComplianceProps
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="box">Box</SelectItem>
+                  <SelectItem value="box wide">Box Wide</SelectItem>
+                  <SelectItem value="box inline">Box Inline</SelectItem>
                   <SelectItem value="cloud">Cloud</SelectItem>
+                  <SelectItem value="cloud inline">Cloud Inline</SelectItem>
                   <SelectItem value="bar">Bar</SelectItem>
+                  <SelectItem value="bar inline">Bar Inline</SelectItem>
                 </SelectContent>
               </Select>
             </div>

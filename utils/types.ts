@@ -40,7 +40,7 @@ export type SiteData = {
     cookieConsentEnabled: boolean;
     cookieConsentSettings?: {
       consentModal: {
-        layout: 'box' | 'cloud' | 'bar';
+        layout: 'box' | 'box wide' | 'box inline' | 'cloud' | 'cloud inline' | 'bar' | 'bar inline';
         position: 'top left' | 'top center' | 'top right' | 'middle left' | 'middle center' | 'middle right' | 'bottom left' | 'bottom center' | 'bottom right';
         equalWeightButtons: boolean;
         flipButtons: boolean;

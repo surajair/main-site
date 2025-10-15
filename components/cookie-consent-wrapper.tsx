@@ -2,10 +2,11 @@
 import dynamic from 'next/dynamic';
 
 type ConsentModalPosition = 'top left' | 'top center' | 'top right' | 'middle left' | 'middle center' | 'middle right' | 'bottom left' | 'bottom center' | 'bottom right';
+type ConsentModalLayout = 'box' | 'box wide' | 'box inline' | 'cloud' | 'cloud inline' | 'bar' | 'bar inline';
 
 export interface CookieConsentSettings {
   consentModal: {
-    layout: 'box' | 'cloud' | 'bar';
+    layout: ConsentModalLayout;
     position: ConsentModalPosition;
     equalWeightButtons: boolean;
     flipButtons: boolean;
