@@ -22,6 +22,5 @@ export const upgradePanel = {
   panel: () => null,
   button: UpgradeButton,
   position: "bottom" as const,
-  width: 700,
   view: "modal" as const,
 };

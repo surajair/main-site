@@ -24,11 +24,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getSession();
+  const clientSettings = await getClientSettings();
   if (!session) redirect("/login");
   return (
     <html dir="ltr" className="smooth-scroll">
       <head>
-        <link rel="stylesheet" href={`/${process.env.APP_DOMAIN?.replace(":", ".")}.css`} />
+        <style>{clientSettings?.theme}</style>
       </head>
       <body className={`${geist.className} flex h-screen flex-col`}>
         <FeatureFlagProvider fromDashboard={true}>

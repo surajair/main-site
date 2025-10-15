@@ -18,16 +18,21 @@ const UpgradeDialog = dynamic(() => import("@/components/upgrade/upgrade-modal")
 import React from "react";
 
 const StartingLoader = ({ logo, progress }: { logo: any; progress: number }) => {
-  // @ts-expect-error window is not defined
-  const [localLogo] = useState(window ?? window?.localStorage?.getItem("client-logo"));
+  const [localLogo, setLocalLogo] = useState<string | null>(null);
   const [localProgress, setLocalProgress] = useState(0);
 
   useEffect(() => {
+    if (!localLogo) {
+      setLocalLogo(window?.localStorage?.getItem("client-logo") || null);
+    }
+
     setLocalProgress((prev) => Math.max(prev, progress));
     let interval = setInterval(() => {
       setLocalProgress((prev) => Math.min(prev + 2, 100));
     }, 400);
     return () => clearInterval(interval);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [progress]);
 
   const loader = useMemo(
