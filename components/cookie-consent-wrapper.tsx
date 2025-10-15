@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 
 type ConsentModalPosition = 'top left' | 'top center' | 'top right' | 'middle left' | 'middle center' | 'middle right' | 'bottom left' | 'bottom center' | 'bottom right';
 
-interface CookieConsentSettings {
+export interface CookieConsentSettings {
   consentModal: {
     layout: 'box' | 'cloud' | 'bar';
     position: ConsentModalPosition;

@@ -2,23 +2,8 @@
 
 import { useEffect, useState } from "react";
 import "vanilla-cookieconsent/dist/cookieconsent.css";
+import { CookieConsentSettings } from "./cookie-consent-wrapper";
 
-type ConsentModalPosition = 'top left' | 'top center' | 'top right' | 'middle left' | 'middle center' | 'middle right' | 'bottom left' | 'bottom center' | 'bottom right';
-
-interface CookieConsentSettings {
-  consentModal: {
-    layout: 'box' | 'cloud' | 'bar';
-    position: ConsentModalPosition;
-    equalWeightButtons: boolean;
-    flipButtons: boolean;
-  };
-  preferencesModal: {
-    layout: 'box' | 'bar';
-    position: 'left' | 'right';
-    equalWeightButtons: boolean;
-    flipButtons: boolean;
-  };
-}
 
 export function CookieConsent({ lang = "en", settings }: { lang?: string; settings?: CookieConsentSettings }) {
   const [hasInteracted, setHasInteracted] = useState(false);
