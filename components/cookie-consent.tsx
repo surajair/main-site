@@ -43,7 +43,7 @@ export function CookieConsent({ lang = "en", settings }: { lang?: string; settin
 
         const defaultSettings: CookieConsentSettings = {
           consentModal: {
-            layout: "cloud",
+            layout: "box",
             position: "bottom right",
             equalWeightButtons: true,
             flipButtons: false,
