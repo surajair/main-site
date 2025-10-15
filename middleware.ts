@@ -14,7 +14,8 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/favicon.ico") ||
     pathname.startsWith("/static/") || // Prevent infinite loops
     pathname.startsWith("/assets/") ||
-    pathname.startsWith("/fonts/")
+    pathname.startsWith("/fonts/") ||
+    pathname.startsWith("/cookie-consent/")
   ) {
     return NextResponse.next();
   }

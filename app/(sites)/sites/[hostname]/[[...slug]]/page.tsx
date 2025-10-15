@@ -1,5 +1,6 @@
 import { registerBlocks } from "@/blocks";
 import ChaiBuilderBadge from "@/components/chai-builder-badge";
+import { CookieConsentWrapper } from "@/components/cookie-consent-wrapper";
 import { ImageBlock } from "@/components/image";
 import { PageScripts } from "@/components/page-scripts";
 import { loadSiteGlobalData } from "@/data/global";
@@ -49,6 +50,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   const data = await ChaiBuilder.getSiteSettings();
   const settings = data?.settings || null;
   const showChaiBadge = hostname.endsWith(".chaibuilder.site");
+  const cookieConsentEnabled = settings?.cookieConsentEnabled || false;
   let page = null;
   try {
     page = await ChaiBuilder.getPage(slug);
@@ -97,6 +99,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
         {showChaiBadge && <ChaiBuilderBadge />}
         <PageScripts />
         <Analytics />
+        {cookieConsentEnabled && <CookieConsentWrapper lang={page.lang} settings={settings?.cookieConsentSettings} />}
       </body>
     </html>
   );

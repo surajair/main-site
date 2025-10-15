@@ -38,6 +38,20 @@ export type SiteData = {
     googleTagManagerId: string;
     recaptchaSecretKey: string;
     cookieConsentEnabled: boolean;
+    cookieConsentSettings?: {
+      consentModal: {
+        layout: 'box' | 'cloud' | 'bar';
+        position: 'top left' | 'top center' | 'top right' | 'middle left' | 'middle center' | 'middle right' | 'bottom left' | 'bottom center' | 'bottom right';
+        equalWeightButtons: boolean;
+        flipButtons: boolean;
+      };
+      preferencesModal: {
+        layout: 'box' | 'bar';
+        position: 'left' | 'right';
+        equalWeightButtons: boolean;
+        flipButtons: boolean;
+      };
+    };
     customTrackingScripts: string[];
     headHTML?: string;
     footerHTML?: string;

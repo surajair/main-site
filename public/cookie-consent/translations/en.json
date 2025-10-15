@@ -1,0 +1,65 @@
+{
+  "consentModal": {
+    "title": "We value your privacy",
+    "description": "We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking \"Accept All\", you consent to our use of cookies.",
+    "acceptAllBtn": "Accept all",
+    "acceptNecessaryBtn": "Reject all",
+    "showPreferencesBtn": "Manage preferences",
+    "footer": "<a href=\"/privacy-policy\">Privacy Policy</a>\n<a href=\"/terms\">Terms and conditions</a>"
+  },
+  "preferencesModal": {
+    "title": "Cookie preferences",
+    "acceptAllBtn": "Accept all",
+    "acceptNecessaryBtn": "Reject all",
+    "savePreferencesBtn": "Save preferences",
+    "closeIconLabel": "Close modal",
+    "serviceCounterLabel": "Service|Services",
+    "sections": [
+      {
+        "title": "Cookie usage",
+        "description": "We use cookies to ensure the basic functionalities of the website and to enhance your online experience. You can choose for each category to opt-in/out whenever you want. For more details relative to cookies and other sensitive data, please read the full <a href=\"/privacy-policy\" class=\"cc-link\">privacy policy</a>."
+      },
+      {
+        "title": "Strictly necessary cookies",
+        "description": "These cookies are essential for the proper functioning of the website. Without these cookies, the website would not work properly.",
+        "linkedCategory": "necessary"
+      },
+      {
+        "title": "Performance and Analytics cookies",
+        "description": "These cookies collect information about how you use our website. All of the data is anonymized and cannot be used to identify you.",
+        "linkedCategory": "analytics",
+        "cookieTable": {
+          "headers": {
+            "name": "Name",
+            "domain": "Service",
+            "description": "Description",
+            "expiration": "Expiration"
+          },
+          "body": [
+            {
+              "name": "_ga",
+              "domain": "Google Analytics",
+              "description": "Cookie set by Google Analytics to distinguish users.",
+              "expiration": "2 years"
+            },
+            {
+              "name": "_gid",
+              "domain": "Google Analytics",
+              "description": "Cookie set by Google Analytics to distinguish users.",
+              "expiration": "24 hours"
+            }
+          ]
+        }
+      },
+      {
+        "title": "Advertisement and Targeting cookies",
+        "description": "These cookies collect information about how you use the website, which pages you visited and which links you clicked on. All of the data is anonymized and cannot be used to identify you.",
+        "linkedCategory": "targeting"
+      },
+      {
+        "title": "More information",
+        "description": "For any queries in relation to our policy on cookies and your choices, please <a class=\"cc-link\" href=\"/contact\">contact us</a>."
+      }
+    ]
+  }
+}

@@ -21,3 +21,38 @@
     @apply max-w-full;
   }
 }
+
+@layer components {
+  #cc-main .cm__overlay,
+  #cc-main .pm__overlay {
+    @apply backdrop-blur-sm;
+  }
+
+  #cc-main button.cm__btn,
+  #cc-main button.pm__btn {
+    @apply transition-all duration-200;
+  }
+
+  #cc-main button.cm__btn--primary,
+  #cc-main button.pm__btn--primary {
+    @apply hover:opacity-90;
+  }
+
+  #cc-main button.cm__btn--secondary,
+  #cc-main button.pm__btn--secondary {
+    @apply hover:opacity-80;
+  }
+
+  #cc-main .cc-link {
+    @apply text-blue-600 hover:text-blue-800 underline;
+  }
+
+  #cc-main .cm,
+  #cc-main .pm {
+    @apply animate-in fade-in duration-300;
+  }
+
+  #cc-main {
+    @apply z-[9999];
+  }
+}
