@@ -1,0 +1,65 @@
+{
+  "consentModal": {
+    "title": "Valoramos tu privacidad",
+    "description": "Utilizamos cookies para mejorar su experiencia de navegación, ofrecer contenido personalizado y analizar nuestro tráfico. Al hacer clic en \"Aceptar todo\", usted acepta nuestro uso de cookies.",
+    "acceptAllBtn": "Aceptar todo",
+    "acceptNecessaryBtn": "Rechazar todo",
+    "showPreferencesBtn": "Gestionar preferencias",
+    "footer": "<a href=\"/privacy-policy\">Política de privacidad</a>\n<a href=\"/terms\">Términos y condiciones</a>"
+  },
+  "preferencesModal": {
+    "title": "Preferencias de cookies",
+    "acceptAllBtn": "Aceptar todo",
+    "acceptNecessaryBtn": "Rechazar todo",
+    "savePreferencesBtn": "Guardar preferencias",
+    "closeIconLabel": "Cerrar modal",
+    "serviceCounterLabel": "Servicio|Servicios",
+    "sections": [
+      {
+        "title": "Uso de cookies",
+        "description": "Utilizamos cookies para garantizar las funcionalidades básicas del sitio web y mejorar su experiencia en línea. Puede elegir para cada categoría activar/desactivar cuando lo desee. Para más detalles sobre cookies y otros datos sensibles, lea la <a href=\"/privacy-policy\" class=\"cc-link\">política de privacidad</a> completa."
+      },
+      {
+        "title": "Cookies estrictamente necesarias",
+        "description": "Estas cookies son esenciales para el correcto funcionamiento del sitio web. Sin estas cookies, el sitio web no funcionaría correctamente.",
+        "linkedCategory": "necessary"
+      },
+      {
+        "title": "Cookies de rendimiento y analíticas",
+        "description": "Estas cookies recopilan información sobre cómo usa nuestro sitio web. Todos los datos están anonimizados y no se pueden usar para identificarlo.",
+        "linkedCategory": "analytics",
+        "cookieTable": {
+          "headers": {
+            "name": "Nombre",
+            "domain": "Servicio",
+            "description": "Descripción",
+            "expiration": "Expiración"
+          },
+          "body": [
+            {
+              "name": "_ga",
+              "domain": "Google Analytics",
+              "description": "Cookie establecida por Google Analytics para distinguir usuarios.",
+              "expiration": "2 años"
+            },
+            {
+              "name": "_gid",
+              "domain": "Google Analytics",
+              "description": "Cookie establecida por Google Analytics para distinguir usuarios.",
+              "expiration": "24 horas"
+            }
+          ]
+        }
+      },
+      {
+        "title": "Cookies de publicidad y segmentación",
+        "description": "Estas cookies recopilan información sobre cómo usa el sitio web, qué páginas visitó y en qué enlaces hizo clic.",
+        "linkedCategory": "targeting"
+      },
+      {
+        "title": "Más información",
+        "description": "Para cualquier consulta en relación con nuestra política sobre cookies y sus opciones, por favor <a class=\"cc-link\" href=\"/contact\">contáctenos</a>."
+      }
+    ]
+  }
+}
