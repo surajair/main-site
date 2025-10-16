@@ -1,8 +1,8 @@
 "use client";
 
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { SiteData } from "@/utils/types";
 import { useTranslation } from "chai-next";
 
@@ -14,7 +14,7 @@ interface LegalComplianceProps {
 export default function LegalCompliance({ data, onChange }: LegalComplianceProps) {
   const { t } = useTranslation();
   const cookieConsentEnabled = data?.settings?.cookieConsentEnabled || false;
-  
+
   const defaultSettings = {
     consentModal: {
       layout: "box" as const,
@@ -29,21 +29,39 @@ export default function LegalCompliance({ data, onChange }: LegalComplianceProps
       flipButtons: false,
     },
   };
-  
+
   // Use existing settings or defaults only for display purposes
   const cookieSettings = data?.settings?.cookieConsentSettings || defaultSettings;
 
   const updateCookieSettings = (path: string, value: any) => {
     const [modal, field] = path.split(".");
+    const updates: any = {
+      ...cookieSettings,
+      [modal]: {
+        ...cookieSettings[modal as keyof typeof cookieSettings],
+        [field]: value,
+      },
+    };
+
+    if (field === "layout" && (value === "bar" || value === "bar inline")) {
+      const currentPosition = cookieSettings.consentModal.position;
+      if (currentPosition !== "top" && currentPosition !== "bottom") {
+        updates.consentModal.position = "top";
+      }
+    } else if (field === "layout" && value !== "bar" && value !== "bar inline") {
+      const currentLayout = cookieSettings.consentModal.layout;
+      const currentPosition = cookieSettings.consentModal.position;
+      if (
+        (currentLayout === "bar" || currentLayout === "bar inline") &&
+        (currentPosition === "top" || currentPosition === "bottom")
+      ) {
+        updates.consentModal.position = "bottom right";
+      }
+    }
+
     onChange?.({
       settings: {
-        cookieConsentSettings: {
-          ...cookieSettings,
-          [modal]: {
-            ...cookieSettings[modal as keyof typeof cookieSettings],
-            [field]: value,
-          },
-        },
+        cookieConsentSettings: updates,
       },
     });
   };
@@ -66,11 +84,7 @@ export default function LegalCompliance({ data, onChange }: LegalComplianceProps
   return (
     <section id="legal-compliance" className="space-y-4">
       <div className="flex items-center gap-4">
-        <Switch
-          id="cookieConsentEnabled"
-          checked={cookieConsentEnabled}
-          onCheckedChange={handleToggleCookieConsent}
-        />
+        <Switch id="cookieConsentEnabled" checked={cookieConsentEnabled} onCheckedChange={handleToggleCookieConsent} />
         <div>
           <Label htmlFor="cookieConsentEnabled" className="cursor-pointer text-xs font-semibold">
             {t("Enable cookie consent panel")}
@@ -86,8 +100,7 @@ export default function LegalCompliance({ data, onChange }: LegalComplianceProps
               <Label className="text-xs">{t("Layout")}</Label>
               <Select
                 value={cookieSettings.consentModal.layout}
-                onValueChange={(value) => updateCookieSettings("consentModal.layout", value)}
-              >
+                onValueChange={(value) => updateCookieSettings("consentModal.layout", value)}>
                 <SelectTrigger className="h-8 text-xs">
                   <SelectValue />
                 </SelectTrigger>
@@ -106,21 +119,30 @@ export default function LegalCompliance({ data, onChange }: LegalComplianceProps
               <Label className="text-xs">{t("Position")}</Label>
               <Select
                 value={cookieSettings.consentModal.position}
-                onValueChange={(value) => updateCookieSettings("consentModal.position", value)}
-              >
+                onValueChange={(value) => updateCookieSettings("consentModal.position", value)}>
                 <SelectTrigger className="h-8 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="top left">Top Left</SelectItem>
-                  <SelectItem value="top center">Top Center</SelectItem>
-                  <SelectItem value="top right">Top Right</SelectItem>
-                  <SelectItem value="middle left">Middle Left</SelectItem>
-                  <SelectItem value="middle center">Middle Center</SelectItem>
-                  <SelectItem value="middle right">Middle Right</SelectItem>
-                  <SelectItem value="bottom left">Bottom Left</SelectItem>
-                  <SelectItem value="bottom center">Bottom Center</SelectItem>
-                  <SelectItem value="bottom right">Bottom Right</SelectItem>
+                  {cookieSettings.consentModal.layout === "bar" ||
+                  cookieSettings.consentModal.layout === "bar inline" ? (
+                    <>
+                      <SelectItem value="top">Top</SelectItem>
+                      <SelectItem value="bottom">Bottom</SelectItem>
+                    </>
+                  ) : (
+                    <>
+                      <SelectItem value="top left">Top Left</SelectItem>
+                      <SelectItem value="top center">Top Center</SelectItem>
+                      <SelectItem value="top right">Top Right</SelectItem>
+                      <SelectItem value="middle left">Middle Left</SelectItem>
+                      <SelectItem value="middle center">Middle Center</SelectItem>
+                      <SelectItem value="middle right">Middle Right</SelectItem>
+                      <SelectItem value="bottom left">Bottom Left</SelectItem>
+                      <SelectItem value="bottom center">Bottom Center</SelectItem>
+                      <SelectItem value="bottom right">Bottom Right</SelectItem>
+                    </>
+                  )}
                 </SelectContent>
               </Select>
             </div>

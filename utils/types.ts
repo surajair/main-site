@@ -40,14 +40,25 @@ export type SiteData = {
     cookieConsentEnabled: boolean;
     cookieConsentSettings?: {
       consentModal: {
-        layout: 'box' | 'box wide' | 'box inline' | 'cloud' | 'cloud inline' | 'bar' | 'bar inline';
-        position: 'top left' | 'top center' | 'top right' | 'middle left' | 'middle center' | 'middle right' | 'bottom left' | 'bottom center' | 'bottom right';
+        layout: "box" | "box wide" | "box inline" | "cloud" | "cloud inline" | "bar" | "bar inline";
+        position:
+          | "top"
+          | "bottom"
+          | "top left"
+          | "top center"
+          | "top right"
+          | "middle left"
+          | "middle center"
+          | "middle right"
+          | "bottom left"
+          | "bottom center"
+          | "bottom right";
         equalWeightButtons: boolean;
         flipButtons: boolean;
       };
       preferencesModal: {
-        layout: 'box' | 'bar';
-        position: 'left' | 'right';
+        layout: "box" | "bar";
+        position: "left" | "right";
         equalWeightButtons: boolean;
         flipButtons: boolean;
       };
