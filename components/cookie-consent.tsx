@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import "vanilla-cookieconsent/dist/cookieconsent.css";
 import { CookieConsentSettings } from "./cookie-consent-wrapper";
 
-
 export function CookieConsent({ lang = "en", settings }: { lang?: string; settings?: CookieConsentSettings }) {
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -57,17 +56,10 @@ export function CookieConsent({ lang = "en", settings }: { lang?: string; settin
         };
 
         const guiSettings = settings || defaultSettings;
-        
+
         CookieConsent.run({
-          disablePageInteraction: true,
+          disablePageInteraction: false,
           hideFromBots: true,
-          cookie: {
-            name: "cc_cookie",
-            domain: window.location.hostname,
-            path: "/",
-            sameSite: "Lax",
-            expiresAfterDays: 365,
-          },
           guiOptions: {
             consentModal: {
               layout: guiSettings.consentModal.layout,
@@ -120,22 +112,6 @@ export function CookieConsent({ lang = "en", settings }: { lang?: string; settin
                 return await response.json();
               },
             },
-          },
-          onFirstConsent: ({ cookie }) => {
-            console.log("Cookie consent initialized:", cookie);
-            if (cookie.categories.includes("analytics")) {
-              console.log("Analytics enabled");
-            }
-          },
-
-          onChange: ({ changedCategories, changedServices }) => {
-            console.log("Consent preferences changed:", {
-              categories: changedCategories,
-              services: changedServices,
-            });
-            if (changedCategories.includes("analytics")) {
-              console.log("Analytics preference changed");
-            }
           },
         });
       } catch (error) {
