@@ -1,7 +1,4 @@
 import { registerBlocks } from "@/blocks";
-import ChaiBuilderBadge from "@/components/chai-builder-badge";
-import { ChaiCustomHtml } from "@/components/chai-custom-html";
-import { CookieConsentWrapper } from "@/components/cookie-consent-wrapper";
 import { ImageBlock } from "@/components/image";
 import { PageScripts } from "@/components/page-scripts";
 import { loadSiteGlobalData } from "@/data/global";
@@ -9,11 +6,19 @@ import { getFontStyles, registerFonts } from "@/fonts";
 import { getClientSettings } from "@/lib/getter";
 import { Analytics } from "@vercel/analytics/next";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
-import { ChaiPageStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
+import { ChaiPageStyles, RenderChaiBlocks } from "chai-next/blocks/rsc";
 import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
 import { isEmpty } from "lodash";
+import dynamicImport from "next/dynamic";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
+
+const ChaiCustomHtml = dynamicImport(() => import("@/components/chai-custom-html").then((mod) => mod.ChaiCustomHtml));
+const ChaiBuilderBadge = dynamicImport(() => import("@/components/chai-builder-badge"));
+const PreviewBanner = dynamicImport(() => import("chai-next/blocks/rsc").then((mod) => mod.PreviewBanner));
+const CookieConsentWrapper = dynamicImport(() =>
+  import("@/components/cookie-consent-wrapper").then((mod) => mod.CookieConsentWrapper),
+);
 
 loadWebBlocks();
 registerBlocks();
