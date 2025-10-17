@@ -1,4 +1,6 @@
 import "@/app/app.css";
+import { ChaiClarity } from "@/components/chai-clarity";
+import { CrispChatWidget } from "@/components/crisp-chat-widget";
 import { Toaster } from "@/components/ui/sonner";
 import { getClientSettings } from "@/lib/getter";
 import { getSession } from "@/lib/getter/users";
@@ -36,6 +38,8 @@ export default async function RootLayout({
           <Toaster richColors theme="light" />
           <main className="flex-1 bg-primary container h-[calc(100vh-4rem)] pb-2 overflow-hidden">{children}</main>
         </FeatureFlagProvider>
+        <ChaiClarity />
+        <CrispChatWidget />
       </body>
     </html>
   );
