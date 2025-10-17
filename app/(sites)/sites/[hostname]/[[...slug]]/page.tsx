@@ -1,5 +1,6 @@
 import { registerBlocks } from "@/blocks";
 import ChaiBuilderBadge from "@/components/chai-builder-badge";
+import { ChaiCustomHtml } from "@/components/chai-custom-html";
 import { CookieConsentWrapper } from "@/components/cookie-consent-wrapper";
 import { ImageBlock } from "@/components/image";
 import { PageScripts } from "@/components/page-scripts";
@@ -89,9 +90,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
         <ChaiPageStyles page={page} />
         <style>{`:root {--font-body: "${body}", "${body} Fallback"; --font-heading: "${heading}", "${heading} Fallback";}`}</style>
         <style>{fontStyles}</style>
-        {!isEmpty(settings?.headHTML) && (
-          <div dangerouslySetInnerHTML={{ __html: settings.headHTML }} style={{ display: "contents" }} />
-        )}
+        {!isEmpty(settings?.headHTML) && <ChaiCustomHtml htmlHeadString={settings.headHTML} />}
       </head>
       <body className={`font-body antialiased`}>
         <PreviewBanner slug={slug} show={isEnabled} />
