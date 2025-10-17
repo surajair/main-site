@@ -67,7 +67,7 @@ export default function Editor({ domain, websiteId }: { domain?: string; website
       autoSaveInterval={20}
       getAccessToken={getAccessToken}
       hasReactQueryProvider
-      apiUrl="editor/api"
+      apiUrl={`/${websiteId}/editor/api`}
       // @ts-ignore
       topLeftCorner={() => websiteSettings}
       getPreviewUrl={getPreviewUrl}
