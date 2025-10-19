@@ -4,6 +4,7 @@ import { BackgroundLinesConfig } from "./background-lines";
 import { FlipWordsConfig } from "./flip-words-block";
 import { FollowingPointerConfig } from "./following-pointer";
 import { FormConfig } from "./form-block-new";
+import { PointerHighlightConfig } from "./pointer-highlight";
 import { ResizeHandleConfig } from "./resize-handle-block";
 import { SuspenseBlock, SuspenseConfig } from "./suspense";
 import { TextRevealConfig } from "./text-reveal-block";
@@ -14,6 +15,7 @@ const ResizeHandleBlock = dynamic(() => import("./resize-handle-block")) as any;
 const TextRevealBlock = dynamic(() => import("./text-reveal-block")) as any;
 const BackgroundLinesBlock = dynamic(() => import("./background-lines")) as any;
 const FollowerPointerCardBlock = dynamic(() => import("./following-pointer")) as any;
+const PointerHighlightBlock = dynamic(() => import("./pointer-highlight")) as any;
 
 export const registerBlocks = () => {
   // Register the custom form block
@@ -24,4 +26,5 @@ export const registerBlocks = () => {
   registerChaiBlock(TextRevealBlock, TextRevealConfig);
   registerChaiBlock(BackgroundLinesBlock, BackgroundLinesConfig);
   registerChaiBlock(FollowerPointerCardBlock, FollowingPointerConfig);
+  registerChaiBlock(PointerHighlightBlock, PointerHighlightConfig);
 };
