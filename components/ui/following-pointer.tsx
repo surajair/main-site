@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 
 import { ChaiStyles } from "chai-next/blocks";
+import { isEmpty } from "lodash";
 import { AnimatePresence, motion, useMotionValue } from "motion/react";
 
 export const FollowerPointerCard = ({
@@ -9,11 +10,13 @@ export const FollowerPointerCard = ({
   title,
   styles,
   blockProps,
+  cursorIcon,
 }: {
   children: React.ReactNode;
   title?: string | React.ReactNode;
   styles: ChaiStyles;
   blockProps: Record<string, string>;
+  cursorIcon?: string;
 }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -53,13 +56,25 @@ export const FollowerPointerCard = ({
       }}
       ref={ref}
       {...styles}>
-      <AnimatePresence>{isInside && <FollowPointer x={x} y={y} title={title} />}</AnimatePresence>
+      <AnimatePresence>
+        {isInside && <FollowPointer x={x} y={y} title={title} cursorIcon={cursorIcon} />}
+      </AnimatePresence>
       {children}
     </div>
   );
 };
 
-export const FollowPointer = ({ x, y, title }: { x: any; y: any; title?: string | React.ReactNode }) => {
+export const FollowPointer = ({
+  x,
+  y,
+  title,
+  cursorIcon,
+}: {
+  x: any;
+  y: any;
+  title?: string | React.ReactNode;
+  cursorIcon?: string;
+}) => {
   const colors = ["#0ea5e9", "#737373", "#14b8a6", "#22c55e", "#3b82f6", "#ef4444", "#eab308"];
   return (
     <motion.div
@@ -81,17 +96,21 @@ export const FollowPointer = ({ x, y, title }: { x: any; y: any; title?: string 
         scale: 0,
         opacity: 0,
       }}>
-      <svg
-        stroke="currentColor"
-        fill="currentColor"
-        strokeWidth="1"
-        viewBox="0 0 16 16"
-        className="h-6 w-6 -translate-x-[12px] -translate-y-[10px] -rotate-[70deg] transform stroke-sky-600 text-sky-500"
-        height="1em"
-        width="1em"
-        xmlns="http://www.w3.org/2000/svg">
-        <path d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103z"></path>
-      </svg>
+      {!isEmpty(cursorIcon) ? (
+        <span dangerouslySetInnerHTML={{ __html: cursorIcon as string }} />
+      ) : (
+        <svg
+          stroke="currentColor"
+          fill="currentColor"
+          strokeWidth="1"
+          viewBox="0 0 16 16"
+          className="h-6 w-6 -translate-x-[12px] -translate-y-[10px] -rotate-[70deg] transform stroke-sky-600 text-sky-500"
+          height="1em"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg">
+          <path d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103z"></path>
+        </svg>
+      )}
       <motion.div
         style={{
           backgroundColor: colors[Math.floor(Math.random() * colors.length)],

@@ -1,7 +1,9 @@
 import { FollowerPointerCard } from "@/components/ui/following-pointer";
-import { ChaiBlockComponentProps, registerChaiBlockSchema, StylesProp } from "chai-next/blocks";
+import { ChaiBlockComponentProps, ChaiStyles, registerChaiBlockSchema, StylesProp } from "chai-next/blocks";
 
-export default function FollowerPointerCardBlock(props: ChaiBlockComponentProps<{}>) {
+export default function FollowerPointerCardBlock(
+  props: ChaiBlockComponentProps<{ styles: ChaiStyles; title: string; cursorIcon: string }>,
+) {
   return <FollowerPointerCard {...props}>{props.children}</FollowerPointerCard>;
 }
 
@@ -16,7 +18,13 @@ export const FollowingPointerConfig = {
       title: {
         type: "string",
         default: "",
-        label: "Cursor Title",
+        title: "Cursor Title",
+      },
+      cursorIcon: {
+        type: "string",
+        default: "",
+        title: "Cursor Icon",
+        ui: { "ui:widget": "icon" },
       },
     },
   }),
