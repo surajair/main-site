@@ -2,6 +2,7 @@ import { registerChaiBlock } from "chai-next/blocks";
 import dynamic from "next/dynamic";
 import { BackgroundLinesConfig } from "./background-lines";
 import { FlipWordsConfig } from "./flip-words-block";
+import { FollowingPointerConfig } from "./following-pointer";
 import { FormConfig } from "./form-block-new";
 import { ResizeHandleConfig } from "./resize-handle-block";
 import { SuspenseBlock, SuspenseConfig } from "./suspense";
@@ -12,6 +13,7 @@ const FlipWordsBlock = dynamic(() => import("./flip-words-block")) as any;
 const ResizeHandleBlock = dynamic(() => import("./resize-handle-block")) as any;
 const TextRevealBlock = dynamic(() => import("./text-reveal-block")) as any;
 const BackgroundLinesBlock = dynamic(() => import("./background-lines")) as any;
+const FollowerPointerCardBlock = dynamic(() => import("./following-pointer")) as any;
 
 export const registerBlocks = () => {
   // Register the custom form block
@@ -21,4 +23,5 @@ export const registerBlocks = () => {
   registerChaiBlock(SuspenseBlock, SuspenseConfig);
   registerChaiBlock(TextRevealBlock, TextRevealConfig);
   registerChaiBlock(BackgroundLinesBlock, BackgroundLinesConfig);
+  registerChaiBlock(FollowerPointerCardBlock, FollowingPointerConfig);
 };
