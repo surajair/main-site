@@ -13,6 +13,7 @@ const BackgroundLinesConfig = {
   type: "BackgroundLines",
   label: "Background Lines",
   category: "core",
+  hidden: true,
   group: "background",
   ...registerChaiBlockSchema({
     properties: {

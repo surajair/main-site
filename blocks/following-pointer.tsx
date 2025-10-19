@@ -11,6 +11,7 @@ export const FollowingPointerConfig = {
   type: "FollowingPointer",
   label: "Following Pointer",
   category: "core",
+  hidden: true,
   group: "Cursor & Pointers",
   ...registerChaiBlockSchema({
     properties: {

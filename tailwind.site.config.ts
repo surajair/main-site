@@ -11,7 +11,8 @@ const config: Config = {
   content: [
     "./blocks/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/chai-builder-badge.tsx",
-    "./node_modules/chai-next/dist/blocks/**/*.{js,cjs}"
+    "./components/ui/**/*.{js,jsx,ts,tsx}",
+    "./node_modules/chai-next/dist/blocks/**/*.{js,cjs}",
   ],
   safelist: ["w-[inherit]", "h-[inherit]"],
   theme: {

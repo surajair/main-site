@@ -5,7 +5,21 @@ type BackgroundGridProps = {
   styles: ChaiStyles;
   patternType: "grid" | "dots" | "grid-fade" | "dots-fade";
   gridSize: "sm" | "md" | "lg" | "xl";
-  gridColor: "gray" | "slate" | "zinc" | "neutral" | "red" | "orange" | "amber" | "yellow" | "lime" | "green" | "emerald" | "teal" | "cyan" | "sky";
+  gridColor:
+    | "gray"
+    | "slate"
+    | "zinc"
+    | "neutral"
+    | "red"
+    | "orange"
+    | "amber"
+    | "yellow"
+    | "lime"
+    | "green"
+    | "emerald"
+    | "teal"
+    | "cyan"
+    | "sky";
 };
 
 const BackgroundGridBlock = (props: ChaiBlockComponentProps<BackgroundGridProps>) => {
@@ -24,6 +38,7 @@ const BackgroundGridConfig = {
   type: "BackgroundGrid",
   label: "Background Grid",
   category: "core",
+  hidden: true,
   group: "background",
   ...registerChaiBlockSchema({
     properties: {
@@ -42,7 +57,22 @@ const BackgroundGridConfig = {
       },
       gridColor: {
         type: "string",
-        enum: ["gray", "slate", "zinc", "neutral", "red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal", "cyan", "sky"],
+        enum: [
+          "gray",
+          "slate",
+          "zinc",
+          "neutral",
+          "red",
+          "orange",
+          "amber",
+          "yellow",
+          "lime",
+          "green",
+          "emerald",
+          "teal",
+          "cyan",
+          "sky",
+        ],
         default: "gray",
         title: "Grid Color",
       },
