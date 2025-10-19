@@ -3,8 +3,8 @@ import { ChaiBlockComponentProps, ChaiStyles, registerChaiBlockSchema, StylesPro
 
 type PointerHighlightProps = {
   styles: ChaiStyles;
-  rectangleClassName: string;
-  pointerClassName: string;
+  rectangleStyles: ChaiStyles;
+  pointerStyles: ChaiStyles;
 };
 
 const PointerHighlightBlock = (props: ChaiBlockComponentProps<PointerHighlightProps>) => {
@@ -12,8 +12,8 @@ const PointerHighlightBlock = (props: ChaiBlockComponentProps<PointerHighlightPr
     <PointerHighlight
       styles={props.styles}
       blockProps={props.blockProps}
-      rectangleClassName={props.rectangleClassName}
-      pointerClassName={props.pointerClassName}>
+      rectangleStyles={props.rectangleStyles}
+      pointerStyles={props.pointerStyles}>
       {props.children}
     </PointerHighlight>
   );
@@ -27,16 +27,8 @@ const PointerHighlightConfig = {
   ...registerChaiBlockSchema({
     properties: {
       styles: StylesProp("relative w-fit"),
-      rectangleClassName: {
-        type: "string",
-        default: "border-border",
-        title: "Rectangle Border Style",
-      },
-      pointerClassName: {
-        type: "string",
-        default: "h-5 w-5 text-blue-500",
-        title: "Pointer Icon Style",
-      },
+      rectangleStyles: StylesProp("absolute inset-0 border border-border"),
+      pointerStyles: StylesProp("h-5 w-5 text-blue-500"),
     },
   }),
   canAcceptBlock: () => true,

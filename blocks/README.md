@@ -260,8 +260,8 @@ import { ChaiBlockComponentProps, ChaiStyles, registerChaiBlockSchema, StylesPro
 
 type PointerHighlightProps = {
   styles: ChaiStyles;
-  rectangleClassName: string;
-  pointerClassName: string;
+  rectangleStyles: ChaiStyles;
+  pointerStyles: ChaiStyles;
 };
 
 const PointerHighlightBlock = (props: ChaiBlockComponentProps<PointerHighlightProps>) => {
@@ -269,8 +269,8 @@ const PointerHighlightBlock = (props: ChaiBlockComponentProps<PointerHighlightPr
     <PointerHighlight
       styles={props.styles}
       blockProps={props.blockProps}
-      rectangleClassName={props.rectangleClassName}
-      pointerClassName={props.pointerClassName}>
+      rectangleStyles={props.rectangleStyles}
+      pointerStyles={props.pointerStyles}>
       {props.children}
     </PointerHighlight>
   );
@@ -283,18 +283,10 @@ const PointerHighlightConfig = {
   group: "Cursor & Pointers",
   ...registerChaiBlockSchema({
     properties: {
-      // Default classes moved from component's hardcoded className to block config
+      // All style properties use ChaiStyles type with StylesProp
       styles: StylesProp("relative w-fit"),
-      rectangleClassName: {
-        type: "string",
-        default: "border-border",
-        title: "Rectangle Border Style",
-      },
-      pointerClassName: {
-        type: "string",
-        default: "h-5 w-5 text-blue-500",
-        title: "Pointer Icon Style",
-      },
+      rectangleStyles: StylesProp("absolute inset-0 border border-border"),
+      pointerStyles: StylesProp("h-5 w-5 text-blue-500"),
     },
   }),
   canAcceptBlock: () => true,
@@ -302,6 +294,8 @@ const PointerHighlightConfig = {
 
 // Component implementation should use:
 // <div {...blockProps} {...styles} ref={ref}>
+//   <motion.div {...rectangleStyles}>
+//   <Pointer {...pointerStyles} />
 
 export { PointerHighlightConfig };
 export default PointerHighlightBlock;
@@ -310,13 +304,15 @@ export default PointerHighlightBlock;
 ## Best Practices
 
 1. **Always use StylesProp** for the main container styles
-2. **Map props correctly** - ensure component props match the block props
-3. **Provide sensible defaults** - use the component's default values
-4. **Group related blocks** - use consistent group names for similar components
-5. **Export both config and component** - follow the export pattern
-6. **Use TypeScript** - define proper types for props
-7. **Support children** - set `canAcceptBlock` appropriately
-8. **Add i18n support** - include text properties in `i18nProps`
+2. **Use ChaiStyles for all style properties** - Instead of `string` type for className props, use `ChaiStyles` type with `StylesProp()`. This allows the Chai framework to manage styles consistently.
+3. **Map props correctly** - ensure component props match the block props
+4. **Provide sensible defaults** - use the component's default values in `StylesProp()`
+5. **Group related blocks** - use consistent group names for similar components
+6. **Export both config and component** - follow the export pattern
+7. **Use TypeScript** - define proper types for props
+8. **Support children** - set `canAcceptBlock` appropriately
+9. **Add i18n support** - include text properties in `i18nProps`
+10. **Spread ChaiStyles objects** - Use `{...stylesProp}` instead of `className={stylesProp}` for all style properties
 
 ## Troubleshooting
 

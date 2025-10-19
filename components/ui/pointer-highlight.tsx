@@ -6,15 +6,15 @@ import { useEffect, useRef, useState } from "react";
 
 export function PointerHighlight({
   children,
-  rectangleClassName,
-  pointerClassName,
+  rectangleStyles,
+  pointerStyles,
   containerClassName,
   styles,
   blockProps,
 }: {
   children: React.ReactNode;
-  rectangleClassName?: string;
-  pointerClassName?: string;
+  rectangleStyles?: ChaiStyles;
+  pointerStyles?: ChaiStyles;
   containerClassName?: string;
   styles?: ChaiStyles;
   blockProps?: Record<string, string>;
@@ -56,7 +56,7 @@ export function PointerHighlight({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}>
           <motion.div
-            className={cn("absolute inset-0 border border-border", rectangleClassName)}
+            {...rectangleStyles}
             initial={{
               width: 0,
               height: 0,
@@ -86,7 +86,7 @@ export function PointerHighlight({
               duration: 1,
               ease: "easeInOut",
             }}>
-            <Pointer className={cn("h-5 w-5 text-blue-500", pointerClassName)} />
+            <Pointer {...pointerStyles} />
           </motion.div>
         </motion.div>
       )}
