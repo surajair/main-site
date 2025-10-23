@@ -14,7 +14,7 @@ const config: Config = {
     "./components/ui/**/*.{js,jsx,ts,tsx}",
     "./node_modules/chai-next/dist/blocks/**/*.{js,cjs}",
   ],
-  safelist: ["w-[inherit]", "h-[inherit]"],
+  safelist: ["w-[inherit]", "h-[inherit]", "aspect-video", "aspect-square", "aspect-auto"],
   theme: {
     extend: {
       ...(getChaiBuilderTheme() as Partial<CustomThemeConfig>),
