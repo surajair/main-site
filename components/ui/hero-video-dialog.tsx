@@ -141,7 +141,7 @@ export function HeroVideoDialog({
   // Use provided thumbnail or auto-generate from YouTube video
   const videoId = getYouTubeVideoId(videoSrc);
   const autoThumbnail = videoId ? getYouTubeThumbnail(videoId) : "";
-  const posterImage = thumbnailSrc || autoThumbnail;
+  const posterImage = (thumbnailSrc && thumbnailSrc.includes("https://")) || autoThumbnail;
 
   const handlePlayClick = () => {
     if (inBuilder && !videoSrc) {
