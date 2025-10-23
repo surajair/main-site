@@ -1,5 +1,6 @@
 import { registerChaiBlock } from "chai-next/blocks";
 import dynamic from "next/dynamic";
+import { BackgroundBeamsConfig } from "./background-beams";
 import { BackgroundDiagonalConfig } from "./background-diagonal";
 import { BackgroundGridConfig } from "./background-grid";
 import { BackgroundLinesConfig } from "./background-lines";
@@ -17,6 +18,7 @@ const ChaiForm = dynamic(() => import("./form-block-new")) as any;
 const FlipWordsBlock = dynamic(() => import("./flip-words-block")) as any;
 const ResizeHandleBlock = dynamic(() => import("./resize-handle-block")) as any;
 const TextRevealBlock = dynamic(() => import("./text-reveal-block")) as any;
+const BackgroundBeamsBlock = dynamic(() => import("./background-beams")) as any;
 const BackgroundDiagonalBlock = dynamic(() => import("./background-diagonal")) as any;
 const BackgroundGridBlock = dynamic(() => import("./background-grid")) as any;
 const BackgroundLinesBlock = dynamic(() => import("./background-lines")) as any;
@@ -32,6 +34,7 @@ export const registerBlocks = () => {
   registerChaiBlock(ResizeHandleBlock, ResizeHandleConfig);
   registerChaiBlock(SuspenseBlock, SuspenseConfig);
   registerChaiBlock(TextRevealBlock, TextRevealConfig);
+  registerChaiBlock(BackgroundBeamsBlock, BackgroundBeamsConfig);
   registerChaiBlock(BackgroundDiagonalBlock, BackgroundDiagonalConfig);
   registerChaiBlock(BackgroundGridBlock, BackgroundGridConfig);
   registerChaiBlock(BackgroundLinesBlock, BackgroundLinesConfig);

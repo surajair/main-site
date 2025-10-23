@@ -42,8 +42,9 @@ const BackgroundDiagonalBlock = (props: ChaiBlockComponentProps<BackgroundDiagon
 
 const BackgroundDiagonalConfig = {
   type: "BackgroundDiagonal",
-  label: "Background Diagonal Stripes",
+  label: "Diagonal Stripes",
   category: "core",
+  hidden: true,
   group: "background",
   ...registerChaiBlockSchema({
     properties: {
