@@ -13,6 +13,7 @@ import { SuspenseBlock, SuspenseConfig } from "./suspense";
 import { TextHoverEffectConfig } from "./text-hover-effect";
 import { TextRevealConfig } from "./text-reveal-block";
 import { HeroVideoDialogConfig } from "./hero-video-dialog";
+import { MeteorsConfig } from "./meteors";
 
 const ChaiForm = dynamic(() => import("./form-block-new")) as any;
 const FlipWordsBlock = dynamic(() => import("./flip-words-block")) as any;
@@ -26,6 +27,7 @@ const FollowerPointerCardBlock = dynamic(() => import("./following-pointer")) as
 const PointerHighlightBlock = dynamic(() => import("./pointer-highlight")) as any;
 const TextHoverEffectBlock = dynamic(() => import("./text-hover-effect")) as any;
 const HeroVideoDialogBlock = dynamic(() => import("./hero-video-dialog")) as any;
+const MeteorsBlock = dynamic(() => import("./meteors")) as any;
 
 export const registerBlocks = () => {
   // Register the custom form block
@@ -42,4 +44,5 @@ export const registerBlocks = () => {
   registerChaiBlock(PointerHighlightBlock, PointerHighlightConfig);
   registerChaiBlock(TextHoverEffectBlock, TextHoverEffectConfig);
   registerChaiBlock(HeroVideoDialogBlock, HeroVideoDialogConfig);
+  registerChaiBlock(MeteorsBlock, MeteorsConfig);
 };
