@@ -20,6 +20,18 @@
   .prose {
     @apply max-w-full;
   }
+
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+
+  .aspect-square {
+    aspect-ratio: 1 / 1;
+  }
+
+  .aspect-auto {
+    aspect-ratio: auto;
+  }
 }
 
 @layer components {

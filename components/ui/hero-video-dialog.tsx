@@ -164,6 +164,7 @@ export function HeroVideoDialog({
             alt={thumbnailAlt}
             width={1920}
             height={1080}
+            loading="lazy"
             className="w-full h-full rounded-md border shadow-lg transition-all duration-200 ease-out group-hover:brightness-[0.8]"
           />
         ) : (
