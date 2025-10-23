@@ -1,8 +1,17 @@
+import { getClientSettings } from "@/lib/getter";
 import { TooltipTrigger } from "chai-next";
 import { HelpCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent } from "../ui/tooltip";
 import { SupportPanel } from "./support";
+
+const clientSettings = await getClientSettings();
+const CustomHelpPanel = () => {
+  if (clientSettings.helpHtml) {
+    return <div dangerouslySetInnerHTML={{ __html: clientSettings.helpHtml }} />;
+  }
+  return <SupportPanel />;
+};
 
 const HelpButton = ({ isActive, show }: { isActive: boolean; show: () => void }) => {
   return (
@@ -20,7 +29,7 @@ const HelpButton = ({ isActive, show }: { isActive: boolean; show: () => void })
 export const helpPanel = {
   id: "help-panel",
   label: "Help",
-  panel: SupportPanel,
+  panel: CustomHelpPanel,
   button: HelpButton,
   position: "bottom" as const,
   width: 280,
