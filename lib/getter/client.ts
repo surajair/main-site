@@ -121,7 +121,7 @@ export const getClientSettings = cache(async (...arg: any): Promise<ClientSettin
   const supabaseServer = await getSupabaseAdmin();
   const { data, error } = await supabaseServer
     .from("clients")
-    .select("settings, loginHtml, features, paymentConfig, theme")
+    .select("settings, loginHtml, features, paymentConfig, theme, helpHtml")
     .eq("id", process.env.CHAIBUILDER_CLIENT_ID)
     .single();
   if (error) throw error;
@@ -137,5 +137,6 @@ export const getClientSettings = cache(async (...arg: any): Promise<ClientSettin
     paymentConfig: data?.paymentConfig || {},
     defaultSiteLang: data?.settings?.defaultSiteLang || "en",
     theme: data?.theme || DEFAULT_THEME,
+    helpHtml: data?.helpHtml || null,
   };
 });
