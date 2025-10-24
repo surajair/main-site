@@ -16,13 +16,27 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("light");
 
   useEffect(() => {
-    // Read theme from localStorage on mount
+    // Read theme from localStorage on mount. If none, use OS preference.
     const storedTheme = localStorage.getItem("theme") as Theme | null;
     if (storedTheme) {
       setThemeState(storedTheme);
       if (storedTheme === "dark") {
         document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
       }
+      return;
+    }
+
+    // Fallback to prefers-color-scheme when no explicit choice exists
+    const prefersDark = typeof window !== "undefined" &&
+      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (prefersDark) {
+      setThemeState("dark");
+      document.documentElement.classList.add("dark");
+    } else {
+      setThemeState("light");
+      document.documentElement.classList.remove("dark");
     }
   }, []);
 
