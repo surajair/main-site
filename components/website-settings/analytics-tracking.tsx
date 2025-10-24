@@ -73,6 +73,74 @@ export default function AnalyticsTracking({ data, onChange }: AnalyticsTrackingP
           }
         />
       </div>
+
+      <div className="space-y-1">
+        <Label htmlFor="tiktokPixelId" className="text-xs">
+          {t("TikTok Pixel ID")}
+        </Label>
+        <Input
+          id="tiktokPixelId"
+          value={baseline?.settings?.tiktokPixelId || ""}
+          placeholder="eg: XXXXXX"
+          onChange={(e) =>
+            handleChange?.({
+              ...(data || {}),
+              settings: { ...(data?.settings || {}), tiktokPixelId: e.target.value },
+            })
+          }
+        />
+      </div>
+
+      <div className="space-y-1">
+        <Label htmlFor="linkedinInsightId" className="text-xs">
+          {t("LinkedIn Insight Tag ID")}
+        </Label>
+        <Input
+          id="linkedinInsightId"
+          value={baseline?.settings?.linkedinInsightId || ""}
+          placeholder="eg: XXXXXX"
+          onChange={(e) =>
+            handleChange?.({
+              ...(data || {}),
+              settings: { ...(data?.settings || {}), linkedinInsightId: e.target.value },
+            })
+          }
+        />
+      </div>
+
+      <div className="space-y-1">
+        <Label htmlFor="microsoftUetId" className="text-xs">
+          {t("Microsoft UET Tag ID")}
+        </Label>
+        <Input
+          id="microsoftUetId"
+          value={baseline?.settings?.microsoftUetId || ""}
+          placeholder="eg: XXXXXX"
+          onChange={(e) =>
+            handleChange?.({
+              ...(data || {}),
+              settings: { ...(data?.settings || {}), microsoftUetId: e.target.value },
+            })
+          }
+        />
+      </div>
+
+      <div className="space-y-1">
+        <Label htmlFor="xPixelId" className="text-xs">
+          {t("X Pixel ID (Twitter)")}
+        </Label>
+        <Input
+          id="xPixelId"
+          value={baseline?.settings?.xPixelId || ""}
+          placeholder="eg: XXXXXX"
+          onChange={(e) =>
+            handleChange?.({
+              ...(data || {}),
+              settings: { ...(data?.settings || {}), xPixelId: e.target.value },
+            })
+          }
+        />
+      </div>
     </section>
   );
 }
