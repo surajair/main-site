@@ -1,6 +1,8 @@
 import { registerBlocks } from "@/blocks";
 import { ImageBlock } from "@/components/image";
 import { PageScripts } from "@/components/page-scripts";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeScript } from "@/components/theme-script";
 import { loadSiteGlobalData } from "@/data/global";
 import { getFontStyles, registerFonts } from "@/fonts";
 import { getClientSettings } from "@/lib/getter";
@@ -82,6 +84,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   return (
     <html lang={page.lang} className={`smooth-scroll`}>
       <head>
+        <ThemeScript />
         {preloads.map((preload: string, index: number) => (
           <link
             key={`preload-font-${index}`}
@@ -98,12 +101,14 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
         {!isEmpty(settings?.headHTML) && <ChaiCustomHtml htmlHeadString={settings.headHTML} />}
       </head>
       <body className={`font-body antialiased`}>
-        <PreviewBanner slug={slug} show={isEnabled} />
-        <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
-        {showChaiBadge && <ChaiBuilderBadge />}
-        <PageScripts />
-        <Analytics />
-        {cookieConsentEnabled && <CookieConsentWrapper lang={page.lang} settings={settings?.cookieConsentSettings} />}
+        <ThemeProvider>
+          <PreviewBanner slug={slug} show={isEnabled} />
+          <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
+          {showChaiBadge && <ChaiBuilderBadge />}
+          <PageScripts />
+          <Analytics />
+          {cookieConsentEnabled && <CookieConsentWrapper lang={page.lang} settings={settings?.cookieConsentSettings} />}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,10 +1,10 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { flushSync } from "react-dom";
-
+import { useTheme } from "@/components/theme-provider";
 import { ChaiStyles } from "chai-next/blocks";
+import { Moon, Sun } from "lucide-react";
+import { useCallback, useRef } from "react";
+import { flushSync } from "react-dom";
 
 interface AnimatedThemeTogglerProps extends React.ComponentPropsWithoutRef<"button"> {
   duration: number;
@@ -14,44 +14,17 @@ interface AnimatedThemeTogglerProps extends React.ComponentPropsWithoutRef<"butt
 }
 
 export const AnimatedThemeToggler = ({ duration = 400, styles, blockProps, inBuilder }: AnimatedThemeTogglerProps) => {
-  const [isDark, setIsDark] = useState(false);
+  const { theme, setTheme } = useTheme();
   const buttonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    // Initialize theme from localStorage on mount (default to light)
-    const storedTheme = localStorage.getItem("theme");
-    const shouldBeDark = storedTheme === "dark";
-
-    if (shouldBeDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-
-    const updateTheme = () => {
-      setIsDark(document.documentElement.classList.contains("dark"));
-    };
-
-    updateTheme();
-
-    const observer = new MutationObserver(updateTheme);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
 
   const toggleTheme = useCallback(async () => {
     if (!buttonRef.current || inBuilder) return;
 
+    const newTheme = theme === "light" ? "dark" : "light";
+
     await document.startViewTransition(() => {
       flushSync(() => {
-        const newTheme = !isDark;
-        setIsDark(newTheme);
-        document.documentElement.classList.toggle("dark");
-        localStorage.setItem("theme", newTheme ? "dark" : "light");
+        setTheme(newTheme);
       });
     }).ready;
 
@@ -70,11 +43,11 @@ export const AnimatedThemeToggler = ({ duration = 400, styles, blockProps, inBui
         pseudoElement: "::view-transition-new(root)",
       },
     );
-  }, [isDark, duration]);
+  }, [theme, setTheme, duration, inBuilder]);
 
   return (
     <button ref={buttonRef} {...styles} onClick={toggleTheme} {...blockProps}>
-      {isDark ? <Sun /> : <Moon />}
+      {theme === "dark" ? <Sun /> : <Moon />}
       <span className="sr-only">Toggle theme</span>
     </button>
   );
