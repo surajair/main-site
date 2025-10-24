@@ -1,12 +1,17 @@
-import { getClientSettings } from "@/lib/getter";
+import { useClientSettings } from "@/hooks/use-client-settings";
 import { TooltipTrigger } from "chai-next";
 import { HelpCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent } from "../ui/tooltip";
 import { SupportPanel } from "./support";
 
-const clientSettings = await getClientSettings();
 const CustomHelpPanel = () => {
+  const { data: clientSettings, isFetching: isFetchingClientSettings } = useClientSettings();
+
+  if (isFetchingClientSettings || !clientSettings) {
+    return <div>Loading...</div>;
+  }
+
   if (clientSettings.helpHtml) {
     return <div dangerouslySetInnerHTML={{ __html: clientSettings.helpHtml }} />;
   }
