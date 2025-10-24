@@ -27,6 +27,10 @@ export type SiteData = {
     timezone: string;
     faviconURL: string;
     metaPixelId: string;
+    tiktokPixelId: string;
+    linkedinInsightId: string;
+    microsoftUetId: string;
+    xPixelId: string;
     siteTagline: string;
     socialLinks: Record<string, string>;
     contactEmail: string;
