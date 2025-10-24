@@ -13,8 +13,8 @@ const AnimatedThemeToggleBlock = (props: ChaiBlockComponentProps<AnimatedThemeTo
 };
 
 const AnimatedThemeToggleConfig = {
-  type: "AnimatedThemeToggle",
-  label: "Animated Theme Toggle",
+  type: "DarkModeToggle",
+  label: "Dark Mode Toggle",
   category: "core",
   group: "interactive",
   ...registerChaiBlockSchema({
