@@ -18,6 +18,16 @@ export const AnimatedThemeToggler = ({ duration = 400, styles, blockProps, inBui
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
+    // Initialize theme from localStorage on mount (default to light)
+    const storedTheme = localStorage.getItem("theme");
+    const shouldBeDark = storedTheme === "dark";
+
+    if (shouldBeDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
     const updateTheme = () => {
       setIsDark(document.documentElement.classList.contains("dark"));
     };
