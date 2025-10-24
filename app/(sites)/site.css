@@ -34,7 +34,53 @@
   }
 }
 
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 @layer components {
+  .rte {
+    h1 {
+      @apply text-2xl;
+    }
+    h2 {
+      @apply text-xl;
+    }
+    h3 {
+      @apply text-lg;
+    }
+    h4 {
+      @apply text-base;
+    }
+    h5 {
+      @apply text-sm;
+    }
+    h6 {
+      @apply text-xs;
+    }
+    p {
+      &:empty {
+        @apply h-4;
+      }
+    }
+    ul {
+      @apply list-disc pl-4 text-base;
+    }
+    ol {
+      @apply list-decimal pl-4 text-base;
+    }
+    li > p {
+      @apply m-0;
+    }
+    blockquote {
+      @apply pl-4 text-base;
+      p {
+        @apply pl-4 text-base;
+      }
+    }
+  }
   #cc-main .cm__overlay,
   #cc-main .pm__overlay {
     @apply backdrop-blur-sm;

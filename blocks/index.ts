@@ -14,6 +14,7 @@ import { TextHoverEffectConfig } from "./text-hover-effect";
 import { TextRevealConfig } from "./text-reveal-block";
 import { HeroVideoDialogConfig } from "./hero-video-dialog";
 import { MeteorsConfig } from "./meteors";
+import { AnimatedThemeToggleConfig } from "./animated-theme-toggle";
 
 const ChaiForm = dynamic(() => import("./form-block-new")) as any;
 const FlipWordsBlock = dynamic(() => import("./flip-words-block")) as any;
@@ -28,6 +29,7 @@ const PointerHighlightBlock = dynamic(() => import("./pointer-highlight")) as an
 const TextHoverEffectBlock = dynamic(() => import("./text-hover-effect")) as any;
 const HeroVideoDialogBlock = dynamic(() => import("./hero-video-dialog")) as any;
 const MeteorsBlock = dynamic(() => import("./meteors")) as any;
+const AnimatedThemeToggleBlock = dynamic(() => import("./animated-theme-toggle")) as any;
 
 export const registerBlocks = () => {
   // Register the custom form block
@@ -45,4 +47,5 @@ export const registerBlocks = () => {
   registerChaiBlock(TextHoverEffectBlock, TextHoverEffectConfig);
   registerChaiBlock(HeroVideoDialogBlock, HeroVideoDialogConfig);
   registerChaiBlock(MeteorsBlock, MeteorsConfig);
+  registerChaiBlock(AnimatedThemeToggleBlock, AnimatedThemeToggleConfig);
 };
