@@ -10,7 +10,11 @@ type AnimatedThemeToggleProps = {
 const AnimatedThemeToggleBlock = (props: ChaiBlockComponentProps<AnimatedThemeToggleProps>) => {
   const { inBuilder } = props;
   if (inBuilder) {
-    return <SunIcon />;
+    return (
+      <div className="inline-flex items-center justify-center rounded-md p-2 hover:bg-accent hover:text-accent-foreground transition-colors">
+        <SunIcon {...props.blockProps} />
+      </div>
+    );
   }
   return <AnimatedThemeToggler {...props} aria-label={"Toggle theme"} />;
 };
