@@ -1,5 +1,6 @@
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { ChaiBlockComponentProps, ChaiStyles, registerChaiBlockSchema, StylesProp } from "chai-next/blocks";
+import { SunIcon } from "lucide-react";
 
 type AnimatedThemeToggleProps = {
   styles: ChaiStyles;
@@ -7,6 +8,10 @@ type AnimatedThemeToggleProps = {
 };
 
 const AnimatedThemeToggleBlock = (props: ChaiBlockComponentProps<AnimatedThemeToggleProps>) => {
+  const { inBuilder } = props;
+  if (inBuilder) {
+    return <SunIcon />;
+  }
   return <AnimatedThemeToggler {...props} aria-label={"Toggle theme"} />;
 };
 
