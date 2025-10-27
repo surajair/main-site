@@ -56,6 +56,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   const { isEnabled } = await draftMode();
   await ChaiBuilder.initByHostname(hostname, isEnabled);
   const data = await ChaiBuilder.getSiteSettings();
+  const clientSettings = await getClientSettings();
   const settings = data?.settings || null;
   const showChaiBadge = hostname.endsWith(".chaibuilder.site");
   const cookieConsentEnabled = settings?.cookieConsentEnabled || false;
@@ -104,7 +105,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
         <ThemeProvider>
           <PreviewBanner slug={slug} show={isEnabled} />
           <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
-          {showChaiBadge && <ChaiBuilderBadge />}
+          {showChaiBadge && <ChaiBuilderBadge madeWithBadge={clientSettings?.madeWithBadge} />}
           <PageScripts />
           <Analytics />
           {cookieConsentEnabled && <CookieConsentWrapper lang={page.lang} settings={settings?.cookieConsentSettings} />}
