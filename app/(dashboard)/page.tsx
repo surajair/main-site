@@ -52,9 +52,7 @@ export default async function HomePage({ params }: { params: Promise<{ websiteId
           <div className="text-center">
             <QueryClientProviderWrapper>
               <CreateNewWebsite totalSites={sites.length}>
-                <Button
-                  className={hasSites ? "my-4 w-fit border" : "w-full"}
-                  variant={!hasSites ? "default" : "secondary"}>
+                <Button className={hasSites ? "my-4 w-fit border" : "w-full"} variant={"default"}>
                   <Plus className="h-4 w-4 mr-2" />
                   {hasSites ? "Create New Website" : "Create Your First Website"}
                 </Button>
