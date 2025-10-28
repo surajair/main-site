@@ -85,7 +85,7 @@ const FlipWordsComponent = ({
                 delay: index * 0.05,
                 duration: 0.3,
               }}
-              className="inline-block"
+              className={`inline-block ${letter === " " ? "mr-2" : ""}`}
             >
               {letter}
             </motion.span>
