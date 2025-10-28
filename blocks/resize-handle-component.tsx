@@ -94,7 +94,10 @@ const FlipWordsInline = ({
           exit="exit"
           {...wordStyles}>
           {currentWord.split("").map((char, i) => (
-            <motion.span key={`${char}-${i}`} variants={letterVariants} className="inline-block">
+            <motion.span
+              key={`${char}-${i}`}
+              variants={letterVariants}
+              className={`inline-block ${char === " " ? "mr-2" : ""}`}>
               {char}
             </motion.span>
           ))}
