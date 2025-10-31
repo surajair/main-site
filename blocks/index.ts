@@ -28,7 +28,9 @@ const BorderBeamBlock = dynamic(() => import("./border-beam")) as any;
 const FollowerPointerCardBlock = dynamic(() => import("./following-pointer")) as any;
 const PointerHighlightBlock = dynamic(() => import("./pointer-highlight")) as any;
 const TextHoverEffectBlock = dynamic(() => import("./text-hover-effect")) as any;
+const TextHighlighterBlock = dynamic(() => import("./text-highlighter")) as any;
 const HeroVideoDialogBlock = dynamic(() => import("./hero-video-dialog")) as any;
+const MagicCardBlock = dynamic(() => import("./magic-card")) as any;
 const MeteorsBlock = dynamic(() => import("./meteors")) as any;
 const AnimatedThemeToggleBlock = dynamic(() => import("./animated-theme-toggle")) as any;
 
@@ -47,7 +49,9 @@ export const registerBlocks = () => {
   registerChaiBlock(FollowerPointerCardBlock, FollowingPointerConfig);
   registerChaiBlock(PointerHighlightBlock, PointerHighlightConfig);
   registerChaiBlock(TextHoverEffectBlock, TextHoverEffectConfig);
+  // registerChaiBlock(TextHighlighterBlock, TextHighlighterConfig);
   registerChaiBlock(HeroVideoDialogBlock, HeroVideoDialogConfig);
+  // registerChaiBlock(MagicCardBlock, MagicCardConfig);
   registerChaiBlock(MeteorsBlock, MeteorsConfig);
   registerChaiBlock(AnimatedThemeToggleBlock, AnimatedThemeToggleConfig);
 };
