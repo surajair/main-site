@@ -17,6 +17,7 @@ type LoggedInUser = {
   metadata?: Record<string, any>;
 };
 
+localStorage.setItem("chai-feature-flags", JSON.stringify(["enable-ai-chat-panel"]));
 registerPanels();
 registerBlocks();
 registerFonts();
