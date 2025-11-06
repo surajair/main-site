@@ -4,12 +4,12 @@ import { useEffect } from "react";
 
 export const CrispChatWidget = () => {
   const crispWebsiteId = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID;
-  if (!crispWebsiteId) return null;
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("chai-feature-flags", JSON.stringify(["enable-ai-chat-panel"]));
     }
   }, []);
+  if (!crispWebsiteId) return null;
   return (
     <Script
       id="crisp-chat-widget"
