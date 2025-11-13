@@ -87,6 +87,12 @@ export async function cancelUserSubscription() {
       throw new Error("Failed to cancel subscription with payment provider");
     }
 
+    await supabaseAdmin
+      .from("app_user_plans")
+      .update({ scheduledForCancellation: true })
+      .eq("user", user.id)
+      .eq("client", process.env.CHAIBUILDER_CLIENT_ID);
+
     // Format the next billing date for the success message
     let formattedDate = "";
     if (userPlan.nextBilledAt) {
