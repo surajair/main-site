@@ -58,11 +58,11 @@ export async function cancelUserSubscription() {
       .from("app_user_plans")
       .select("*")
       .eq("user", user.id)
-      .eq("client", clientSettings?.id)
+      .eq("client", process.env.CHAIBUILDER_CLIENT_ID)
       .single();
 
     if (planError || !userPlan) {
-      console.error("No active subscription found:", planError, userPlan);
+      console.error("No active subscription found:", planError, user.id, process.env.CHAIBUILDER_CLIENT_ID);
       throw new Error("No active subscription found");
     }
 

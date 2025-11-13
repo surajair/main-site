@@ -61,7 +61,7 @@ export async function resumeUserSubscription() {
       .from("app_user_plans")
       .select("*")
       .eq("user", user.id)
-      .eq("client", clientSettings?.id)
+      .eq("client", process.env.CHAIBUILDER_CLIENT_ID)
       .single();
 
     if (planError || !userPlan) {
@@ -92,7 +92,7 @@ export async function resumeUserSubscription() {
       .from("app_user_plans")
       .update({ scheduledForCancellation: false })
       .eq("user", user.id)
-      .eq("clientId", clientSettings?.id);
+      .eq("clientId", process.env.CHAIBUILDER_CLIENT_ID);
 
     if (updateError) {
       throw new Error("Failed to update subscription status in database");
