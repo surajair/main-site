@@ -1,7 +1,7 @@
 "use client";
 
-import { updateUserProfile } from "@/actions/update-profile-action";
 import { cancelUserSubscription } from "@/actions/cancel-user-subscription";
+import { updateUserProfile } from "@/actions/update-profile-action";
 import UpdatePassword from "@/components/auth/update-password";
 import LogoutButton from "@/components/logout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -148,16 +148,14 @@ const ProfileAvatarTrigger = ({ data }: { data: any }) => {
 const CancelSubscriptionModal = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
   const { t } = useTranslation();
   const [isCancelling, setIsCancelling] = useState(false);
-  const queryClient = useQueryClient();
 
   const handleCancelSubscription = async () => {
     setIsCancelling(true);
     try {
       const result = await cancelUserSubscription();
-      
+
       if (result.success) {
-        toast.success(t("Your subscription has been cancelled successfully."));
-        queryClient.invalidateQueries({ queryKey: ["user"] });
+        toast.success(result.message);
         onOpenChange(false);
       } else {
         toast.error(result.message || t("Failed to cancel subscription. Please try again."));
