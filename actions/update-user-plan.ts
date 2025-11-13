@@ -11,7 +11,7 @@ export const updateUserPlan = async (payload: any) => {
     const user = await getUser();
     if (!user) return false;
 
-    const updatedPayload = { ...payload, user: user.id };
+    const updatedPayload = { ...payload, user: user.id, client: process.env.CHAIBUILDER_CLIENT_ID };
 
     /**
      * Check if user already has a plan
@@ -19,7 +19,8 @@ export const updateUserPlan = async (payload: any) => {
     const { data: existingPlans, error: existingPlansError } = await supabaseServer
       .from("app_user_plans")
       .select("*")
-      .eq("user", user.id);
+      .eq("user", user.id)
+      .eq("client", process.env.CHAIBUILDER_CLIENT_ID);
     if (existingPlansError) return false;
 
     /**
@@ -29,7 +30,8 @@ export const updateUserPlan = async (payload: any) => {
       const { error: updateError } = await supabaseServer
         .from("app_user_plans")
         .update(updatedPayload)
-        .eq("user", user.id);
+        .eq("user", user.id)
+        .eq("client", process.env.CHAIBUILDER_CLIENT_ID);
       if (updateError) return false;
       return true;
     }
