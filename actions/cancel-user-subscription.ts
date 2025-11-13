@@ -62,6 +62,7 @@ export async function cancelUserSubscription() {
       .single();
 
     if (planError || !userPlan) {
+      console.error("No active subscription found:", planError, userPlan);
       throw new Error("No active subscription found");
     }
 
