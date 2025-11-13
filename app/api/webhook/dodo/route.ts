@@ -1,3 +1,4 @@
+import { handleDodoWebhookAction } from "@/actions/handle-webhook-action";
 import { findUserIdByClientId, logWebhookEvent } from "@/lib/webhook-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -21,6 +22,10 @@ export async function POST(req: NextRequest) {
       console.error("Failed to log webhook:", logError);
       return NextResponse.json({ error: "Failed to save webhook" }, { status: 500 });
     }
+
+    // Process webhook event based on event type
+    const actionResult = await handleDodoWebhookAction(eventType, body);
+
     return NextResponse.json(
       {
         received: true,
