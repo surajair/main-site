@@ -121,11 +121,12 @@ export const getClientSettings = cache(async (...arg: any): Promise<ClientSettin
   const supabaseServer = await getSupabaseAdmin();
   const { data, error } = await supabaseServer
     .from("clients")
-    .select("settings, loginHtml, features, paymentConfig, theme, helpHtml")
+    .select("id, settings, loginHtml, features, paymentConfig, theme, helpHtml")
     .eq("id", process.env.CHAIBUILDER_CLIENT_ID)
     .single();
   if (error) throw error;
   return {
+    id: data.id,
     loginHtml: data.loginHtml,
     ...(data?.settings || {}),
     name: data?.settings?.name || "Your Builder",
