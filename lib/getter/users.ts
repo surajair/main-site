@@ -43,8 +43,10 @@ export async function getPlan(userId: string): Promise<any> {
     const supabase = await getSupabaseAdmin();
     const { data: plan, error } = await supabase
       .from("app_user_plans")
-      .select("planId,nextBilledAt, scheduledForCancellation")
-      .eq("user", userId);
+      .select("planId,nextBilledAt,scheduledForCancellation")
+      .eq("user", userId)
+      .eq("client", process.env.CHAIBUILDER_CLIENT_ID);
+
     if (plan?.length === 0 || error) return { planId: "FREE" };
     return plan[0];
   } catch (error) {

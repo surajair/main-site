@@ -306,6 +306,7 @@ const ProfileForm = ({ data }: { data: any }) => {
   const { t } = useTranslation();
   const user = get(data, "user");
   const plan = useUserPlan();
+
   const planName = plan?.name;
   const nextBilledAt = plan?.nextBilledAt;
   const scheduledForCancellation = plan?.scheduledForCancellation;
