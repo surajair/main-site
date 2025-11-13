@@ -1,6 +1,7 @@
 "use client";
 
 import { updateUserProfile } from "@/actions/update-profile-action";
+import { cancelUserSubscription } from "@/actions/cancel-user-subscription";
 import UpdatePassword from "@/components/auth/update-password";
 import LogoutButton from "@/components/logout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,9 +17,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useUserPlan } from "@/lib/openfeature/helper";
 import { useQueryClient } from "@tanstack/react-query";
-import { useTranslation, useSavePage } from "chai-next";
+import { useSavePage, useTranslation } from "chai-next";
 import { get } from "lodash";
-import { Crown, Loader, User } from "lucide-react";
+import { AlertTriangle, Crown, Loader, User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import UpgradeModalButton from "../upgrade/upgrade-modal-button";
@@ -143,6 +144,78 @@ const ProfileAvatarTrigger = ({ data }: { data: any }) => {
   );
 };
 
+// Cancel Subscription Modal Component
+const CancelSubscriptionModal = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
+  const { t } = useTranslation();
+  const [isCancelling, setIsCancelling] = useState(false);
+  const queryClient = useQueryClient();
+
+  const handleCancelSubscription = async () => {
+    setIsCancelling(true);
+    try {
+      const result = await cancelUserSubscription();
+      
+      if (result.success) {
+        toast.success(t("Your subscription has been cancelled successfully."));
+        queryClient.invalidateQueries({ queryKey: ["user"] });
+        onOpenChange(false);
+      } else {
+        toast.error(result.message || t("Failed to cancel subscription. Please try again."));
+      }
+    } catch (error) {
+      toast.error(t("Failed to cancel subscription. Please try again."));
+      console.error("Subscription cancellation error:", error);
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[450px]">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-red-600">
+            <AlertTriangle className="h-5 w-5" />
+            {t("Cancel Subscription")}
+          </DialogTitle>
+          <DialogDescription className="text-left">
+            {t(
+              "Are you sure you want to cancel your subscription? This action will take effect at the end of your current billing period.",
+            )}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <h4 className="font-medium text-red-900 mb-2">{t("What happens when you cancel?")}</h4>
+            <ul className="text-sm text-red-800 space-y-1">
+              <li>• {t("You'll continue to have access until the end of your billing period")}</li>
+              <li>• {t("No further charges will be made to your account")}</li>
+              <li>• {t("You can resubscribe at any time")}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3">
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isCancelling}>
+            {t("Keep Subscription")}
+          </Button>
+          <Button variant="destructive" onClick={handleCancelSubscription} disabled={isCancelling}>
+            {isCancelling ? (
+              <>
+                <Loader className="h-4 w-4 animate-spin mr-2" />
+                {t("Cancelling...")}
+              </>
+            ) : (
+              t("Cancel Subscription")
+            )}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 // Main profile dialog component
 const ProfileForm = ({ data }: { data: any }) => {
   const { t } = useTranslation();
@@ -150,6 +223,7 @@ const ProfileForm = ({ data }: { data: any }) => {
   const plan = useUserPlan();
   const planName = plan?.name;
   const [open, setOpen] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const displayName = user.user_metadata?.full_name;
   const email = user.email;
   const { savePageAsync } = useSavePage();
@@ -187,17 +261,20 @@ const ProfileForm = ({ data }: { data: any }) => {
           </DialogTitle>
         </DialogHeader>
 
-        {plan?.isFree ? (
+        {!plan?.isFree ? (
           <div className="border rounded-md p-3 bg-muted">
             <p className="text-sm text-gray-600 pb-2">{t("You are currently on Free plan")}</p>
             <UpgradeModalButton />
           </div>
         ) : (
           planName && (
-            <div className="border rounded-md p-3 bg-muted">
+            <div className="border rounded-md flex items-center justify-between p-3 bg-muted">
               <p className="text-sm text-gray-600">
-                {t("You current plan:")}{" "}<span className="font-semibold text-amber-600">{planName}</span>
+                {t("You current plan:")} <span className="font-semibold text-amber-600">{planName}</span>
               </p>
+              <Button variant="link" size="sm" className="mt-2" onClick={() => setCancelModalOpen(true)}>
+                {t("Cancel plan")}
+              </Button>
             </div>
           )
         )}
@@ -231,6 +308,9 @@ const ProfileForm = ({ data }: { data: any }) => {
           <LogoutButton />
         </div>
       </DialogContent>
+
+      {/* Cancel Subscription Modal */}
+      <CancelSubscriptionModal open={cancelModalOpen} onOpenChange={setCancelModalOpen} />
     </Dialog>
   );
 };
