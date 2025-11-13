@@ -55,6 +55,8 @@ export const useUserPlan = () => {
     limits: {},
     name: "FREE",
     isFree: true,
+    nextBilledAt: null as string | null,
+    scheduledForCancellation: false,
   });
 
   return value;

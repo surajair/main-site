@@ -1,6 +1,7 @@
 "use client";
 
 import { cancelUserSubscription } from "@/actions/cancel-user-subscription";
+import { resumeUserSubscription } from "@/actions/resume-user-subscription";
 import { updateUserProfile } from "@/actions/update-profile-action";
 import UpdatePassword from "@/components/auth/update-password";
 import LogoutButton from "@/components/logout-button";
@@ -19,7 +20,7 @@ import { useUserPlan } from "@/lib/openfeature/helper";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSavePage, useTranslation } from "chai-next";
 import { get } from "lodash";
-import { AlertTriangle, Crown, Loader, User } from "lucide-react";
+import { AlertTriangle, Crown, Loader, RefreshCw, User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import UpgradeModalButton from "../upgrade/upgrade-modal-button";
@@ -214,14 +215,103 @@ const CancelSubscriptionModal = ({ open, onOpenChange }: { open: boolean; onOpen
   );
 };
 
+// Resume Subscription Modal Component
+const ResumeSubscriptionModal = ({
+  open,
+  onOpenChange,
+  nextBilledAt,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  nextBilledAt: string;
+}) => {
+  const { t } = useTranslation();
+  const [isResuming, setIsResuming] = useState(false);
+  const queryClient = useQueryClient();
+
+  const handleResumeSubscription = async () => {
+    setIsResuming(true);
+    try {
+      const result = await resumeUserSubscription();
+
+      if (result.success) {
+        toast.success(result.message);
+        queryClient.invalidateQueries({ queryKey: ["user"] });
+        onOpenChange(false);
+      } else {
+        toast.error(result.message || t("Failed to resume subscription. Please try again."));
+      }
+    } catch (error) {
+      toast.error(t("Failed to resume subscription. Please try again."));
+      console.error("Subscription resume error:", error);
+    } finally {
+      setIsResuming(false);
+    }
+  };
+
+  // Format the cancellation date
+  const cancellationDate = new Date(nextBilledAt).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[450px]">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-green-600">
+            <RefreshCw className="h-5 w-5" />
+            {t("Resume Subscription")}
+          </DialogTitle>
+          <DialogDescription className="text-left">
+            {t("Your subscription is scheduled to be cancelled. Would you like to resume it?")}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-4">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <h4 className="font-medium text-amber-900 mb-2">{t("Cancellation Scheduled")}</h4>
+            <p className="text-sm text-amber-800">
+              {t("Your plan will be cancelled on")} <span className="font-semibold">{cancellationDate}</span>
+            </p>
+            <p className="text-sm text-amber-800 mt-1">
+              {t("Resuming will keep your subscription active and you'll continue to be billed.")}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3">
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isResuming}>
+            {t("Keep Cancelled")}
+          </Button>
+          <Button onClick={handleResumeSubscription} disabled={isResuming}>
+            {isResuming ? (
+              <>
+                <Loader className="h-4 w-4 animate-spin mr-2" />
+                {t("Resuming...")}
+              </>
+            ) : (
+              t("Resume Subscription")
+            )}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 // Main profile dialog component
 const ProfileForm = ({ data }: { data: any }) => {
   const { t } = useTranslation();
   const user = get(data, "user");
   const plan = useUserPlan();
   const planName = plan?.name;
+  const nextBilledAt = plan?.nextBilledAt;
+  const scheduledForCancellation = plan?.scheduledForCancellation;
   const [open, setOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [resumeModalOpen, setResumeModalOpen] = useState(false);
   const displayName = user.user_metadata?.full_name;
   const email = user.email;
   const { savePageAsync } = useSavePage();
@@ -259,21 +349,48 @@ const ProfileForm = ({ data }: { data: any }) => {
           </DialogTitle>
         </DialogHeader>
 
-        {!plan?.isFree ? (
+        {plan?.isFree ? (
           <div className="border rounded-md p-3 bg-muted">
             <p className="text-sm text-gray-600 pb-2">{t("You are currently on Free plan")}</p>
             <UpgradeModalButton />
           </div>
         ) : (
           planName && (
-            <div className="border rounded-md flex items-center justify-between p-3 bg-muted">
-              <p className="text-sm text-gray-600">
-                {t("You current plan:")} <span className="font-semibold text-amber-600">{planName}</span>
-              </p>
-              <Button variant="link" size="sm" className="mt-2" onClick={() => setCancelModalOpen(true)}>
-                {t("Cancel plan")}
-              </Button>
-            </div>
+            <>
+              <div className="border rounded-md p-3 bg-muted">
+                <p className="text-sm text-gray-600">
+                  {t("You current plan:")} <span className="font-semibold text-amber-600">{planName}</span>
+                </p>
+                {scheduledForCancellation && nextBilledAt && (
+                  <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded">
+                    <p className="text-xs text-amber-800">
+                      {t("Scheduled for cancellation on")}{" "}
+                      {new Date(nextBilledAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </div>
+                )}
+                <div className="flex gap-2 mt-2">
+                  {scheduledForCancellation ? (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => setResumeModalOpen(true)}
+                      className="bg-green-600 hover:bg-green-700">
+                      <RefreshCw className="h-3 w-3 mr-1" />
+                      {t("Resume Plan")}
+                    </Button>
+                  ) : (
+                    <Button variant="link" size="sm" onClick={() => setCancelModalOpen(true)}>
+                      {t("Cancel plan")}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </>
           )
         )}
 
@@ -309,6 +426,11 @@ const ProfileForm = ({ data }: { data: any }) => {
 
       {/* Cancel Subscription Modal */}
       <CancelSubscriptionModal open={cancelModalOpen} onOpenChange={setCancelModalOpen} />
+
+      {/* Resume Subscription Modal */}
+      {nextBilledAt && (
+        <ResumeSubscriptionModal open={resumeModalOpen} onOpenChange={setResumeModalOpen} nextBilledAt={nextBilledAt} />
+      )}
     </Dialog>
   );
 };
