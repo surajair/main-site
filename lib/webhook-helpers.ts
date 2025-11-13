@@ -56,7 +56,6 @@ export async function findUserIdByEmail(email: string): Promise<string | null> {
       console.error("Error fetching user by email via RPC:", rpcError);
       return null;
     }
-    console.log("User ID found:", rpcResult);
     return rpcResult?.[0]?.id || null;
   } catch (error) {
     console.error("Exception in findUserIdByEmail:", error);

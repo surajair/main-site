@@ -10,7 +10,6 @@ export const handleDodoWebhookAction = async (eventType: string, payload: any) =
 
     // Extract subscription ID from payload
     const subscriptionId = payload?.data?.subscription_id;
-    console.log("subscriptionId", subscriptionId);
     if (!subscriptionId) {
       return { success: false, error: "Missing subscription ID for subscription.active event" };
     }
