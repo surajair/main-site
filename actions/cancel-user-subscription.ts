@@ -1,8 +1,8 @@
 "use server";
 
+import { createClient } from "@/chai/supabase.auth.server";
 import { getClientSettings } from "@/lib/getter/client";
 import { Paddle } from "@paddle/paddle-node-sdk";
-import { getSupabaseAdmin } from "chai-next/server";
 import { DodoPayments } from "dodopayments";
 const PAYMENT_API_KEY = process.env.PAYMENT_API_KEY!;
 
@@ -41,7 +41,7 @@ async function cancelSubscription(provider: string, subscriptionId: string, isTe
 // Server action to cancel user subscription
 export async function cancelUserSubscription() {
   try {
-    const supabaseServer = await getSupabaseAdmin();
+    const supabaseServer = await createClient();
     const clientSettings = await getClientSettings();
 
     // Get current user
