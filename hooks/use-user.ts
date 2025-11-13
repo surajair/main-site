@@ -36,6 +36,7 @@ export const useUser = () => {
         saveUserInLocalStorage(session);
         const user = session?.user;
         const userPlan = await getPlan(user?.id);
+
         return { user, session, plan: userPlan, role: "admin", isLoggedIn: true };
       } catch (error) {
         return { user: null, session: null, plan: null, role: "admin", isLoggedIn: false };
