@@ -31,9 +31,7 @@ export const updateUserPayment = async (provider: string, paymentId: string) => 
       set(data, "client", process.env.CHAIBUILDER_CLIENT_ID);
       const nextBilledAt = get(data, "nextBilledAt");
       const planId = get(data, "product.id");
-      const priceId = get(data, "price.id");
-      const status = get(data, "status");
-      payload = { subscriptionId, nextBilledAt, data, planId, priceId, status };
+      payload = { subscriptionId, nextBilledAt, planId };
       break;
     }
     case "DODO": {
@@ -53,9 +51,7 @@ export const updateUserPayment = async (provider: string, paymentId: string) => 
       set(data, "client", process.env.CHAIBUILDER_CLIENT_ID);
       const nextBilledAt = get(data, "next_billing_date");
       const planId = get(data, "product_id");
-      const priceId = get(data, "product_id");
-      const status = get(data, "status");
-      payload = { subscriptionId, nextBilledAt, data, planId, priceId, status };
+      payload = { subscriptionId, nextBilledAt, planId };
       break;
     }
     default:
