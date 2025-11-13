@@ -1,5 +1,6 @@
 "use server";
 
+import { cancelUserPlan } from "./cancel-user-plan";
 import { updateUserPayment } from "./update-user-payment";
 
 export const handleDodoWebhookAction = async (eventType: string, payload: any) => {
@@ -11,7 +12,7 @@ export const handleDodoWebhookAction = async (eventType: string, payload: any) =
     // Extract subscription ID from payload
     const subscriptionId = payload?.data?.subscription_id;
     if (!subscriptionId) {
-      return { success: false, error: "Missing subscription ID for subscription.active event" };
+      return { success: false, error: "Missing subscription ID" };
     }
 
     switch (eventType) {
@@ -24,7 +25,15 @@ export const handleDodoWebhookAction = async (eventType: string, payload: any) =
         const result = await updateUserPayment("DODO", subscriptionId);
         return result;
       }
-      //TODO: Add more event types here as needed
+      case "subscription.cancelled": {
+        const result = await cancelUserPlan(subscriptionId);
+        return result;
+      }
+
+      case "subscription.expired": {
+        const result = await cancelUserPlan(subscriptionId);
+        return result;
+      }
 
       default: {
         console.log(`Unhandled Dodo webhook event type: ${eventType}`);

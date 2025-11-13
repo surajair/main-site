@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Process webhook event based on event type
-    const actionResult = await handleDodoWebhookAction(eventType, body);
+    await handleDodoWebhookAction(eventType, body);
 
     return NextResponse.json(
       {
