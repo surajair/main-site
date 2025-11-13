@@ -3,6 +3,7 @@
 import { createClient } from "@/chai/supabase.auth.server";
 import { getClientSettings } from "@/lib/getter/client";
 import { Paddle } from "@paddle/paddle-node-sdk";
+import { getSupabaseAdmin } from "chai-next/server";
 import { DodoPayments } from "dodopayments";
 
 const PAYMENT_API_KEY = process.env.PAYMENT_API_KEY!;
@@ -56,8 +57,10 @@ export async function resumeUserSubscription() {
       throw new Error("User not authenticated");
     }
 
+    const supabaseAdmin = await getSupabaseAdmin();
+
     // Get user's current subscription
-    const { data: userPlan, error: planError } = await supabaseServer
+    const { data: userPlan, error: planError } = await supabaseAdmin
       .from("app_user_plans")
       .select("*")
       .eq("user", user.id)
@@ -88,11 +91,11 @@ export async function resumeUserSubscription() {
     }
 
     // Update user plan in database to remove scheduled cancellation
-    const { error: updateError } = await supabaseServer
+    const { error: updateError } = await supabaseAdmin
       .from("app_user_plans")
       .update({ scheduledForCancellation: false })
       .eq("user", user.id)
-      .eq("clientId", process.env.CHAIBUILDER_CLIENT_ID);
+      .eq("client", process.env.CHAIBUILDER_CLIENT_ID);
 
     if (updateError) {
       throw new Error("Failed to update subscription status in database");

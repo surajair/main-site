@@ -3,6 +3,7 @@
 import { createClient } from "@/chai/supabase.auth.server";
 import { getClientSettings } from "@/lib/getter/client";
 import { Paddle } from "@paddle/paddle-node-sdk";
+import { getSupabaseAdmin } from "chai-next/server";
 import { DodoPayments } from "dodopayments";
 const PAYMENT_API_KEY = process.env.PAYMENT_API_KEY!;
 
@@ -53,8 +54,9 @@ export async function cancelUserSubscription() {
       throw new Error("User not authenticated");
     }
 
+    const supabaseAdmin = await getSupabaseAdmin();
     // Get user's current subscription
-    const { data: userPlan, error: planError } = await supabaseServer
+    const { data: userPlan, error: planError } = await supabaseAdmin
       .from("app_user_plans")
       .select("*")
       .eq("user", user.id)
