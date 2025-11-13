@@ -6,7 +6,7 @@ import { forEach, get, omit } from "lodash";
 
 const PAYMENT_API_KEY = process.env.PAYMENT_API_KEY!;
 
-export const getEnvironment = (provider: "PADDLE" | "DODO", isTestMode: boolean): any => {
+const getEnvironment = (provider: "PADDLE" | "DODO", isTestMode: boolean): any => {
   switch (provider) {
     case "PADDLE":
       return isTestMode ? "sandbox" : "production";

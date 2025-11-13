@@ -1,7 +1,6 @@
 "use server";
 
 import { getClientSettings } from "@/lib/getter/client";
-import { getEnvironment } from "@/lib/getter/payment";
 import { Paddle } from "@paddle/paddle-node-sdk";
 import { getSupabaseAdmin } from "chai-next/server";
 import { DodoPayments } from "dodopayments";
@@ -21,7 +20,8 @@ async function cancelDodoSubscription(subscriptionId: string, isTestMode: boolea
 
 // PADDLE cancellation function
 async function cancelPaddleSubscription(subscriptionId: string, isTestMode: boolean) {
-  const paddle = new Paddle(PAYMENT_API_KEY, { environment: getEnvironment("PADDLE", isTestMode) });
+  const env = isTestMode ? "sandbox" : "production";
+  const paddle = new Paddle(PAYMENT_API_KEY, { environment: env as any });
   await paddle.subscriptions.cancel(subscriptionId, { effectiveFrom: "next_billing_period" });
   return { success: true };
 }
@@ -84,9 +84,24 @@ export async function cancelUserSubscription() {
       throw new Error("Failed to cancel subscription with payment provider");
     }
 
+    // Format the next billing date for the success message
+    let formattedDate = "";
+    if (userPlan.nextBilledAt) {
+      const nextBillingDate = new Date(userPlan.nextBilledAt);
+      formattedDate = nextBillingDate.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    }
+
+    const successMessage = formattedDate
+      ? `Your plan has been successfully cancelled. You can continue using the pro plan until ${formattedDate}.`
+      : "Your plan has been successfully cancelled.";
+
     return {
       success: true,
-      message: "Subscription cancelled successfully",
+      message: successMessage,
     };
   } catch (error) {
     console.error("Subscription cancellation error:", error);
