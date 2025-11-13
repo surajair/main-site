@@ -1,13 +1,13 @@
 import { handleDodoWebhookAction } from "@/actions/handle-webhook-action";
-import { findUserIdByClientId, logWebhookEvent } from "@/lib/webhook-helpers";
+import { findUserIdByEmail, logWebhookEvent } from "@/lib/webhook-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const clientId = process.env.CHAIBUILDER_CLIENT_ID || "";
-    const userId = (await findUserIdByClientId(clientId)) || "";
-    const eventType = body.type || body.event_type;
+    const userId = (await findUserIdByEmail(body?.data?.customer?.email)) || "";
+    const eventType = body.type;
 
     // Save webhook to database - Just userId, clientId, and complete payload
     const { webhook, error: logError } = await logWebhookEvent({

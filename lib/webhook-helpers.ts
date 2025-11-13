@@ -40,36 +40,26 @@ export async function logWebhookEvent(data: {
 }
 
 /**
- * Find User ID by Client ID (queries apps table)
- * Returns the first user found for the given client
- * Here I want find user then By Email then Because One Client Can Have Multiple users
+ * Find User ID by email
  */
 
-//TODO: Need to Change This Function with Find By Mail
-export async function findUserIdByClientId(clientId: string): Promise<string | null> {
+export async function findUserIdByEmail(email: string): Promise<string | null> {
   try {
-    const supabase = await getSupabaseAdmin();
-
-    const { data, error } = await supabase
-      .from("apps")
-      .select("user")
-      .eq("client", clientId)
-      .is("deletedAt", null)
-      .limit(1)
-      .single();
-
-    if (error) {
-      console.error("Error finding user by clientId:", error);
+    if (!email) {
+      console.warn("No contact email found");
       return null;
     }
+    const supabase = await getSupabaseAdmin();
+    const { data: rpcResult, error: rpcError } = await supabase.rpc("get_user_id_by_email", { email });
 
-    if (data?.user) {
-      return data.user;
+    if (rpcError) {
+      console.error("Error fetching user by email via RPC:", rpcError);
+      return null;
     }
-
-    return null;
+    console.log("User ID found:", rpcResult);
+    return rpcResult?.[0]?.id || null;
   } catch (error) {
-    console.error("Exception in findUserIdByClientId:", error);
+    console.error("Exception in findUserIdByEmail:", error);
     return null;
   }
 }
