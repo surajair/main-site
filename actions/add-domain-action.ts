@@ -4,10 +4,12 @@ import { Vercel } from "@vercel/sdk";
 import { domainsGetDomainConfig } from "@vercel/sdk/funcs/domainsGetDomainConfig";
 import { projectsVerifyProjectDomain } from "@vercel/sdk/funcs/projectsVerifyProjectDomain";
 import { getSupabaseAdmin } from "chai-next/server";
+import { revalidateTag } from "next/cache";
 
 export async function addDomain(websiteId: string, domain: string) {
   try {
     const supabase = await getSupabaseAdmin();
+    domain = domain.trim().replace(/\s/g, "").replace("www.", "");
     // Check if domain already exists
     const { data: existingDomain } = await supabase.from("app_domains").select("id").eq("domain", domain).single();
 
@@ -17,13 +19,26 @@ export async function addDomain(websiteId: string, domain: string) {
 
     const vercel = new Vercel({ bearerToken: process.env.VERCEL_TOKEN! });
 
-    await vercel.projects.addProjectDomain({
-      idOrName: process.env.VERCEL_PROJECT_ID!,
-      teamId: process.env.VERCEL_TEAM_ID!,
-      requestBody: { name: domain },
-    });
+    try {
+      await vercel.projects.addProjectDomain({
+        idOrName: process.env.VERCEL_PROJECT_ID!,
+        teamId: process.env.VERCEL_TEAM_ID!,
+        requestBody: { name: domain },
+      });
+    } catch (error: any) {
+      if (error?.message?.toLowerCase().includes("already in use by")) {
+        await supabase.from("app_domains").update({ domain: domain, domainConfigured: true }).eq("app", websiteId);
+        revalidateTag(`website-settings-${websiteId}`);
+        return { success: true };
+      }
+      if (error?.message?.toLowerCase().includes("not found")) {
+        return { success: false, error: "Domain not found" };
+      }
+      return { success: false, error: error?.message || "Failed to add domain" };
+    }
 
     await supabase.from("app_domains").update({ domain: domain, domainConfigured: false }).eq("app", websiteId);
+    revalidateTag(`website-settings-${websiteId}`);
 
     return { success: true };
   } catch (error: any) {
