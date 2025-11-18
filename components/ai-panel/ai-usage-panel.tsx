@@ -37,9 +37,9 @@ const AiUsagePanelButton = () => {
             e.stopPropagation();
             setOpen(!open);
           }}
-          className={`w-11 -mx-1 h-max py-1 mb-2 flex items-center justify-center rounded cursor-pointer duration-200 ${remainingCredit < 4 ? "text-red-600 hover:bg-red-600/10" : "text-blue-600 hover:bg-blue-600/10"}`}>
+          className={`w-11 -mx-1 h-max py-1 mb-2 flex items-center justify-center rounded cursor-pointer duration-200 ${remainingCredit < 4 ? "text-red-600 hover:bg-red-600/10" : "text-blue-600 hover:bg-blue-600/10"} ${remainingCredit > 99 ? "flex-col" : ""}`}>
           <BadgeDollarSign className="h-3 w-3 flex-shrink-0" size={12} />
-          <small className="text-[11px] font-semibold pl-0.5">{remainingCredit.toFixed(1)}</small>
+          <small className="text-[11px] font-semibold pl-0.5">{remainingCredit.toFixed(1)?.replace(".0", "")}</small>
         </div>
       </TooltipTrigger>
     </Tooltip>
