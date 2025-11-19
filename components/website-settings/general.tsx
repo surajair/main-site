@@ -91,9 +91,16 @@ export default function General({ data, onChange }: GeneralProps) {
               })
             }
           />
-          <Label htmlFor="darkMode" className="text-xs">
-            {t("Dark Mode")}
-          </Label>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="darkMode" className="text-xs font-semibold">
+              {t("Light & Dark Mode")}
+            </Label>
+            <p className="text-xs font-normal text-gray-500">
+              {t(
+                "Enables you to create your site in light and dark mode. If enabled, user will see their preferred device theme on first load.",
+              )}
+            </p>
+          </div>
         </div>
       </div>
     </section>
