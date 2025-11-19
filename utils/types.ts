@@ -42,6 +42,7 @@ export type SiteData = {
     googleTagManagerId: string;
     recaptchaSecretKey: string;
     cookieConsentEnabled: boolean;
+    darkMode?: boolean;
     cookieConsentSettings?: {
       consentModal: {
         layout: "box" | "box wide" | "box inline" | "cloud" | "cloud inline" | "bar" | "bar inline";
