@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { LANGUAGE_CODES } from "@/lib/language-config";
 import { useFeatureFlag } from "@/lib/openfeature/helper";
 import { SiteData } from "@/utils/types";
@@ -76,6 +77,31 @@ export default function General({ data, onChange }: GeneralProps) {
         {multilingualEnabled && Object.keys(LANGUAGE_CODES).length > 1 && (
           <AdditionalLanguageSelector data={data} onChange={onChange} />
         )}
+      </div>
+
+      <div className="space-y-1">
+        <div className="flex items-center gap-4">
+          <Switch
+            id="darkMode"
+            checked={baseline?.settings?.darkMode || false}
+            onCheckedChange={(checked) =>
+              handleChange?.({
+                ...(data || {}),
+                settings: { ...(data?.settings || {}), darkMode: checked },
+              })
+            }
+          />
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="darkMode" className="text-xs font-semibold">
+              {t("Light & Dark Mode")}
+            </Label>
+            <p className="text-xs font-normal text-gray-500">
+              {t(
+                "Enables you to create your site in light and dark mode. If enabled, user will see their preferred device theme on first load.",
+              )}
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );

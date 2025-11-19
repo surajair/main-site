@@ -60,6 +60,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   const settings = data?.settings || null;
   const showChaiBadge = hostname.endsWith(".chaibuilder.site");
   const cookieConsentEnabled = settings?.cookieConsentEnabled || false;
+  const darkMode = settings?.darkMode || false;
   let page = null;
   try {
     page = await ChaiBuilder.getPage(slug);
@@ -102,7 +103,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
         {!isEmpty(settings?.headHTML) && <ChaiCustomHtml htmlHeadString={settings.headHTML} />}
       </head>
       <body className={`font-body antialiased`}>
-        <ThemeProvider>
+        <ThemeProvider defaultDarkMode={darkMode}>
           <PreviewBanner slug={slug} show={isEnabled} />
           <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
           {showChaiBadge && <ChaiBuilderBadge madeWithBadge={clientSettings?.madeWithBadge} />}
