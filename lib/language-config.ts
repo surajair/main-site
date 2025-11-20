@@ -24,7 +24,7 @@ function getAdditionalLanguageCodes(): Record<string, string> {
 }
 
 // Combine base language with additional languages from environment
-export const LANGUAGE_CODES = {
+export const LANGUAGE_CODES: Record<string, string> = {
   ...BASE_LANGUAGE_CODES,
   ...getAdditionalLanguageCodes(),
 };
