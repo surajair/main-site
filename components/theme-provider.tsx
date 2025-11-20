@@ -12,15 +12,16 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children, defaultDarkMode = false }: { children: React.ReactNode; defaultDarkMode?: boolean }) {
+export function ThemeProvider({
+  children,
+  defaultDarkMode = false,
+}: {
+  children: React.ReactNode;
+  defaultDarkMode?: boolean;
+}) {
   const [theme, setThemeState] = useState<Theme>("light");
 
   useEffect(() => {
-    if(!defaultDarkMode){
-      setThemeState("light");
-      document.documentElement.classList.remove("dark");
-      return;
-    }
     // Read theme from localStorage on mount. If none, use OS preference.
     const storedTheme = localStorage.getItem("theme") as Theme | null;
     if (storedTheme) {
@@ -34,8 +35,11 @@ export function ThemeProvider({ children, defaultDarkMode = false }: { children:
     }
 
     // Fallback to prefers-color-scheme when no explicit choice exists
-    const prefersDark = typeof window !== "undefined" &&
-      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const prefersDark =
+      typeof window !== "undefined" &&
+      defaultDarkMode &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
     if (prefersDark) {
       setThemeState("dark");
       document.documentElement.classList.add("dark");
@@ -59,11 +63,7 @@ export function ThemeProvider({ children, defaultDarkMode = false }: { children:
     setTheme(theme === "light" ? "dark" : "light");
   };
 
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {
