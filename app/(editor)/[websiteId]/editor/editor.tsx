@@ -63,7 +63,7 @@ export default function Editor({ domain, websiteId }: { domain?: string; website
 
   return (
     <ChaiBuilder
-      flags={{ exportCode: true }}
+      flags={{ exportCode: true, dragAndDrop: true }}
       currentUser={user}
       autoSave
       autoSaveInterval={20}
