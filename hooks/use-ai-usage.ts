@@ -16,11 +16,11 @@ export const useAiUsage = () => {
   const totalCredit = planLimits?.getLimit("no_of_ai_credits") || 0;
 
   // Calculate used credits
-  const usedCredit = totalTokensUsed / 1000;
+  const usedCredit = totalTokensUsed / 2000;
 
   // Calculate remaining credits
   const remainingCredit = totalCredit - usedCredit > 0 ? totalCredit - usedCredit : 0;
-  const isCreditLeft = false; // remainingCredit > 0;
+  const isCreditLeft = remainingCredit > 0;
 
   return {
     isLoading,

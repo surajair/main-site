@@ -40,9 +40,9 @@ function UpgradeModalContent() {
               className="w-16 h-16 text-green-500"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
+              strokeWidth="2"
               viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="white" />
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="white" />
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4-4" />
             </svg>
           </div>
