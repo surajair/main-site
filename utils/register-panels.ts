@@ -1,4 +1,4 @@
-import { aiUsagePanel, aiUsagePanelId } from "@/components/ai-panel/ai-usage-panel";
+import { aiUsagePanel, aiUsagePanelId } from "@/components/ai-usage-panel";
 import { formsPanel } from "@/components/website-settings/form-panel";
 import { helpPanel } from "@/components/website-settings/help-panel";
 import { profilePanel } from "@/components/website-settings/profile-panel";
@@ -13,7 +13,6 @@ export const registerPanels = () => {
 
   const flags = localStorage.getItem("chai-feature-flags") ?? "";
   if (flags.includes("enable-ai-chat-panel")) {
-    // registerChaiSidebarPanel(aiPanelId, aiPanel);
     registerChaiSidebarPanel(aiUsagePanelId, aiUsagePanel);
   }
 };

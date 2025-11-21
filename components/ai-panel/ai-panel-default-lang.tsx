@@ -169,14 +169,12 @@ const AiPanelForDefaultLang = ({
       const html = cleanHtmlResponse(accumulatedText);
       const finalBlocks = htmlToBlocks(html);
       if (editingBlock?._id) {
-        console.log("Editing block", editingBlock?._id, finalBlocks);
         replaceBlock(editingBlock?._id, finalBlocks);
       } else {
         addPredefinedBlock([...finalBlocks], editingBlock?._parent, -1);
       }
       setTimeout(() => {
-        console.log("## 100");
-        queryClient.invalidateQueries({ queryKey: ["ai-usage"] });
+        queryClient.invalidateQueries({ queryKey: ["AI_USAGE"] });
       }, 4000);
     } catch (error: any) {
       // Don't show error message if request was aborted

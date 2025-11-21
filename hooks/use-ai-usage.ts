@@ -7,7 +7,7 @@ export const useAiUsage = () => {
   const { data: totalTokensUsed = 0, isLoading } = useQuery({
     staleTime: Infinity,
     gcTime: Infinity,
-    queryKey: ["ai-usage"],
+    queryKey: ["AI_USAGE"],
     queryFn: getAiUsage,
   });
 

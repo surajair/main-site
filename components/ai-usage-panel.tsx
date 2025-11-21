@@ -1,7 +1,7 @@
 import { useAiUsage } from "@/hooks/use-ai-usage";
 import { BadgeDollarSign } from "lucide-react";
 import { useState } from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 export const aiUsagePanelId = "chai-ai-usage-panel";
 
 const AiUsagePanelButton = () => {
