@@ -61,9 +61,12 @@ export class DodoAdapter implements PaymentProviderInterface {
   async openCheckout(options: any = {}): Promise<any> {
     const returnUrl = getReturnURL(this.provider);
     const checkout = await getDodoCheckoutSession({ ...options, returnUrl }, this.isTestMode);
-    DodoPayments.Checkout.open({
-      checkoutUrl: checkout?.checkout_url,
-    });
+
+    // Navigate to checkout in the same tab to avoid bot detection
+    if (checkout?.checkout_url) {
+      window.location.href = checkout.checkout_url;
+    }
+
     return checkout;
   }
 
