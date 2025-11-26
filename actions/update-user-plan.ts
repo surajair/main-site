@@ -21,7 +21,10 @@ export const updateUserPlan = async (payload: any) => {
       .select("*")
       .eq("user", user.id)
       .eq("client", process.env.CHAIBUILDER_CLIENT_ID);
-    if (existingPlansError) return false;
+    if (existingPlansError) {
+      console.error("Error fetching existing plans:", existingPlansError);
+      return false;
+    }
 
     /**
      * Update plan if user already has a plan
@@ -32,7 +35,10 @@ export const updateUserPlan = async (payload: any) => {
         .update(updatedPayload)
         .eq("user", user.id)
         .eq("client", process.env.CHAIBUILDER_CLIENT_ID);
-      if (updateError) return false;
+      if (updateError) {
+        console.error("Error updating user plan:", updateError);
+        return false;
+      }
       return true;
     }
 
@@ -40,9 +46,13 @@ export const updateUserPlan = async (payload: any) => {
      * Insert plan if user does not have a plan
      */
     const { error: insertError } = await supabaseServer.from("app_user_plans").insert(updatedPayload);
-    if (insertError) return false;
+    if (insertError) {
+      console.error("Error inserting user plan:", insertError);
+      return false;
+    }
     return true;
   } catch (error) {
+    console.error("Error updating user plan:", error);
     return false;
   }
 };
