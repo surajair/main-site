@@ -1,6 +1,5 @@
 "use server";
 
-import { getUser } from "@/lib/getter";
 import { getSupabaseAdmin } from "chai-next/server";
 
 export const updateUserPlan = async (payload: any) => {
@@ -8,10 +7,8 @@ export const updateUserPlan = async (payload: any) => {
     if (!payload) return false;
 
     const supabaseServer = await getSupabaseAdmin();
-    const user = await getUser();
-    if (!user) return false;
 
-    const updatedPayload = { ...payload, user: user.id, client: process.env.CHAIBUILDER_CLIENT_ID };
+    const updatedPayload = { ...payload, client: process.env.CHAIBUILDER_CLIENT_ID };
 
     /**
      * Check if user already has a plan
@@ -19,7 +16,7 @@ export const updateUserPlan = async (payload: any) => {
     const { data: existingPlans, error: existingPlansError } = await supabaseServer
       .from("app_user_plans")
       .select("*")
-      .eq("user", user.id)
+      .eq("user", payload.user)
       .eq("client", process.env.CHAIBUILDER_CLIENT_ID);
     if (existingPlansError) {
       console.error("Error fetching existing plans:", existingPlansError);
@@ -33,7 +30,7 @@ export const updateUserPlan = async (payload: any) => {
       const { error: updateError } = await supabaseServer
         .from("app_user_plans")
         .update(updatedPayload)
-        .eq("user", user.id)
+        .eq("user", payload.user)
         .eq("client", process.env.CHAIBUILDER_CLIENT_ID);
       if (updateError) {
         console.error("Error updating user plan:", updateError);
@@ -52,7 +49,7 @@ export const updateUserPlan = async (payload: any) => {
     }
     return true;
   } catch (error) {
-    console.error("Error updating user plan:", error);
+    console.error("Error updating user plan catch:", error);
     return false;
   }
 };

@@ -1,4 +1,3 @@
-import { updateUserPayment } from "@/actions/update-user-payment";
 import { getProductList } from "@/lib/getter/payment";
 import { initializePaddle, Paddle } from "@paddle/paddle-js";
 import { find, get } from "lodash";
@@ -34,7 +33,6 @@ export class PaddleAdapter implements PaymentProviderInterface {
           const transactionId = get(event, "data.transaction_id") as string;
           this.options?.onStatusChange("processing");
           await new Promise((resolve) => setTimeout(resolve, 300));
-          updateUserPayment("PADDLE", transactionId);
           const returnUrl = getReturnURL("PADDLE", { transaction_id: transactionId, status: "active" });
           window.location.href = returnUrl;
         } else if (event.name === "checkout.error") {

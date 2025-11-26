@@ -8,6 +8,7 @@ import { updateUserPlan } from "./update-user-plan";
 
 const PAYMENT_API_KEY = process.env.PAYMENT_API_KEY!;
 
+//TODO: Remove later
 export const updateUserPayment = async (provider: string, paymentId: string) => {
   if (!provider || !paymentId) return { success: false, error: "Invalid provider or payment ID" };
   const clientSettings = await getClientSettings();
