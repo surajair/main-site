@@ -22,7 +22,6 @@ export const handleDodoWebhookAction = async (eventType: string, payload: any, u
           subscriptionId,
           nextBilledAt: payload?.data?.next_billing_date,
           planId: payload?.data?.product_id,
-          provider: "DODO",
           user: userId,
         };
 
