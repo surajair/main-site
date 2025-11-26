@@ -24,6 +24,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Process webhook event based on event type
+    if (eventType === "subscription.renewed") {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
     await handleDodoWebhookAction(eventType, body, userId);
 
     return NextResponse.json(
