@@ -15,13 +15,8 @@ export default async function Page({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const queryParams = await searchParams;
-  const status = get(queryParams, "status");
-  const provider = get(queryParams, "provider");
   const paymentId = get(queryParams, "subscription_id") || get(queryParams, "transaction_id");
-
-  if (status === "active" && paymentId) {
-    return <PaymentConfirmation provider={provider as string} paymentId={paymentId as string} />;
-  }
+  if (paymentId) return <PaymentConfirmation />;
 
   const { websiteId } = await params;
   const supabaseServer = await getSupabaseAdmin();

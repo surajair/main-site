@@ -51,6 +51,7 @@ export const getDodoCheckoutSession = async (payload: any, isTestMode: boolean) 
     customer: { email: payload?.user?.email || "", ...(payload?.user?.name && { name: payload?.user?.name }) },
     return_url: payload?.returnUrl || "",
     customization: { theme: "light" },
+    allowed_payment_method_types: ["credit", "debit", "upi_intent", "upi_collect"],
   });
   return checkoutSession;
 };
