@@ -1,7 +1,7 @@
 "use server";
 
 import { cancelUserPlan } from "./cancel-user-plan";
-import { updateUserPayment } from "./update-user-payment";
+import { updateUserPlan } from "./update-user-plan";
 
 export const handleDodoWebhookAction = async (eventType: string, payload: any) => {
   try {
@@ -14,17 +14,18 @@ export const handleDodoWebhookAction = async (eventType: string, payload: any) =
     if (!subscriptionId) {
       return { success: false, error: "Missing subscription ID" };
     }
-
     switch (eventType) {
-      case "subscription.active": {
-        const result = await updateUserPayment("DODO", subscriptionId);
+      case "subscription.active":
+      case "subscription.renewed":
+        const userPlan = {
+          subscriptionId,
+          nextBilledAt: payload?.data?.next_billing_date,
+          planId: payload?.data?.product_id,
+          provider: "DODO",
+        };
+        const result = await updateUserPlan(userPlan);
         return result;
-      }
 
-      case "subscription.renewed": {
-        const result = await updateUserPayment("DODO", subscriptionId);
-        return result;
-      }
       case "subscription.cancelled": {
         const result = await cancelUserPlan(subscriptionId);
         return result;
