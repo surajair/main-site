@@ -8,6 +8,7 @@ import { registerPanels } from "@/utils/register-panels";
 import ChaiBuilder from "chai-next";
 import { startsWith } from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import LoginForm from "./login";
 
 type LoggedInUser = {
   id: string;
@@ -58,7 +59,7 @@ export default function Editor({ websiteId }: { websiteId?: string }) {
   );
 
   if (!user) {
-    return null;
+    return <LoginForm />;
   }
 
   return (

@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { LANGUAGE_CODES } from "@/lib/language-config";
-import { useFeatureFlag } from "@/lib/openfeature/helper";
 import { SiteData } from "@/utils/types";
 import { useTranslation } from "chai-next";
 import { useState } from "react";
@@ -17,7 +16,6 @@ interface GeneralProps {
 
 export default function General({ data, onChange }: GeneralProps) {
   const { t } = useTranslation();
-  const { value: multilingualEnabled } = useFeatureFlag("multilingual");
   const [baseline, setBaseline] = useState(data);
 
   const handleChange = (updates: any) => {
@@ -74,9 +72,7 @@ export default function General({ data, onChange }: GeneralProps) {
             readOnly
           />
         </div>
-        {multilingualEnabled && Object.keys(LANGUAGE_CODES).length > 1 && (
-          <AdditionalLanguageSelector data={data} onChange={onChange} />
-        )}
+        {Object.keys(LANGUAGE_CODES).length > 1 && <AdditionalLanguageSelector data={data} onChange={onChange} />}
       </div>
 
       <div className="space-y-1">

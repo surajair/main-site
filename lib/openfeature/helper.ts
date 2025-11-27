@@ -1,4 +1,3 @@
-import { useFlag } from "@openfeature/react-sdk";
 import { find, get } from "lodash";
 
 interface UserPermissions {
@@ -42,30 +41,25 @@ export function convertToOpenFeatureDevFormat(input: Record<string, any>, role: 
   return flags;
 }
 
-// Hook for boolean feature flags
-export const useFeatureFlag = (flagKey: string, defaultValue = false) => {
-  return useFlag(flagKey, defaultValue);
-};
-
 // Hook for user plan with typed limits
 export const useUserPlan = () => {
-  const { value } = useFlag("user_plan", {
+  const value = {
     id: "",
     limits: {},
     name: "FREE",
     isFree: true,
     nextBilledAt: null as string | null,
     scheduledForCancellation: false,
-  });
+  };
 
   return value;
 };
 
 // Hook for user role and permissions
 export const useUserRole = () => {
-  const { value } = useFlag("user_role", {
+  const value = {
     permissions: { "*": false },
-  });
+  };
 
   const permissions = (value as UserPermissions).permissions;
 

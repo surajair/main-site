@@ -88,6 +88,32 @@ export async function updatePassword(newPassword: string): Promise<{ success: bo
   return { success: true, message: "Password updated successfully!", data };
 }
 
+export async function loginWithGoogle(): Promise<{ success: boolean; message: string; data?: any }> {
+  // Check for bot
+  const verification = await checkBotId();
+  if (verification.isBot) {
+    return { success: false, message: "Access denied" };
+  }
+
+  const supabaseServer = await createClient();
+
+  const { data, error } = await supabaseServer.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+    },
+  });
+
+  if (error) {
+    if (error instanceof AuthError) {
+      return { success: false, message: error.message };
+    }
+    return { success: false, message: "An error occurred during Google login" };
+  }
+
+  return { success: true, message: "Redirecting to Google...", data };
+}
+
 export async function updatePasswordAction(
   _prevState: any,
   formData: FormData,

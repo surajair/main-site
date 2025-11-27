@@ -8,7 +8,7 @@ export async function GET(request: Request) {
 
   const code = searchParams.get("code");
   const type = searchParams.get("type") ?? "";
-  const next = searchParams.get("next") ?? "";
+  const next = searchParams.get("next") ?? "/editor";
 
   if (code) {
     const supabase = await createClient();

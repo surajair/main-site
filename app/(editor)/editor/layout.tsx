@@ -1,6 +1,8 @@
 import { Geist } from "next/font/google";
 import "./builder.css";
 
+export const dynamic = "force-dynamic";
+
 const geist = Geist({ subsets: ["latin"], preload: true });
 
 export const generateMetadata = async () => {

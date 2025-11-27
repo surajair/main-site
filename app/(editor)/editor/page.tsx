@@ -1,14 +1,9 @@
 import QueryClientProviderWrapper from "@/components/providers/query-client-provider";
 import "chai-next/builder-styles";
 import ChaiBuilder from "chai-next/server";
-import Editor from "./editor";
+import Editor from "./editor-client";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ websiteId: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+export default async function Page() {
   const websiteId = await ChaiBuilder.getSiteId();
   return (
     <QueryClientProviderWrapper>
