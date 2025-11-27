@@ -49,12 +49,12 @@ export default function Editor({ websiteId }: { websiteId?: string }) {
   }, []);
 
   const getPreviewUrl = useCallback(
-    (slug: string) => `//api/preview?slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`,
+    (slug: string) => `/api/preview?slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`,
     [],
   );
 
   const getLiveUrl = useCallback(
-    (slug: string) => `//api/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`,
+    (slug: string) => `/api/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`,
     [],
   );
 
