@@ -1,7 +1,6 @@
 "use client";
 
 import { cancelUserSubscription } from "@/actions/cancel-user-subscription";
-import { resumeUserSubscription } from "@/actions/resume-user-subscription";
 import { updateUserProfile } from "@/actions/update-profile-action";
 import LogoutButton from "@/components/logout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,7 +14,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useUser } from "@/hooks/use-user";
 import { useUserPlan } from "@/lib/openfeature/helper";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSavePage, useTranslation } from "chai-next";
@@ -220,34 +218,9 @@ const ProfileForm = ({ data }: { data: any }) => {
   const { t } = useTranslation();
   const user = get(data, "user");
   const plan = useUserPlan();
-  const { data: userPlan } = useUser();
-  const queryClient = useQueryClient();
-  const planName = plan?.name;
-  const nextBilledAt = userPlan?.plan?.nextBilledAt;
-  const scheduledForCancellation = userPlan?.plan?.scheduledForCancellation;
   const [open, setOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
-  const [isResuming, setIsResuming] = useState(false);
 
-  // Resume Subscription Handler
-  const handleResumeSubscription = async () => {
-    setIsResuming(true);
-    try {
-      const result = await resumeUserSubscription();
-
-      if (result.success) {
-        toast.success(result.message);
-        queryClient.invalidateQueries({ queryKey: ["CHAIBUILDER_USER"] });
-      } else {
-        toast.error(result.message || t("Failed to resume subscription. Please try again."));
-      }
-    } catch (error) {
-      toast.error(t("Failed to resume subscription. Please try again."));
-      console.error("Subscription resume error:", error);
-    } finally {
-      setIsResuming(false);
-    }
-  };
   const displayName = user.user_metadata?.full_name;
   const email = user.email;
   const { savePageAsync } = useSavePage();

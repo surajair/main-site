@@ -24,7 +24,7 @@ const ProfilePanel = () => {
   return <ProfileForm data={data} />;
 };
 
-const ProfileButton = ({ isActive, show }: { isActive: boolean; show: () => void }) => {
+const ProfileButton = () => {
   const { data, isLoading } = useUser();
 
   if (isLoading) return <LoadingAvatar />;
