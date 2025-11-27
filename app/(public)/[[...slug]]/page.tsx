@@ -2,7 +2,6 @@ import { registerBlocks } from "@/blocks";
 import { ImageBlock } from "@/components/image";
 import { PageScripts } from "@/components/page-scripts";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeScript } from "@/components/theme-script";
 import { loadSiteGlobalData } from "@/data/global";
 import { getFontStyles, registerFonts } from "@/fonts";
 import { Analytics } from "@vercel/analytics/next";
@@ -15,7 +14,6 @@ import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
 const ChaiCustomHtml = dynamicImport(() => import("@/components/chai-custom-html").then((mod) => mod.ChaiCustomHtml));
-const ChaiBuilderBadge = dynamicImport(() => import("@/components/chai-builder-badge"));
 const PreviewBanner = dynamicImport(() => import("chai-next/blocks/rsc").then((mod) => mod.PreviewBanner));
 const CookieConsentWrapper = dynamicImport(() =>
   import("@/components/cookie-consent-wrapper").then((mod) => mod.CookieConsentWrapper),
@@ -31,17 +29,14 @@ export const dynamic = "force-static";
 export const generateMetadata = async (props: { params: Promise<{ slug: string[] }> }) => {
   const nextParams = await props.params;
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
-
   const { isEnabled } = await draftMode();
-  ChaiBuilder.setDraftMode(isEnabled);
+  await ChaiBuilder.init(process.env.CHAIBUILDER_APP_ID!, isEnabled);
   const data = await ChaiBuilder.getSiteSettings();
   const favicon = data?.settings?.faviconURL || "";
   return {
     ...((await ChaiBuilder.getPageSeoData(slug)) as any),
     icons: { icon: favicon },
-    alternates: {
-      canonical: slug,
-    },
+    alternates: { canonical: slug },
   };
 };
 
@@ -49,7 +44,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string[
   const nextParams = await params;
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
   const { isEnabled } = await draftMode();
-  ChaiBuilder.setDraftMode(isEnabled);
+  await ChaiBuilder.init(process.env.CHAIBUILDER_APP_ID!, isEnabled);
   const data = await ChaiBuilder.getSiteSettings();
   const settings = data?.settings || null;
   const cookieConsentEnabled = settings?.cookieConsentEnabled || false;
@@ -79,7 +74,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string[
   return (
     <html lang={page.lang} className={`smooth-scroll`}>
       <head>
-        <ThemeScript />
         {preloads.map((preload: string, index: number) => (
           <link
             key={`preload-font-${index}`}

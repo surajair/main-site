@@ -1,7 +1,4 @@
 import "@/app/(public)/site.css";
-import ChaiBuilder from "chai-next/server";
-
-ChaiBuilder.init(process.env.CHAIBUILDER_APP_ID!);
 
 export const generateMetadata = async () => {
   return {
