@@ -3,7 +3,6 @@
 import { cancelUserSubscription } from "@/actions/cancel-user-subscription";
 import { resumeUserSubscription } from "@/actions/resume-user-subscription";
 import { updateUserProfile } from "@/actions/update-profile-action";
-import UpdatePassword from "@/components/auth/update-password";
 import LogoutButton from "@/components/logout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -21,10 +20,9 @@ import { useUserPlan } from "@/lib/openfeature/helper";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSavePage, useTranslation } from "chai-next";
 import { get } from "lodash";
-import { AlertTriangle, Crown, Loader, RefreshCw, User } from "lucide-react";
+import { AlertTriangle, Crown, Loader, User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import UpgradeModalButton from "../upgrade/upgrade-modal-button";
 
 function ProfileName({ initialName }: { initialName: string }) {
   const { t } = useTranslation();
@@ -111,9 +109,7 @@ const ChangePasswordModal = () => {
             {t("Enter your new password below. Make sure it's at least 8 characters long.")}
           </DialogDescription>
         </DialogHeader>
-        <div className="py-4">
-          <UpdatePassword close={() => setOpen(false)} />
-        </div>
+        <div className="py-4">{/* <UpdatePassword close={() => setOpen(false)} /> */}</div>
       </DialogContent>
     </Dialog>
   );
@@ -288,60 +284,6 @@ const ProfileForm = ({ data }: { data: any }) => {
             </div>
           </DialogTitle>
         </DialogHeader>
-
-        {plan?.isFree ? (
-          <div className="border rounded-md p-3 bg-muted">
-            <p className="text-sm text-gray-600 pb-2">{t("You are currently on Free plan")}</p>
-            <UpgradeModalButton />
-          </div>
-        ) : (
-          planName && (
-            <>
-              <div className="border flex items-center justify-between rounded-md p-3 bg-muted">
-                <p className="text-sm text-gray-600">
-                  {t("You current plan:")} <span className="font-semibold text-amber-600">{planName}</span>
-                </p>
-                <div className="flex gap-2 mt-2">
-                  {!scheduledForCancellation && (
-                    <Button variant="link" size="sm" onClick={() => setCancelModalOpen(true)}>
-                      {t("Cancel plan")}
-                    </Button>
-                  )}
-                </div>
-              </div>
-              {scheduledForCancellation && nextBilledAt && (
-                <div className="p-2 bg-amber-50 border flex justify-between items-center border-amber-200 rounded">
-                  <p className="text-xs text-amber-800">
-                    {t("Your plan will be cancelled on")}{" "}
-                    {new Date(nextBilledAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </p>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={handleResumeSubscription}
-                    disabled={isResuming}
-                    className="bg-green-600 mt-1 hover:bg-green-700">
-                    {isResuming ? (
-                      <>
-                        <Loader className="h-3 w-3 animate-spin mr-1" />
-                        {t("Resuming...")}
-                      </>
-                    ) : (
-                      <>
-                        <RefreshCw className="h-3 w-3 mr-1" />
-                        {t("Resume")}
-                      </>
-                    )}
-                  </Button>
-                </div>
-              )}
-            </>
-          )
-        )}
 
         <div className="space-y-6 py-4 overflow-y-auto">
           {/* Account Details Section */}

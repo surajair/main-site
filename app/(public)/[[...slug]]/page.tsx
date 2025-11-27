@@ -29,36 +29,31 @@ registerFonts();
 
 export const dynamic = "force-static";
 
-export const generateMetadata = async (props: { params: Promise<{ hostname: string; slug: string[] }> }) => {
+export const generateMetadata = async (props: { params: Promise<{ slug: string[] }> }) => {
   const nextParams = await props.params;
-  const hostname = nextParams.hostname.replace("%3A", ":").replace("%2E", ".");
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
 
   const { isEnabled } = await draftMode();
-  await ChaiBuilder.initByHostname(hostname, isEnabled);
+  ChaiBuilder.setDraftMode(isEnabled);
   const data = await ChaiBuilder.getSiteSettings();
   const clientSettings = await getClientSettings();
   const favicon = data?.settings?.faviconURL || clientSettings.favicon;
   return {
     ...((await ChaiBuilder.getPageSeoData(slug)) as any),
     icons: { icon: favicon },
-    metadataBase: new URL(`https://${hostname}`),
     alternates: {
       canonical: slug,
     },
   };
 };
 
-export default async function Page({ params }: { params: Promise<{ hostname: string; slug: string[] }> }) {
+export default async function Page({ params }: { params: Promise<{ slug: string[] }> }) {
   const nextParams = await params;
-  const hostname = nextParams.hostname.replace("%3A", ":").replace("%2E", ".");
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
   const { isEnabled } = await draftMode();
-  await ChaiBuilder.initByHostname(hostname, isEnabled);
+  ChaiBuilder.setDraftMode(isEnabled);
   const data = await ChaiBuilder.getSiteSettings();
-  const clientSettings = await getClientSettings();
   const settings = data?.settings || null;
-  const showChaiBadge = hostname.endsWith(".chaibuilder.site");
   const cookieConsentEnabled = settings?.cookieConsentEnabled || false;
   const darkMode = settings?.darkMode || false;
   let page = null;
@@ -106,7 +101,6 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
         <ThemeProvider defaultDarkMode={darkMode}>
           <PreviewBanner slug={slug} show={isEnabled} />
           <RenderChaiBlocks page={page} pageProps={pageProps} imageComponent={ImageBlock} />
-          {showChaiBadge && <ChaiBuilderBadge madeWithBadge={clientSettings?.madeWithBadge} />}
           <PageScripts />
           <Analytics />
           {cookieConsentEnabled && <CookieConsentWrapper lang={page.lang} settings={settings?.cookieConsentSettings} />}

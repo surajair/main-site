@@ -17,10 +17,6 @@
     height: inherit;
   }
 
-  .prose {
-    @apply max-w-full;
-  }
-
   .aspect-video {
     aspect-ratio: 16 / 9;
   }

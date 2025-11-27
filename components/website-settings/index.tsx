@@ -3,39 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { useClientSettings } from "@/hooks/use-client-settings";
-import { useWebsites } from "@/hooks/use-websites";
 import { getSite } from "@/lib/getter";
 import { SiteData } from "@/utils/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Popover, PopoverContent, PopoverTrigger, useSavePage, useTranslation } from "chai-next";
+import { useSavePage, useTranslation } from "chai-next";
 import { omit } from "lodash";
-import {
-  Activity,
-  ChevronDown,
-  Code,
-  ExternalLinkIcon,
-  Globe,
-  ImageIcon,
-  Loader,
-  MoreHorizontal,
-  Plus,
-  Settings,
-  Share2,
-  ShieldCheck,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Activity, Code, ExternalLinkIcon, ImageIcon, Loader, Settings, Share2, ShieldCheck } from "lucide-react";
+import { useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import AnalyticsTracking from "./analytics-tracking";
 import BrandingConfiguration from "./branding-configuration";
 import ContactSocial from "./contact-social";
-import CreateNewWebsite from "./create-new-website";
 import CustomHtml from "./custom-html-code";
-import DeleteWebsite from "./delete-website";
-import DomainConfiguration from "./domain-configuration";
 import General from "./general";
 import LegalCompliance from "./legal-compliance";
 import SaveButton from "./save-button";
@@ -48,7 +27,6 @@ const getSidebarItems = (t: any) => [
   { id: "legal-compliance", label: t("Cookie Consent"), icon: ShieldCheck, component: LegalCompliance },
   { id: "analytics-tracking", label: t("Analytics Tracking"), icon: Activity, component: AnalyticsTracking },
   { id: "custom-html", label: t("Custom HTML"), icon: Code, component: CustomHtml },
-  { id: "domain", label: t("Domains"), icon: Globe, component: DomainConfiguration },
 ];
 
 /**
@@ -206,7 +184,9 @@ function WebsiteSettingsContent({
               className="h-full scroll-smooth overflow-y-auto px-6 no-scrollbar"
               style={{ scrollBehavior: "smooth" }}>
               <ErrorBoundary
-                fallback={<div className="text-center text-red-500 p-10">{t("Something went wrong, Please try again")}</div>}>
+                fallback={
+                  <div className="text-center text-red-500 p-10">{t("Something went wrong, Please try again")}</div>
+                }>
                 {Component && <Component data={siteData} websiteId={websiteId} onChange={updateSiteDataLocally} />}
               </ErrorBoundary>
               <div className="h-16" />
@@ -319,160 +299,16 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
 };
 
 /**
- * Websites popover content component
- * @param params websiteId, websites, isLoading, refetch
- */
-const WebsitesPopoverContent = ({
-  websiteId,
-  websites,
-  isLoading,
-}: {
-  websiteId: string;
-  websites: any;
-  isLoading: boolean;
-}) => {
-  const { t } = useTranslation();
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-4 h-80 w-96">
-        <Loader className="h-4 w-4 animate-spin" />
-      </div>
-    );
-  }
-
-  return (
-    <Card className="w-96 flex flex-col">
-      {/* Fixed Header */}
-      <CardHeader className="p-2 px-4 border-b">
-        <CardTitle className="text-sm flex items-center justify-between">
-          <span>{t("Your Website")}</span>
-          <span className="text-muted-foreground font-light">{t("{{count}} websites", { count: websites?.length })}</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1 max-h-96 overflow-y-auto space-y-2 rounded-lg p-2">
-        {websites?.map((site: any) => (
-          <div key={site.id} className="group relative overflow-hidden cursor-pointer">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-200">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" side="right">
-                <DeleteWebsite websiteId={site.id} websiteName={site.name} />
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <div
-              onClick={() => (window.location.href = `/${site?.id}/editor`)}
-              className="px-3 py-1 group-hover:bg-muted rounded">
-              <div className={`font-medium text-sm ${websiteId === site.id ? "text-primary" : ""}`}>{site.name}</div>
-              <div className="text-xs text-muted-foreground">{site.subdomain}</div>
-            </div>
-          </div>
-        ))}
-      </CardContent>
-
-      {/* Fixed Footer */}
-      <CardFooter className="flex-shrink-0 p-3 border-t bg-white">
-        <CreateNewWebsite totalSites={websites?.length || 0}>
-          <Button className="w-full" size="sm">
-            <Plus className="h-4 w-4" />
-            {t("Add New Website")}
-          </Button>
-        </CreateNewWebsite>
-      </CardFooter>
-    </Card>
-  );
-};
-
-/**
- * Websites list popover component
- * @param params websites, websiteId, isLoading
- */
-const WebsitesListPopover = ({
-  websites,
-  websiteId,
-  isLoading,
-}: {
-  websites: any;
-  isLoading: boolean;
-  websiteId: string | undefined;
-}) => {
-  const { t } = useTranslation();
-  const { savePageAsync } = useSavePage();
-  const [showWebsiteList, setShowWebsiteList] = useState(false);
-  const open = showWebsiteList || !websiteId || (isLoading ? false : websites?.length === 0);
-
-  const onOpenChange = async (open: boolean) => {
-    if (open) savePageAsync();
-    setShowWebsiteList(open);
-  };
-
-  const website = useMemo(() => websites?.find((site: any) => site?.id === websiteId), [websites, websiteId]);
-
-  if (isLoading) {
-    return (
-      <Button variant="ghost" size="sm" className="h-8" disabled={true}>
-        <span className="text-xs">{t("Loading")}</span>
-        <ChevronDown />
-        <span className="sr-only">{t("Website manager")}</span>
-      </Button>
-    );
-  }
-
-  return (
-    <Popover open={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8">
-          <span className="text-xs">{website?.name}</span>
-          <ChevronDown />
-          <span className="sr-only">{t("Website manager")}</span>
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        side="bottom"
-        align="start"
-        alignOffset={-12}
-        className={`ml-2 p-0 border rounded-xl border-border shadow-2xl overflow-hidden w-96`}>
-        <WebsitesPopoverContent websiteId={websiteId || ""} websites={websites} isLoading={isLoading} />
-      </PopoverContent>
-    </Popover>
-  );
-};
-
-/**
  *
  * Website settings component
  * @param params websiteId, websites, isLoading
  */
 function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
-  const { data: clientSettings, isFetching: isFetchingClientSettings } = useClientSettings();
-  const { data: websites, isFetching: isFetchingWebsites } = useWebsites();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isFetchingClientSettings || isFetchingWebsites) return;
-    const isActiveWebsite = websites?.find((site) => site?.id === websiteId);
-    if (!isActiveWebsite) router.push(`/`);
-  }, [websiteId, websites, isFetchingClientSettings, isFetchingWebsites, router]);
-
   return (
     <div className="flex items-center gap-x-2">
-      {!isFetchingClientSettings && clientSettings?.logo ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={clientSettings?.logo} width={32} height={32} alt="brand-logo" className="rounded-md" />
-      ) : (
-        <div className="w-8 h-8 rounded-md" />
-      )}
-      {!isFetchingWebsites && (
-        <div className="flex items-center border rounded-md p-0 h-9 px-px">
-          <WebsitesListPopover websiteId={websiteId} isLoading={isFetchingWebsites} websites={websites} />
-          <WebsiteSettingsModal websiteId={websiteId} isLoading={isFetchingWebsites} />
-        </div>
-      )}
+      <div className="flex items-center border rounded-md p-0 h-9 px-px">
+        <WebsiteSettingsModal websiteId={websiteId} isLoading={false} />
+      </div>
     </div>
   );
 }

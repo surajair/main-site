@@ -22,7 +22,7 @@ registerPanels();
 registerBlocks();
 registerFonts();
 
-export default function Editor({ domain, websiteId }: { domain?: string; websiteId?: string }) {
+export default function Editor({ websiteId }: { websiteId?: string }) {
   const [user, setUser] = useState<LoggedInUser | null>(null);
   const websiteSettings = useMemo(() => <WebsiteSettings websiteId={websiteId} />, [websiteId]);
 
@@ -48,13 +48,13 @@ export default function Editor({ domain, websiteId }: { domain?: string; website
   }, []);
 
   const getPreviewUrl = useCallback(
-    (slug: string) => `//${domain}/api/preview?slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`,
-    [domain],
+    (slug: string) => `//api/preview?slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`,
+    [],
   );
 
   const getLiveUrl = useCallback(
-    (slug: string) => `//${domain}/api/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`,
-    [domain],
+    (slug: string) => `//api/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`,
+    [],
   );
 
   if (!user) {
@@ -69,7 +69,7 @@ export default function Editor({ domain, websiteId }: { domain?: string; website
       autoSaveInterval={20}
       getAccessToken={getAccessToken}
       hasReactQueryProvider
-      apiUrl={`/${websiteId}/editor/api`}
+      apiUrl={`/editor/api`}
       // @ts-ignore
       topLeftCorner={() => websiteSettings}
       getPreviewUrl={getPreviewUrl}

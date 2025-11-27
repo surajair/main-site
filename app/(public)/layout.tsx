@@ -1,5 +1,8 @@
-import "@/app/(sites)/site.css";
+import "@/app/(public)/site.css";
 import { getClientSettings } from "@/lib/getter";
+import ChaiBuilder from "chai-next/server";
+
+ChaiBuilder.init(process.env.CHAIBUILDER_APP_ID!);
 
 export const generateMetadata = async () => {
   const clientSettings = await getClientSettings();
