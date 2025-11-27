@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeScript } from "@/components/theme-script";
 import { loadSiteGlobalData } from "@/data/global";
 import { getFontStyles, registerFonts } from "@/fonts";
-import { getClientSettings } from "@/lib/getter";
 import { Analytics } from "@vercel/analytics/next";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { ChaiPageStyles, RenderChaiBlocks } from "chai-next/blocks/rsc";
@@ -36,8 +35,7 @@ export const generateMetadata = async (props: { params: Promise<{ slug: string[]
   const { isEnabled } = await draftMode();
   ChaiBuilder.setDraftMode(isEnabled);
   const data = await ChaiBuilder.getSiteSettings();
-  const clientSettings = await getClientSettings();
-  const favicon = data?.settings?.faviconURL || clientSettings.favicon;
+  const favicon = data?.settings?.faviconURL || "";
   return {
     ...((await ChaiBuilder.getPageSeoData(slug)) as any),
     icons: { icon: favicon },

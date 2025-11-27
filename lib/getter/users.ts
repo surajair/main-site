@@ -2,7 +2,6 @@
 
 import { createClient } from "@/chai/supabase.auth.server";
 import { Session, User } from "@supabase/supabase-js";
-import { getSupabaseAdmin } from "chai-next/server";
 import { redirect } from "next/navigation";
 
 /**
@@ -36,20 +35,4 @@ export async function getSession(): Promise<Session> {
   } = await supabase.auth.getSession();
 
   return session as Session;
-}
-
-export async function getPlan(userId: string): Promise<any> {
-  try {
-    const supabase = await getSupabaseAdmin();
-    const { data: plan, error } = await supabase
-      .from("app_user_plans")
-      .select("planId,nextBilledAt,scheduledForCancellation")
-      .eq("user", userId)
-      .eq("client", process.env.CHAIBUILDER_CLIENT_ID);
-
-    if (plan?.length === 0 || error) return { planId: "FREE" };
-    return plan[0];
-  } catch (error) {
-    return { planId: "FREE" };
-  }
 }

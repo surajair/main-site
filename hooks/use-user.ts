@@ -1,5 +1,4 @@
 import { getSession } from "@/lib/getter";
-import { getPlan } from "@/lib/getter/users";
 import { Session, User } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
 
@@ -20,7 +19,6 @@ const saveUserInLocalStorage = (session: Session | null) => {
 type TUser = {
   user: User | null;
   session: Session | null;
-  plan: any;
   role: string;
   isLoggedIn: boolean;
 };
@@ -35,9 +33,8 @@ export const useUser = () => {
         const session = await getSession();
         saveUserInLocalStorage(session);
         const user = session?.user;
-        const userPlan = await getPlan(user?.id);
 
-        return { user, session, plan: userPlan, role: "admin", isLoggedIn: true };
+        return { user, session, role: "admin", isLoggedIn: true };
       } catch (error) {
         return { user: null, session: null, plan: null, role: "admin", isLoggedIn: false };
       }
@@ -45,7 +42,6 @@ export const useUser = () => {
     placeholderData: {
       user: null,
       session: null,
-      plan: null,
       role: "admin",
       isLoggedIn: false,
     },

@@ -1,9 +1,6 @@
 "use server";
 
-import { getClientSettings } from "@/lib/getter";
-
 export const getHomepageBlocks = async () => {
-  const clientSettings = await getClientSettings();
   return [
     {
       _id: "amBjaf",
@@ -45,24 +42,12 @@ export const getHomepageBlocks = async () => {
       styles: "#styles:,flex items-center justify-center space-x-3 mb-6",
     },
     {
-      _type: "Image",
-      _id: "gjeeln",
-      _parent: "eBsCcc",
-      styles: "#styles:,w-12 h-12 rounded-xl",
-      image: clientSettings.logo,
-      alt: "",
-      lazyLoading: true,
-      width: "48",
-      height: "48",
-      mobileImage: "",
-    },
-    {
       _id: "rdDjhl",
       _parent: "eBsCcc",
       _type: "Span",
       tag: "span",
       styles: "#styles:,text-2xl font-bold",
-      content: clientSettings.name,
+      content: "Chai Builder",
     },
     {
       _id: "zlbqpl",

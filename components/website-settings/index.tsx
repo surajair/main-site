@@ -8,7 +8,7 @@ import { SiteData } from "@/utils/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSavePage, useTranslation } from "chai-next";
 import { omit } from "lodash";
-import { Activity, Code, ExternalLinkIcon, ImageIcon, Loader, Settings, Share2, ShieldCheck } from "lucide-react";
+import { Activity, Code, ImageIcon, Loader, Settings, Settings2, Share2, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import AnalyticsTracking from "./analytics-tracking";
@@ -128,24 +128,6 @@ function WebsiteSettingsContent({
         <div className="w-52 h-full bg-sidebar border-r border-sidebar-border pr-2">
           <h2 className="font-semibold text-sidebar-foreground px-2 pt-1">{t("Website Settings")}</h2>
           <div className="text-xs text-primary px-2">{siteData?.name}</div>
-          {siteData?.domainConfigured && siteData?.domain && (
-            <a
-              href={`https://${siteData?.domain}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-light px-2 text-blue-500 hover:text-blue-800 flex items-center gap-1 truncate">
-              <span className="truncate">{siteData?.domain}</span>
-              <ExternalLinkIcon className="h-2.5 w-2.5 flex-shrink-0" />
-            </a>
-          )}
-          <a
-            href={`https://${siteData?.subdomain}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs font-light px-2 text-blue-500 hover:text-blue-800 flex items-center gap-1 truncate">
-            <span className="truncate">{siteData?.subdomain}</span>
-            <ExternalLinkIcon className="h-2.5 w-2.5 flex-shrink-0" />
-          </a>
 
           <nav className="pt-6">
             {SIDEBAR_ITEMS.map((item) => {
@@ -223,14 +205,13 @@ function WebsiteSettingsContent({
  * Website settings modal component
  * @param params websiteId
  */
-const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | undefined; isLoading: boolean }) => {
+const WebsiteSettingsModal = ({ websiteId }: { websiteId: string | undefined }) => {
   const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { savePageAsync } = useSavePage();
   const [isDataChange, setIsDataChange] = useState(false);
   const [initData, setInitData] = useState<any>(null);
-  const queryClient = useQueryClient();
   const handleOpenChange = async (newOpen: boolean) => {
     if (newOpen) savePageAsync();
     if (!newOpen && isDataChange) setShowConfirmDialog(true);
@@ -242,7 +223,6 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
     setShowModal(false);
     setIsDataChange(false);
     if (!initData) return;
-    queryClient.setQueryData(["website-settings", websiteId], () => initData);
   };
 
   const handleCancelClose = () => {
@@ -250,21 +230,13 @@ const WebsiteSettingsModal = ({ websiteId, isLoading }: { websiteId: string | un
   };
 
   if (!websiteId) return null;
-  if (isLoading) {
-    return (
-      <Button variant="ghost" size="icon" className="p-0 w-8 h-8" disabled={true}>
-        <Settings />
-        <span className="sr-only">Settings</span>
-      </Button>
-    );
-  }
 
   return (
     <>
       <Dialog open={showModal} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
           <Button variant="ghost" size="icon" className="p-0 w-8 h-8">
-            <Settings />
+            <Settings2 />
             <span className="sr-only">{t("Settings")}</span>
           </Button>
         </DialogTrigger>
@@ -307,7 +279,8 @@ function WebsiteSettings({ websiteId }: { websiteId: string | undefined }) {
   return (
     <div className="flex items-center gap-x-2">
       <div className="flex items-center border rounded-md p-0 h-9 px-px">
-        <WebsiteSettingsModal websiteId={websiteId} isLoading={false} />
+        <p className="text-xs font-mono font-bold px-2">ChaiBuilder</p>
+        <WebsiteSettingsModal websiteId={websiteId} />
       </div>
     </div>
   );

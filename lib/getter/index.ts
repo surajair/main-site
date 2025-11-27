@@ -1,5 +1,5 @@
 // Sites related functions and types
-export { getSite, getSites, type Site } from "./sites";
+export { getSite, type Site } from "./sites";
 
 // Forms related functions and types
 export {
@@ -12,6 +12,3 @@ export {
 
 // Users related functions
 export { getSession, getUser } from "./users";
-
-// Clients related functions
-export { getClientSettings, type ClientSettings } from "./client";

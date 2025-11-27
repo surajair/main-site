@@ -1,6 +1,8 @@
+import ChaiBuilder from "chai-next/server";
 import { Geist } from "next/font/google";
 import "./builder.css";
 
+ChaiBuilder.init(process.env.CHAIBUILDER_APP_ID!);
 export const dynamic = "force-dynamic";
 
 const geist = Geist({ subsets: ["latin"], preload: true });
