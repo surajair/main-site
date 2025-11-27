@@ -3,9 +3,9 @@
   "version": "0.1.22",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css --watch\" \"next dev --turbopack --port 3000\"",
-    "dev:turbo": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css --watch\" \"next dev --turbopack --port 3000\"",
-    "build": "npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(sites\\)/site.css && next build --turbopack",
+    "dev": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(public\\)/site.css --watch\" \"next dev --turbopack --port 3000\"",
+    "dev:turbo": "concurrently \"npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(public\\)/site.css --watch\" \"next dev --turbopack --port 3000\"",
+    "build": "npx chai-tailwind -c ./tailwind.site.config.ts -i ./app/\\(public\\)/site.css && next build --turbopack",
     "start": "next start",
     "lint": "next lint & tsc --noEmit",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
