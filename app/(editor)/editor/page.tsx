@@ -1,4 +1,4 @@
-import { FeatureFlagProvider } from "@/lib/openfeature/feature-flag-provider";
+import QueryClientProviderWrapper from "@/components/providers/query-client-provider";
 import "chai-next/builder-styles";
 import ChaiBuilder from "chai-next/server";
 import Editor from "./editor";
@@ -11,8 +11,8 @@ export default async function Page({
 }) {
   const websiteId = await ChaiBuilder.getSiteId();
   return (
-    <FeatureFlagProvider>
+    <QueryClientProviderWrapper>
       <Editor websiteId={websiteId} />
-    </FeatureFlagProvider>
+    </QueryClientProviderWrapper>
   );
 }

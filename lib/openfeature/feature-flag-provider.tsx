@@ -41,9 +41,5 @@ export const FeatureFlagProvider = ({
   children: React.ReactNode;
   fromDashboard?: boolean;
 }) => {
-  return (
-    <QueryClientProviderWrapper>
-      <FeatureFlagProviderComponent fromDashboard={fromDashboard}>{children}</FeatureFlagProviderComponent>
-    </QueryClientProviderWrapper>
-  );
+  return <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>;
 };
